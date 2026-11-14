@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-14T20:35:44.144Z",
+  "fetchedAt": "2026-11-14T20:41:14.679Z",
   "clientVersion": 6861,
   "source": "api.deadlock-api.com",
   "count": 156,
@@ -729,7 +729,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/restorative_locket.webp",
-      "description": ""
+      "description": "Если враг применяет умение в радиусе 32m м от вас, вы получаете единицу эффекта восстановления. Поглотите все накопленные единицы, чтобы полечить себя и восстановить до 3 ед. выносливости в зависимости от числа накопленных единиц."
     },
     {
       "id": 3361075077,
@@ -837,7 +837,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/fleetfoot.webp",
-      "description": ""
+      "description": "Убирает снижение скорости передвижения во время стрельбы. Даёт бонус к скорости передвижения и сопротивляемости замедлению."
     },
     {
       "id": 2407033488,
@@ -1295,7 +1295,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_remover.webp",
-      "description": ""
+      "description": "Снимает с вас все отрицательные эффекты, кроме наложенных ультами. Если был снят хоть один эффект, вы лечите себя и получаете бонус к скорости передвижения. Нельзя применять в состоянии оглушения и сна."
     },
     {
       "id": 3585132399,
@@ -1327,7 +1327,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fury_trance.webp",
-      "description": ""
+      "description": "Даёт скорострельность, сопротивляемость спиритизму и скорость передвижения, а также снимает штраф к скорости передвижения при стрельбе, но накладывает безмолвие и не даёт восстанавливать и использовать выносливость."
     },
     {
       "id": 2956256701,
@@ -1433,7 +1433,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/stamina_mastery.webp",
-      "description": ""
+      "description": "Позволяет делать дополнительный прыжок или рывок в воздухе перед приземлением."
     },
     {
       "id": 865958998,
@@ -1706,7 +1706,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spellslinger_headshots.webp",
-      "description": ""
+      "description": "Ваши пули накладывают на цель эффект, снижающий её сопротивляемость спиритизму и дающий вам и вашим союзникам кражу здоровья жертвы спиритизмом. Попадания в голову ещё больше снижают сопротивляемость спиритизму у жертвы."
     },
     {
       "id": 811521119,
@@ -1812,7 +1812,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/echo_shard.webp",
-      "description": ""
+      "description": "Сбрасывает перезарядку усиленного умения (кроме ультов). Перезарядка этого предмета увеличивается в зависимости от перезарядки усиленного умения."
     },
     {
       "id": 3005970438,
@@ -1918,7 +1918,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reverb.webp",
-      "description": ""
+      "description": "Усиливает выбранное умение: оно получает кражу здоровья, замедляет цель и после короткой задержки наносит врагам вокруг неё долю от нанесённого ей урона."
     },
     {
       "id": 677738769,
@@ -1992,7 +1992,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/vortex_web.webp",
-      "description": ""
+      "description": "Вы бросаете вакуумную гранату, которая притягивает врагов в небольшую область и накладывает на них «Замедляющие чары». Альт. огонь: применить на конкретную цель."
     },
     {
       "id": 3361811174,
@@ -2006,7 +2006,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/cheat_death.webp",
-      "description": ""
+      "description": "Если вам наносят смертельный урон, вы получаете временное бессмертие, а также избавляетесь от всех отрицательных эффектов, кроме оглушения. В этом состоянии вы наносите уменьшенный урон, и имеете сниженное лечение."
     },
     {
       "id": 2407781327,
@@ -2084,7 +2084,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/indomitable.webp",
-      "description": ""
+      "description": "Следующий наложенный на вас эффект оглушения, сковывания, обездвиживания, безмолвия или страха автоматически снимается. При этом вы получаете барьер, а перезарядка всех ваших умений сокращается на 20%."
     },
     {
       "id": 1797283378,
@@ -2130,7 +2130,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/juggernaut.webp",
-      "description": ""
+      "description": "У стреляющих в вас врагов снижается скорострельность."
     },
     {
       "id": 865846625,
@@ -2189,7 +2189,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/siphon_bullets.webp",
-      "description": ""
+      "description": "Ваши выстрелы на время крадут долю от максимального здоровья жертв. Украденное здоровье возвращается врагам по окончании действия эффекта."
     },
     {
       "id": 1955841979,
@@ -2237,7 +2237,7 @@
       ],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/vampiric_burst.webp",
-      "description": ""
+      "description": "Даёт бонус к краже здоровья, скорострельности и боезапасу. Увеличенный этим умением боезапас может превысить максимальный."
     },
     {
       "id": 3028234315,
@@ -2329,7 +2329,7 @@
       "components": [],
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/frenzy.webp",
-      "description": ""
+      "description": "Когда у вас меньше 50% здоровья, вы на указанный период получаете бонусы к характеристикам, а наложенные на вас отрицательные эффекты ослабляются."
     },
     {
       "id": 365620721,

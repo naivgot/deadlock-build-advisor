@@ -68,6 +68,17 @@ function buildAbilities(heroesRu, itemsEn, itemByClass) {
   return abilities;
 }
 
+// Описание предмета: основное поле, а если его нет — тексты из всплывающей подсказки.
+function itemDescription(item) {
+  const main = stripHtml(item.description?.desc);
+  if (main) return main;
+  const parts = (item.tooltip_sections ?? [])
+    .flatMap((section) => section.section_attributes ?? [])
+    .map((attribute) => stripHtml(attribute.loc_string))
+    .filter(Boolean);
+  return [...new Set(parts)].join(' ');
+}
+
 // Предметы стандартного режима: продаются в магазине, не отключены и реально покупаются в обычных матчах.
 function buildItems(itemsRu, itemsEn, boughtIds) {
   const enNames = namesById(itemsEn);
@@ -90,7 +101,7 @@ function buildItems(itemsRu, itemsEn, boughtIds) {
     components: (item.component_items ?? []).map((className) => idByClass.get(className)).filter(Boolean),
     upgrades: [],
     icon: item.shop_image_webp ?? item.image_webp ?? null,
-    description: stripHtml(item.description?.desc),
+    description: itemDescription(item),
   }));
 
   // «Во что улучшается» — обратная связь к компонентам.
