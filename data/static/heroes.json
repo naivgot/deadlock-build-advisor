@@ -1,0 +1,1020 @@
+{
+  "fetchedAt": "2026-11-14T20:35:44.144Z",
+  "clientVersion": 6861,
+  "source": "api.deadlock-api.com",
+  "count": 44,
+  "heroes": [
+    {
+      "id": 1,
+      "className": "hero_inferno",
+      "name": "Infernus",
+      "nameRu": "Инфернус",
+      "role": "Поджигает врагов и наблюдает за их мучениями",
+      "tags": [
+        "Поджигатель",
+        "Взрывной",
+        "Палитель резины"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card.webp",
+      "abilities": [
+        491391007,
+        3516947824,
+        1593133799,
+        1142270357
+      ]
+    },
+    {
+      "id": 2,
+      "className": "hero_gigawatt",
+      "name": "Seven",
+      "nameRu": "Семь",
+      "role": "Поражает током толпы врагов",
+      "tags": [
+        "Высокое напряжение",
+        "Безжалостный",
+        "Контроль над областью"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card.webp",
+      "abilities": [
+        1065103387,
+        1074714947,
+        539192269,
+        2061574352
+      ]
+    },
+    {
+      "id": 3,
+      "className": "hero_hornet",
+      "name": "Vindicta",
+      "nameRu": "Виндикта",
+      "role": "Отстреливает жертв издалека",
+      "tags": [
+        "Снайпер",
+        "Парящая",
+        "Убийство одним выстрелом"
+      ],
+      "heroType": "marksman",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card.webp",
+      "abilities": [
+        537527508,
+        1796564033,
+        2048438176,
+        775377419
+      ]
+    },
+    {
+      "id": 4,
+      "className": "hero_ghost",
+      "name": "Lady Geist",
+      "nameRu": "Леди Гайст",
+      "role": "Жертвует здоровьем, но потом забирает его у врагов",
+      "tags": [
+        "Кража здоровья",
+        "Урон себе",
+        "Роковая"
+      ],
+      "heroType": "mystic",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card.webp",
+      "abilities": [
+        715325746,
+        218284420,
+        3230530872,
+        1307289689
+      ]
+    },
+    {
+      "id": 6,
+      "className": "hero_atlas",
+      "name": "Abrams",
+      "nameRu": "Абрамс",
+      "role": "Рвётся в ближний бой",
+      "tags": [
+        "Танк",
+        "Дебошир",
+        "Упрямый"
+      ],
+      "heroType": "brawler",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card.webp",
+      "abilities": [
+        4072270083,
+        2824119765,
+        715762406,
+        509856396
+      ]
+    },
+    {
+      "id": 7,
+      "className": "hero_wraith",
+      "name": "Wraith",
+      "nameRu": "Тень",
+      "role": "Изолирует и уничтожает цели",
+      "tags": [
+        "Дуэлянтка",
+        "Изолирующая",
+        "Телекинетик"
+      ],
+      "heroType": "marksman",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card.webp",
+      "abilities": [
+        1999680326,
+        4147641675,
+        1842576017,
+        2981692841
+      ]
+    },
+    {
+      "id": 8,
+      "className": "hero_forge",
+      "name": "McGinnis",
+      "nameRu": "Макгиннис",
+      "role": "Контролирует бой с помощью боевых турелей",
+      "tags": [
+        "Изобретательница",
+        "Поддержка",
+        "Назойливая"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card.webp",
+      "abilities": [
+        3133377790,
+        2142734020,
+        1725685134,
+        3503044146
+      ]
+    },
+    {
+      "id": 10,
+      "className": "hero_chrono",
+      "name": "Paradox",
+      "nameRu": "Парадокс",
+      "role": "Манипулирует пространством и временем",
+      "tags": [
+        "Расчётливая",
+        "Назойливая",
+        "Тактик"
+      ],
+      "heroType": "marksman",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card.webp",
+      "abilities": [
+        58655583,
+        1366719170,
+        1128670012,
+        2917891787
+      ]
+    },
+    {
+      "id": 11,
+      "className": "hero_dynamo",
+      "name": "Dynamo",
+      "nameRu": "Динамо",
+      "role": "Сдерживает вражескую команду",
+      "tags": [
+        "Командный игрок",
+        "Инициатор",
+        "Мастер схваток"
+      ],
+      "heroType": null,
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card.webp",
+      "abilities": [
+        3760705623,
+        2031714424,
+        492030745,
+        249410288
+      ]
+    },
+    {
+      "id": 12,
+      "className": "hero_kelvin",
+      "name": "Kelvin",
+      "nameRu": "Кельвин",
+      "role": "Замораживает врагов намертво",
+      "tags": [
+        "Защитник",
+        "Исследователь",
+        "Ледяной"
+      ],
+      "heroType": null,
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card.webp",
+      "abilities": [
+        18921423,
+        1963397252,
+        2351041382,
+        3826390464
+      ]
+    },
+    {
+      "id": 13,
+      "className": "hero_haze",
+      "name": "Haze",
+      "nameRu": "Пелена",
+      "role": "Подкрадывается и решетит пулями",
+      "tags": [
+        "Убийца",
+        "Скрытная",
+        "Смертоносная"
+      ],
+      "heroType": "assassin",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card.webp",
+      "abilities": [
+        2948410412,
+        2414191464,
+        1080948381,
+        731943444
+      ]
+    },
+    {
+      "id": 14,
+      "className": "hero_astro",
+      "name": "Holliday",
+      "nameRu": "Холлидей",
+      "role": "Подскакивает и метко стреляет",
+      "tags": [
+        "Меткий глаз",
+        "Взрывная",
+        "Задержание"
+      ],
+      "heroType": "marksman",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card.webp",
+      "abilities": [
+        1235098866,
+        2240607294,
+        4179229681,
+        3190606822
+      ]
+    },
+    {
+      "id": 15,
+      "className": "hero_bebop",
+      "name": "Bebop",
+      "nameRu": "Бибоп",
+      "role": "Цепляет врагов крюком, а затем добивает",
+      "tags": [
+        "Крюк",
+        "Бомба",
+        "Удар"
+      ],
+      "heroType": "brawler",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card.webp",
+      "abilities": [
+        3089858203,
+        2521902222,
+        1928108461,
+        3832675871
+      ]
+    },
+    {
+      "id": 16,
+      "className": "hero_nano",
+      "name": "Calico",
+      "nameRu": "Калико",
+      "role": "Сеет хаос со стороны",
+      "tags": [
+        "Ловкая",
+        "Увёртливая",
+        "Большой мгновенный урон"
+      ],
+      "heroType": "assassin",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card.webp",
+      "abilities": [
+        4131517918,
+        1426567660,
+        1009029159,
+        2054144742
+      ]
+    },
+    {
+      "id": 17,
+      "className": "hero_orion",
+      "name": "Grey Talon",
+      "nameRu": "Серый Коготь",
+      "role": "Точно стреляет издалека",
+      "tags": [
+        "Точность",
+        "Охотник",
+        "Контроль над областью"
+      ],
+      "heroType": "mystic",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card.webp",
+      "abilities": [
+        548943648,
+        3452399392,
+        512733154,
+        3242902780
+      ]
+    },
+    {
+      "id": 18,
+      "className": "hero_krill",
+      "name": "Mo & Krill",
+      "nameRu": "Мо и Мелкий",
+      "role": "Копают под своих врагов",
+      "tags": [
+        "Парная команда",
+        "Инициаторы",
+        "Зарыватели"
+      ],
+      "heroType": "brawler",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card.webp",
+      "abilities": [
+        1454278799,
+        2406758797,
+        1914797280,
+        1917840730
+      ]
+    },
+    {
+      "id": 19,
+      "className": "hero_shiv",
+      "name": "Shiv",
+      "nameRu": "Заточка",
+      "role": "Изматывает, а затем добивает врагов",
+      "tags": [
+        "Ярость",
+        "Кровопускание",
+        "Повторяем"
+      ],
+      "heroType": "brawler",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card.webp",
+      "abilities": [
+        2460791803,
+        1458044103,
+        1537272748,
+        1835738020
+      ]
+    },
+    {
+      "id": 20,
+      "className": "hero_tengu",
+      "name": "Ivy",
+      "nameRu": "Плющик",
+      "role": "Отличная напарница для везучих союзников",
+      "tags": [
+        "Командный игрок",
+        "Назойливая",
+        "Тверда как скала"
+      ],
+      "heroType": null,
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card.webp",
+      "abilities": [
+        4111222521,
+        1531378655,
+        3642273386,
+        1247583368
+      ]
+    },
+    {
+      "id": 25,
+      "className": "hero_warden",
+      "name": "Warden",
+      "nameRu": "Дозорный",
+      "role": "Ослабляет и преследует врагов",
+      "tags": [
+        "Инициатор",
+        "Бесстрашный",
+        "Один против всех"
+      ],
+      "heroType": "brawler",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card.webp",
+      "abilities": [
+        2656490109,
+        2751689917,
+        1656913918,
+        2702908623
+      ]
+    },
+    {
+      "id": 27,
+      "className": "hero_yamato",
+      "name": "Yamato",
+      "nameRu": "Ямато",
+      "role": "Изящно выполняет мощные атаки",
+      "tags": [
+        "Неустанная",
+        "Акробатка",
+        "Преследующая"
+      ],
+      "heroType": "assassin",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card.webp",
+      "abilities": [
+        3255651252,
+        2566573207,
+        2366960452,
+        3319782965
+      ]
+    },
+    {
+      "id": 31,
+      "className": "hero_lash",
+      "name": "Lash",
+      "nameRu": "Хлыст",
+      "role": "Атакует с воздуха и топчет врагов",
+      "tags": [
+        "Инициатор",
+        "Сумасбродный",
+        "Заносчивый"
+      ],
+      "heroType": "assassin",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card.webp",
+      "abilities": [
+        3561817145,
+        2670099061,
+        519124136,
+        397010810
+      ]
+    },
+    {
+      "id": 35,
+      "className": "hero_viscous",
+      "name": "Viscous",
+      "nameRu": "Вязкус",
+      "role": "Катается по полю боя и отражает пули",
+      "tags": [
+        "Увёртливый",
+        "Назойливый",
+        "Вязкий"
+      ],
+      "heroType": "brawler",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card.webp",
+      "abilities": [
+        3247040238,
+        3788152387,
+        1020817390,
+        4206531918
+      ]
+    },
+    {
+      "id": 50,
+      "className": "hero_synth",
+      "name": "Pocket",
+      "nameRu": "Карман",
+      "role": "Проникает в тыл врага и наводит хаос",
+      "tags": [
+        "Ловкач",
+        "Большой мгновенный урон",
+        "Лягушки"
+      ],
+      "heroType": "assassin",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card.webp",
+      "abilities": [
+        938149308,
+        1976701714,
+        3747867012,
+        2954330093
+      ]
+    },
+    {
+      "id": 52,
+      "className": "hero_mirage",
+      "name": "Mirage",
+      "nameRu": "Мираж",
+      "role": "Совершает точные выстрелы и ловит убегающих врагов",
+      "tags": [
+        "Телохранитель",
+        "Путник",
+        "Сосредоточенный"
+      ],
+      "heroType": "assassin",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card.webp",
+      "abilities": [
+        3733594387,
+        1336069669,
+        2221949202,
+        2604653402
+      ]
+    },
+    {
+      "id": 58,
+      "className": "hero_viper",
+      "name": "Vyper",
+      "nameRu": "Гадюка",
+      "role": "Проскальзывает к противникам и устраняет их",
+      "tags": [
+        "Стрелок",
+        "Увёртливая",
+        "Тра-та-та"
+      ],
+      "heroType": "assassin",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card.webp",
+      "abilities": [
+        645773760,
+        3428732129,
+        1469918191,
+        1594727071
+      ]
+    },
+    {
+      "id": 60,
+      "className": "hero_magician",
+      "name": "Sinclair",
+      "nameRu": "Синклер",
+      "role": "Дезориентирует и заклинает врагов",
+      "tags": [
+        "Ловкач",
+        "Подражатель",
+        "Универсальный"
+      ],
+      "heroType": "mystic",
+      "complexity": 4,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card.webp",
+      "abilities": [
+        3156905386,
+        12456023,
+        2142213586,
+        191022746
+      ]
+    },
+    {
+      "id": 63,
+      "className": "hero_vampirebat",
+      "name": "Mina",
+      "nameRu": "Мина",
+      "role": "",
+      "tags": [
+        "Мучительница",
+        "Проворная",
+        "Досаждающая"
+      ],
+      "heroType": "mystic",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card.webp",
+      "abilities": [
+        193508101,
+        2398133749,
+        1233782561,
+        3379486147
+      ]
+    },
+    {
+      "id": 64,
+      "className": "hero_drifter",
+      "name": "Drifter",
+      "nameRu": "Скиталец",
+      "role": "",
+      "tags": [
+        "Преследователь",
+        "Кровожадный",
+        "Жестокий"
+      ],
+      "heroType": "assassin",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card.webp",
+      "abilities": [
+        3120550633,
+        1264175662,
+        1033019133,
+        1168182161
+      ]
+    },
+    {
+      "id": 65,
+      "className": "hero_priest",
+      "name": "Venator",
+      "nameRu": "Венатор",
+      "role": "",
+      "tags": [
+        "Набожный",
+        "Эксперт по оружию",
+        "Тактик"
+      ],
+      "heroType": "marksman",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card.webp",
+      "abilities": [
+        911307831,
+        1764146857,
+        11154161,
+        2918874166
+      ]
+    },
+    {
+      "id": 66,
+      "className": "hero_frank",
+      "name": "Victor",
+      "nameRu": "Виктор",
+      "role": "",
+      "tags": [
+        "Вам",
+        "Меня",
+        "Не убить"
+      ],
+      "heroType": "brawler",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card.webp",
+      "abilities": [
+        2043074967,
+        3727084744,
+        1472593493,
+        3493884851
+      ]
+    },
+    {
+      "id": 67,
+      "className": "hero_bookworm",
+      "name": "Paige",
+      "nameRu": "Пейдж",
+      "role": "",
+      "tags": [
+        "Помощница",
+        "Защитница",
+        "Начитанная"
+      ],
+      "heroType": null,
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card.webp",
+      "abilities": [
+        604448162,
+        3553292912,
+        3054993162,
+        1841901343
+      ]
+    },
+    {
+      "id": 69,
+      "className": "hero_doorman",
+      "name": "The Doorman",
+      "nameRu": "Швейцар",
+      "role": "",
+      "tags": [
+        "Дезориентирующий",
+        "Контроль над картой",
+        "Игры разума"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card.webp",
+      "abilities": [
+        103496908,
+        109766091,
+        1719512318,
+        1703045691
+      ]
+    },
+    {
+      "id": 72,
+      "className": "hero_punkgoat",
+      "name": "Billy",
+      "nameRu": "Билли",
+      "role": "",
+      "tags": [
+        "Панк",
+        "Хаотичный",
+        "Всем козлам козёл"
+      ],
+      "heroType": "brawler",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card.webp",
+      "abilities": [
+        1841661392,
+        1792773251,
+        3296031213,
+        3762861984
+      ]
+    },
+    {
+      "id": 76,
+      "className": "hero_necro",
+      "name": "Graves",
+      "nameRu": "Грейвс",
+      "role": "",
+      "tags": [
+        "Мрачная",
+        "Контроль над областью",
+        "Некромант"
+      ],
+      "heroType": "mystic",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card.webp",
+      "abilities": [
+        3214055642,
+        2001589780,
+        629925354,
+        4110547059
+      ]
+    },
+    {
+      "id": 77,
+      "className": "hero_fencer",
+      "name": "Apollo",
+      "nameRu": "Аполлон",
+      "role": "",
+      "tags": [
+        "Изящность",
+        "Мобильность",
+        "Высший класс"
+      ],
+      "heroType": "assassin",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card.webp",
+      "abilities": [
+        725153709,
+        2006773718,
+        147493976,
+        494112189
+      ]
+    },
+    {
+      "id": 78,
+      "className": "hero_deadpack",
+      "name": "Deadman Danny",
+      "nameRu": "Дохлый Дэнни",
+      "role": "",
+      "tags": [
+        "Безбашенный",
+        "Сумасбродный",
+        "Взрывной"
+      ],
+      "heroType": "marksman",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card.webp",
+      "abilities": [
+        2603013853,
+        1904698842,
+        374042410,
+        1026127931
+      ]
+    },
+    {
+      "id": 79,
+      "className": "hero_familiar",
+      "name": "Rem",
+      "nameRu": "Дрём",
+      "role": "",
+      "tags": [
+        "Подмога",
+        "Кроха",
+        "Хр-р-р"
+      ],
+      "heroType": null,
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card.webp",
+      "abilities": [
+        3692321247,
+        1568845221,
+        536278136,
+        2396527575
+      ]
+    },
+    {
+      "id": 80,
+      "className": "hero_werewolf",
+      "name": "Silver",
+      "nameRu": "Сильвер",
+      "role": "",
+      "tags": [
+        "Дикая",
+        "Оторва",
+        "Оборотень"
+      ],
+      "heroType": "brawler",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card.webp",
+      "abilities": [
+        1385849824,
+        2717130900,
+        3983754897,
+        515791019
+      ]
+    },
+    {
+      "id": 81,
+      "className": "hero_unicorn",
+      "name": "Celeste",
+      "nameRu": "Селеста",
+      "role": "",
+      "tags": [
+        "Артистка",
+        "Назойливая",
+        "Ослепительная"
+      ],
+      "heroType": "mystic",
+      "complexity": 2,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card.webp",
+      "abilities": [
+        3443575800,
+        1950738949,
+        1011349580,
+        2590796390
+      ]
+    },
+    {
+      "id": 84,
+      "className": "hero_ratking",
+      "name": "Rat King",
+      "nameRu": "Крысиный король",
+      "role": "",
+      "tags": [
+        "Сварливый",
+        "Знатный",
+        "Настырный"
+      ],
+      "heroType": "brawler",
+      "complexity": 3,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card.webp",
+      "abilities": [
+        3002308408,
+        3681399397,
+        690412829,
+        1627989937
+      ]
+    },
+    {
+      "id": 85,
+      "className": "hero_chessmaster",
+      "name": "Solomon",
+      "nameRu": "Соломон",
+      "role": "",
+      "tags": [
+        "Стратег",
+        "Сосредоточенный",
+        "Вдумчивый"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card.webp",
+      "abilities": [
+        4011110259,
+        4180486641,
+        2424652896,
+        1389230689
+      ]
+    },
+    {
+      "id": 86,
+      "className": "hero_artist",
+      "name": "Violet",
+      "nameRu": "Виолетта",
+      "role": "",
+      "tags": [
+        "Целеустремлённая",
+        "Проворная",
+        "Творческая"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": true,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card.webp",
+      "abilities": [
+        836615329,
+        3389503777,
+        3612874202,
+        2516700978
+      ]
+    },
+    {
+      "id": 87,
+      "className": "hero_nurse",
+      "name": "Nurse Harrow",
+      "nameRu": "Сестра Хэрроу",
+      "role": "",
+      "tags": [
+        "Строгая",
+        "Ужасающая",
+        "Спасительница"
+      ],
+      "heroType": null,
+      "complexity": 1,
+      "inDevelopment": false,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card.webp",
+      "abilities": [
+        267712790,
+        3621314027,
+        683490631,
+        3427093887
+      ]
+    },
+    {
+      "id": 88,
+      "className": "hero_baba",
+      "name": "Baba",
+      "nameRu": "Буся",
+      "role": "",
+      "tags": [
+        "Ехидная",
+        "Бусинка",
+        "Ведьма"
+      ],
+      "heroType": "mystic",
+      "complexity": 1,
+      "inDevelopment": true,
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_sm.webp",
+      "card": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card.webp",
+      "abilities": [
+        1282689113,
+        3122124161,
+        2003165630,
+        299875845
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2421 @@
+{
+  "fetchedAt": "2026-11-14T20:35:44.144Z",
+  "clientVersion": 6861,
+  "source": "api.deadlock-api.com",
+  "count": 156,
+  "items": [
+    {
+      "id": 3776945997,
+      "className": "upgrade_extra_charge",
+      "name": "Extra Charge",
+      "nameRu": "Добавочные заряды",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        787198704
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/extra_charge.webp",
+      "description": ""
+    },
+    {
+      "id": 968099481,
+      "className": "upgrade_improved_spirit",
+      "name": "Extra Spirit",
+      "nameRu": "Добавочный спиритизм",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        7409189,
+        1292979587
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/extra_spirit.webp",
+      "description": ""
+    },
+    {
+      "id": 2462046703,
+      "className": "upgrade_goose_egg",
+      "name": "Golden Goose Egg",
+      "nameRu": "Золотое гусиное яйцо",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/goose_egg.webp",
+      "description": "Вы постепенно получаете души, пока живы."
+    },
+    {
+      "id": 1998374645,
+      "className": "upgrade_magic_burst",
+      "name": "Mystic Burst",
+      "nameRu": "Мистический импульс",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2121044373
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_burst.webp",
+      "description": "Постепенно заряжается спиритическим уроном, благодаря чему умения, наносящие более 80 ед. урона, причиняют дополнительный урон."
+    },
+    {
+      "id": 754480263,
+      "className": "upgrade_magic_reach",
+      "name": "Mystic Expansion",
+      "nameRu": "Мистическое расширение",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        1193964439,
+        3294954488
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reach.webp",
+      "description": "Увеличивает дальность выбранного умения и радиус его эффекта."
+    },
+    {
+      "id": 1439347412,
+      "className": "upgrade_mystic_regeneration",
+      "name": "Mystic Regeneration",
+      "nameRu": "Мистическое восстановление",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2947183272
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_regen.webp",
+      "description": "Нанесение спиритического урона вражеским героям даёт вам бонусное восстановление. Накапливается при нанесении урона разным героям."
+    },
+    {
+      "id": 2922054143,
+      "className": "upgrade_withering_whip",
+      "name": "Rusted Barrel",
+      "nameRu": "Ржавый ствол",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": true,
+      "components": [],
+      "upgrades": [
+        2061878743
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/rusted_barrel.webp",
+      "description": "У выбранной цели снижаются скорострельность и сопротивляемость пулям."
+    },
+    {
+      "id": 465043967,
+      "className": "upgrade_acolytes_glove",
+      "name": "Spirit Strike",
+      "nameRu": "Спиритический удар",
+      "type": "spirit",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3190916303
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_strike.webp",
+      "description": "Совершив лёгкий или тяжёлый удар ближнего боя по герою, вы нанесёте ему дополнительный спиритический урон и уменьшите его сопротивляемость спиритизму. При нанесении лёгких ударов ближнего боя перезарядка длится в 2 раза дольше."
+    },
+    {
+      "id": 3633614685,
+      "className": "upgrade_health",
+      "name": "Extra Health",
+      "nameRu": "Добавочное здоровье",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3585132399,
+        2407781327
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_health.webp",
+      "description": ""
+    },
+    {
+      "id": 2829638276,
+      "className": "upgrade_endurance",
+      "name": "Extra Regen",
+      "nameRu": "Добавочное восстановление",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_regen.webp",
+      "description": ""
+    },
+    {
+      "id": 4139877411,
+      "className": "upgrade_improved_stamina",
+      "name": "Extra Stamina",
+      "nameRu": "Добавочная выносливость",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        334300056,
+        3977876567,
+        1150006784
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_stamina.webp",
+      "description": ""
+    },
+    {
+      "id": 1672893796,
+      "className": "upgrade_grit",
+      "name": "Grit",
+      "nameRu": "Крепость",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": true,
+      "components": [],
+      "upgrades": [
+        805079544,
+        112198670,
+        857669956,
+        1644605047
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/grit.webp",
+      "description": "Вы ненадолго получаете барьер."
+    },
+    {
+      "id": 1710079648,
+      "className": "upgrade_health_stimpak",
+      "name": "Healing Rite",
+      "nameRu": "Обряд лечения",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": true,
+      "components": [],
+      "upgrades": [
+        1804594021,
+        2956256701
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_rite.webp",
+      "description": "Даёт цели восстановление здоровья и скорость бега. Эффект пропадает, если цель получает урон от вражеских героев или построек. Можно применить на себя."
+    },
+    {
+      "id": 1437614329,
+      "className": "upgrade_lifestrike_gauntlets",
+      "name": "Melee Lifesteal",
+      "nameRu": "Ударная кража здоровья",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        1252627263
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/melee_lifesteal.webp",
+      "description": "Ваша следующая атака ближнего боя лечит вас. Лечение от существ, не являющихся героями, эффективно на 30%. Множитель времени перезарядки составляет 1.5 при нанесении лёгких ударов ближнего боя."
+    },
+    {
+      "id": 4204808176,
+      "className": "upgrade_melee_rebuttal",
+      "name": "Rebuttal",
+      "nameRu": "Отпор",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/rebuttal.webp",
+      "description": "В случае успешного парирования атаки вражеского героя вы лечите себя на объём, соответствующий парированному урону, отражаете этот урон на цель и получаете временный бонус к наносимому урону."
+    },
+    {
+      "id": 3399065363,
+      "className": "upgrade_sprint_booster",
+      "name": "Sprint Boots",
+      "nameRu": "Беговые ботинки",
+      "type": "vitality",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3074274290,
+        2447176615,
+        1798666702
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/sprint_boots.webp",
+      "description": ""
+    },
+    {
+      "id": 1342610602,
+      "className": "upgrade_close_range",
+      "name": "Close Quarters",
+      "nameRu": "Ближняя дистанция",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2095565695
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/close_quarters.webp",
+      "description": "Когда цель выстрелов находится на малой дальности, вы наносите больше урона оружием."
+    },
+    {
+      "id": 1548066885,
+      "className": "upgrade_clip_size",
+      "name": "Extended Magazine",
+      "nameRu": "Увеличенный магазин",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2463960640,
+        2356412290
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/basic_magazine.webp",
+      "description": ""
+    },
+    {
+      "id": 2010028405,
+      "className": "upgrade_headshot_booster",
+      "name": "Headshot Booster",
+      "nameRu": "Усилитель выстрелов в голову",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        4053935515
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headshot_booster.webp",
+      "description": "Ваше следующее попадание в голову вражескому герою нанесёт ему доп. урон от оружия."
+    },
+    {
+      "id": 3077079169,
+      "className": "upgrade_high_velocity_mag",
+      "name": "High-Velocity Rounds",
+      "nameRu": "Скоростные патроны",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2064029594,
+        2152872419,
+        673001892,
+        690458959
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/high_velocity_rounds.webp",
+      "description": ""
+    },
+    {
+      "id": 1009965641,
+      "className": "upgrade_non_player_bonus",
+      "name": "Monster Rounds",
+      "nameRu": "Чудовищные патроны",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        709540378
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/monster_rounds.webp",
+      "description": ""
+    },
+    {
+      "id": 668299740,
+      "className": "upgrade_rapid_rounds",
+      "name": "Rapid Rounds",
+      "nameRu": "Спешная стрельба",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2739107182,
+        4104549924
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/rapid_rounds.webp",
+      "description": ""
+    },
+    {
+      "id": 3862866912,
+      "className": "upgrade_medic_bullets",
+      "name": "Restorative Shot",
+      "nameRu": "Живительный выстрел",
+      "type": "weapon",
+      "tier": 1,
+      "cost": 800,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/restorative_shot.webp",
+      "description": "Следующий выстрел вас излечит (количество будет зависеть от того, во что или кого вы попадёте)."
+    },
+    {
+      "id": 1150006784,
+      "className": "upgrade_arcane_surge",
+      "name": "Arcane Surge",
+      "nameRu": "Колдовской порыв",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        4139877411
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/arcane_surge.webp",
+      "description": "После совершения рывка с прыжком следующее умение, которое вы используете в течение 7 сек., будет иметь бонусную дальность, длительность и спиритическую мощь."
+    },
+    {
+      "id": 2971868509,
+      "className": "upgrade_bullet_resist_shredder",
+      "name": "Bullet Resist Shredder",
+      "nameRu": "Измельчитель пулестойкости",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/bullet_resist_shredder.webp",
+      "description": "Снижает сопротивляемость пулям у врагов, которым вы наносите спиритический урон."
+    },
+    {
+      "id": 1976391348,
+      "className": "upgrade_cold_front",
+      "name": "Cold Front",
+      "nameRu": "Холодный фронт",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [
+        3812615317
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/cold_front.webp",
+      "description": "Вы выпускаете расширяющуюся леденящую волну, которая наносит спиритический урон и замедляет задетых врагов."
+    },
+    {
+      "id": 380806748,
+      "className": "upgrade_magic_tempo",
+      "name": "Compress Cooldown",
+      "nameRu": "Сжатая перезарядка умения",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3261353684
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/improved_cooldown.webp",
+      "description": "Сокращает время перезарядки выбранного умения."
+    },
+    {
+      "id": 2951612397,
+      "className": "upgrade_arcane_extension",
+      "name": "Duration Extender",
+      "nameRu": "Увеличитель длительности",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2717651715
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/duration_extender.webp",
+      "description": "Усиливает выбранное умение, повышая время его действия."
+    },
+    {
+      "id": 7409189,
+      "className": "upgrade_soaring_spirit",
+      "name": "Improved Spirit",
+      "nameRu": "Улучшенный спиритизм",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        968099481
+      ],
+      "upgrades": [
+        2519598785
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/improved_spirit.webp",
+      "description": ""
+    },
+    {
+      "id": 1102081447,
+      "className": "upgrade_magic_slow",
+      "name": "Mystic Slow",
+      "nameRu": "Мистическое замедление",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        493591231
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_slow.webp",
+      "description": "Когда цель получает спиритический урон, у неё снижается скорость передвижения."
+    },
+    {
+      "id": 2081037738,
+      "className": "upgrade_magic_vulnerability",
+      "name": "Mystic Vulnerability",
+      "nameRu": "Мистическая уязвимость",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3005970438
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_vulnerability.webp",
+      "description": "Когда враг получает спиритический урон, у него снижается сопротивляемость спиритизму."
+    },
+    {
+      "id": 84321454,
+      "className": "upgrade_quick_silver",
+      "name": "Quicksilver Reload",
+      "nameRu": "Ртутная перезарядка",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3919289022
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/quicksilver_reload.webp",
+      "description": "Усиленное умение постепенно заряжается, благодаря чему при использовании наносит доп. спиритический урон, даёт повышенную скорострельность и перезаряжает оружие."
+    },
+    {
+      "id": 1813726886,
+      "className": "upgrade_containment",
+      "name": "Slowing Hex",
+      "nameRu": "Замедляющие чары",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [
+        1152158042
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/slowing_hex.webp",
+      "description": "Замедляет передвижение выбранного врага и накладывает безмолвие на его предметы и умения, связанные с передвижением. Увеличивает гравитацию цели. Не влияет на расход её выносливости."
+    },
+    {
+      "id": 1219329868,
+      "className": "upgrade_spirit_sap",
+      "name": "Spirit Sap",
+      "nameRu": "Спиритическое истощение",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [
+        2142980412
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_sap.webp",
+      "description": "Снижает сопротивляемость спиритизму и спиритическую мощь выбранного врага."
+    },
+    {
+      "id": 1925087134,
+      "className": "upgrade_suppressor",
+      "name": "Suppressor",
+      "nameRu": "Подавитель",
+      "type": "spirit",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/suppressor.webp",
+      "description": "Нанося спиритический урон врагам, вы также снижаете их скорострельность."
+    },
+    {
+      "id": 1235347618,
+      "className": "upgrade_regenerating_bullet_shield",
+      "name": "Battle Vest",
+      "nameRu": "Боевой жилет",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/battle_vest.webp",
+      "description": "Если у вас более 65% здоровья, увеличивается наносимый вами урон от оружия и вам даётся повышенная скорострельность."
+    },
+    {
+      "id": 499683006,
+      "className": "upgrade_vampire",
+      "name": "Bullet Lifesteal",
+      "nameRu": "Пулевая кража здоровья",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        865846625,
+        1409190604,
+        1055679805
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/bullet_lifesteal.webp",
+      "description": ""
+    },
+    {
+      "id": 1047818222,
+      "className": "upgrade_debuff_reducer",
+      "name": "Debuff Reducer",
+      "nameRu": "Уменьшитель эффектов",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3357231760,
+        1955841979
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_reducer.webp",
+      "description": "Снижает длительность всех накладываемых на вас отрицательных эффектов."
+    },
+    {
+      "id": 3970837787,
+      "className": "upgrade_magic_shield",
+      "name": "Enchanter's Emblem",
+      "nameRu": "Эмблема заклинателя",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/enchanters_emblem.webp",
+      "description": "Если у вас более 65% здоровья, вам даётся дополнительная спиритическая мощь и сокращённое время перезарядки умений."
+    },
+    {
+      "id": 2447176615,
+      "className": "upgrade_cardio_calibrator",
+      "name": "Enduring Speed",
+      "nameRu": "Скоростная стойкость",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        3399065363
+      ],
+      "upgrades": [
+        1250307611
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/enduring_speed.webp",
+      "description": "Уменьшает эффективность наложенного врагами снижения скорости передвижения."
+    },
+    {
+      "id": 857669956,
+      "className": "upgrade_guardian_ward",
+      "name": "Guardian Ward",
+      "nameRu": "Заслон стража",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [
+        1672893796
+      ],
+      "upgrades": [
+        1662311306
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/guardian_ward.webp",
+      "description": "Цель получает барьер и временное повышение скорости передвижения. Можно применять на себя. Если применяется не на себя, время перезарядки сокращается вдвое."
+    },
+    {
+      "id": 2603935618,
+      "className": "upgrade_healbane",
+      "name": "Healbane",
+      "nameRu": "Гроза целителей",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healbane.webp",
+      "description": "Наносимый вами спиритический урон снижает врагу получаемое лечение. Если вражеский герой умирает, находясь под действием этого эффекта, вы значительно восстанавливаете здоровье."
+    },
+    {
+      "id": 2566692615,
+      "className": "upgrade_healing_booster",
+      "name": "Healing Booster",
+      "nameRu": "Усилитель лечения",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        1427630806
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_booster.webp",
+      "description": "Повышает эффективность вашего лечения."
+    },
+    {
+      "id": 1644605047,
+      "className": "upgrade_vex_barrier",
+      "name": "Reactive Barrier",
+      "nameRu": "Барьерная реакция",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        1672893796
+      ],
+      "upgrades": [
+        951866250
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/reactive_barrier.webp",
+      "description": "Вы получаете барьер, когда оглушены, скованы, обездвижены, спите или обезмолвлены."
+    },
+    {
+      "id": 2059712766,
+      "className": "upgrade_restorative_locket",
+      "name": "Restorative Locket",
+      "nameRu": "Живительный медальон",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/restorative_locket.webp",
+      "description": ""
+    },
+    {
+      "id": 3361075077,
+      "className": "upgrade_return_fire",
+      "name": "Return Fire",
+      "nameRu": "Обратный огонь",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/return_fire.webp",
+      "description": "Автоматически выстреливает в любого врага, который наносит вам урон умением или оружием."
+    },
+    {
+      "id": 876563814,
+      "className": "upgrade_health_stealing_magic",
+      "name": "Spirit Lifesteal",
+      "nameRu": "Спиритическая кража здоровья",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        865846625,
+        2226497419,
+        1797283378
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_lifesteal.webp",
+      "description": ""
+    },
+    {
+      "id": 112198670,
+      "className": "upgrade_spirit_bubble",
+      "name": "Spirit Shielding",
+      "nameRu": "Спиритическая защита",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        1672893796
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_shielding.webp",
+      "description": "Даёт вам барьер, когда вражеские герои наносят вам значительный спиритический урон за короткий интервал времени."
+    },
+    {
+      "id": 3074274290,
+      "className": "upgrade_trophy_collector",
+      "name": "Trophy Collector",
+      "nameRu": "Собиратель трофеев",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        3399065363
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/trophy_collector.webp",
+      "description": "При каждой помощи или убийстве вы получаете бонус к скорости бега и дальности умений, а ещё у вас начинают пассивно генерироваться души. Данный эффект накапливается и не обнуляется в случае смерти."
+    },
+    {
+      "id": 805079544,
+      "className": "upgrade_weapon_shielding",
+      "name": "Weapon Shielding",
+      "nameRu": "Оружейная защита",
+      "type": "vitality",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        1672893796
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/weapon_shielding.webp",
+      "description": "Даёт вам барьер, когда вражеские герои наносят вам значительный урон от оружия за короткий интервал времени."
+    },
+    {
+      "id": 381961617,
+      "className": "upgrade_active_reload",
+      "name": "Active Reload",
+      "nameRu": "Активная перезарядка",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/active_reload.webp",
+      "description": "Нажав Перезарядка в указанный момент перезарядки, вы мгновенно завершите её и получите бонус к скорострельности, краже здоровья пулями и скорости передвижения."
+    },
+    {
+      "id": 3403085434,
+      "className": "upgrade_fleetfoot_boots",
+      "name": "Fleetfoot",
+      "nameRu": "Проворная поступь",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/fleetfoot.webp",
+      "description": ""
+    },
+    {
+      "id": 2407033488,
+      "className": "upgrade_intensifying_clip",
+      "name": "Intensifying Magazine",
+      "nameRu": "Усиливающий магазин",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/intensifying_magazine.webp",
+      "description": "Увеличивает урон от оружия при непрерывной стрельбе."
+    },
+    {
+      "id": 3977876567,
+      "className": "upgrade_kinetic_sash",
+      "name": "Kinetic Dash",
+      "nameRu": "Кинетический рывок",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        4139877411
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/kinetic_dash.webp",
+      "description": "При совершении рывка с прыжком вы получаете бонус к скорострельности и боезапасу до следующей перезарядки. Действует до 7 сек."
+    },
+    {
+      "id": 3331811235,
+      "className": "upgrade_long_range",
+      "name": "Long Range",
+      "nameRu": "Дальняя дистанция",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        2152872419
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/long_range.webp",
+      "description": "Вы наносите больше урона оружием, когда цель находится за пределами минимальной дальности."
+    },
+    {
+      "id": 26002154,
+      "className": "upgrade_melee_charge",
+      "name": "Melee Charge",
+      "nameRu": "Удар с зарядом",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        800008313
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/melee_charge.webp",
+      "description": "Ваш следующий тяжёлый удар ближнего боя наносит врагу повышенный урон."
+    },
+    {
+      "id": 395867183,
+      "className": "upgrade_crackshot",
+      "name": "Mystic Shot",
+      "nameRu": "Мистический выстрел",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/mystic_shot.webp",
+      "description": "Ваша следующая пуля нанесёт дополнительный спиритический урон."
+    },
+    {
+      "id": 2064029594,
+      "className": "upgrade_pristine_emblem",
+      "name": "Opening Rounds",
+      "nameRu": "Вскрывающие патроны",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        3077079169
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/opening_rounds.webp",
+      "description": "Повышает урон от оружия, наносимый врагам, у которых больше 50% здоровья."
+    },
+    {
+      "id": 1763073141,
+      "className": "upgrade_rechargingbullets",
+      "name": "Recharging Rush",
+      "nameRu": "Прилив зарядов",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/recharging_rounds.webp",
+      "description": "Нанеся значительный урон от оружия, вы восстанавливаете заряд у каждого умения с зарядами."
+    },
+    {
+      "id": 393974127,
+      "className": "upgrade_slowing_bullets",
+      "name": "Slowing Bullets",
+      "nameRu": "Замедляющие пули",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3791587546
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/slowing_bullets.webp",
+      "description": "Ваши пули накладывают на врагов накапливаемое снижение скорости передвижения."
+    },
+    {
+      "id": 1144549437,
+      "className": "upgrade_tech_defense_shredders",
+      "name": "Spirit Shredder",
+      "nameRu": "Душегубные пули",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        4075861416
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spirit_shredder_bullets.webp",
+      "description": "Ваши пули накладывают на цель эффект, снижающий её сопротивляемость спиритизму и дающий вам и вашим союзникам кражу здоровья жертвы спиритизмом."
+    },
+    {
+      "id": 3647584222,
+      "className": "upgrade_split_shot",
+      "name": "Split Shot",
+      "nameRu": "Веерный выстрел",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/split_shot.webp",
+      "description": "Ваше оружие начинает совершать мультивыстрелы. Попадание в более чем одного героя за выстрел даёт накапливаемый бонус к урону от оружия. При каждом мультивыстреле попасть в определённую цель можно только единожды."
+    },
+    {
+      "id": 98582110,
+      "className": "upgrade_weapon_backstabber",
+      "name": "Stalker",
+      "nameRu": "Преследователь",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/backstabber.webp",
+      "description": "Нанесение урона от оружия на ближней дистанции открывает рану и даёт вам увеличенную скорость передвижения. Раненые враги получают постепенный спиритический урон, имеют сниженную сопротивляемость пулям и становятся видимыми сквозь стены."
+    },
+    {
+      "id": 4104549924,
+      "className": "upgrade_blitz_bullets",
+      "name": "Swift Striker",
+      "nameRu": "Быстрый стрелок",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        668299740
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/swift_striker.webp",
+      "description": ""
+    },
+    {
+      "id": 2356412290,
+      "className": "upgrade_titan_round",
+      "name": "Titanic Magazine",
+      "nameRu": "Титанический магазин",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [
+        1548066885
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/titanic_magazine.webp",
+      "description": ""
+    },
+    {
+      "id": 1770441818,
+      "className": "upgrade_headshot_booster2",
+      "name": "Weakening Headshot",
+      "nameRu": "Ослабляющий выстрел в голову",
+      "type": "weapon",
+      "tier": 2,
+      "cost": 1600,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        3884003354
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weakening_headshot.webp",
+      "description": "Попадание в голову снижает сопротивляемость пулям у жертвы."
+    },
+    {
+      "id": 3144988365,
+      "className": "upgrade_rupture",
+      "name": "Decay",
+      "nameRu": "Разложение",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/decay.webp",
+      "description": "Вы постепенно наносите урон цели на основе её текущего здоровья. Урон от «Разложения» не может убить и не влияет на срабатывание предметов."
+    },
+    {
+      "id": 2061878743,
+      "className": "upgrade_greater_withering_whip",
+      "name": "Disarming Hex",
+      "nameRu": "Чары обезоруживания",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [
+        2922054143
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/disarming_hex.webp",
+      "description": "Разоружает выбранного врага и снижает его сопротивляемость пулям."
+    },
+    {
+      "id": 1193964439,
+      "className": "upgrade_tech_range",
+      "name": "Greater Expansion",
+      "nameRu": "Усиленное расширение",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        754480263
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/greater_expansion.webp",
+      "description": "Увеличивает дальность и радиус действия ваших умений и предметов."
+    },
+    {
+      "id": 1254091416,
+      "className": "upgrade_target_stun",
+      "name": "Knockdown",
+      "nameRu": "Нокдаун",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/knockdown.webp",
+      "description": "Вы накладываете оглушение после задержки в 2 сек. Оглушение действует дольше на цели, находящиеся в воздухе. Во время действия оглушения гравитация цели увеличивается."
+    },
+    {
+      "id": 2947183272,
+      "className": "upgrade_resonant_healing",
+      "name": "Radiant Regeneration",
+      "nameRu": "Сияющее восстановление",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        1439347412
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/radiant_regeneration.webp",
+      "description": "В бою вы при применении умения вы получаете лечение и кратковременный бонус к скорости передвижения."
+    },
+    {
+      "id": 787198704,
+      "className": "upgrade_rapid_recharge",
+      "name": "Rapid Recharge",
+      "nameRu": "Спешные заряды",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        3776945997
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/rapid_recharge.webp",
+      "description": ""
+    },
+    {
+      "id": 619484391,
+      "className": "upgrade_targeted_silence",
+      "name": "Silence Wave",
+      "nameRu": "Волна безмолвия",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/silence_glyph.webp",
+      "description": "Вы выпускаете расширяющийся снаряд, который ненадолго накладывает на врагов безмолвие и наносит урон при попадании. Безмолвие не прерывает подготавливаемые умения."
+    },
+    {
+      "id": 3190916303,
+      "className": "upgrade_spirit_snatch",
+      "name": "Spirit Snatch",
+      "nameRu": "Похищение спиритизма",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        465043967
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_snatch.webp",
+      "description": "Совершив лёгкий или тяжёлый удар ближнего боя по герою, вы нанесёте ему дополнительный спиритический урон, а также украдёте его сопротивляемость спиритизму и спиритическую мощь. При нанесении лёгких ударов ближнего боя сила эффектов снижается на 30%."
+    },
+    {
+      "id": 3261353684,
+      "className": "upgrade_cooldown_reduction",
+      "name": "Superior Cooldown",
+      "nameRu": "Превосходная перезарядка умений",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        380806748
+      ],
+      "upgrades": [
+        915014646
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/superior_cooldown.webp",
+      "description": "Сокращает время перезарядки ваших умений."
+    },
+    {
+      "id": 2717651715,
+      "className": "upgrade_imbued_duration_extender",
+      "name": "Superior Duration",
+      "nameRu": "Превосходная длительность",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        2951612397
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/superior_duration.webp",
+      "description": "Увеличивает длительность действия ваших умений и предметов."
+    },
+    {
+      "id": 1292979587,
+      "className": "upgrade_magic_storm",
+      "name": "Surge of Power",
+      "nameRu": "Прилив мощи",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        968099481
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/surge_of_power.webp",
+      "description": "Усиливает выбранное умение: навсегда увеличивает его спиритическую мощь. Применив его, вы некоторое время передвигаетесь быстрее и не замедляетесь при совершении атак."
+    },
+    {
+      "id": 2121044373,
+      "className": "upgrade_magic_shock",
+      "name": "Tankbuster",
+      "nameRu": "Гроза танков",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        1998374645
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/tankbuster.webp",
+      "description": "Постепенно заряжается спиритическим уроном, благодаря чему умения, наносящие более 165 ед. урона, причиняют дополнительный урон. Игнорирует сопротивляемость спиритизму."
+    },
+    {
+      "id": 395944548,
+      "className": "upgrade_tech_damage_pulse",
+      "name": "Torment Pulse",
+      "nameRu": "Терзающий пульс",
+      "type": "spirit",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/torment_pulse.webp",
+      "description": "Периодически наносит спиритический урон двум ближайшим врагам неподалёку."
+    },
+    {
+      "id": 3140772621,
+      "className": "upgrade_improved_bullet_armor",
+      "name": "Bullet Resilience",
+      "nameRu": "Пулевая стойкость",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/bullet_resilience.webp",
+      "description": "Если у вас менее 50% здоровья, вы получаете дополнительную сопротивляемость пулям."
+    },
+    {
+      "id": 1414025773,
+      "className": "upgrade_counterspell",
+      "name": "Counterspell",
+      "nameRu": "Контрчары",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/counterspell.webp",
+      "description": "Ваше следующее парирование защитит вас от урона и эффектов вражеских умений и предметов. При успешном парировании умения вы получите лечение и бонусы к скорости передвижения и спиритической мощи."
+    },
+    {
+      "id": 3731635960,
+      "className": "upgrade_reduce_debuff_duration",
+      "name": "Dispel Magic",
+      "nameRu": "Развеивание магии",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_remover.webp",
+      "description": ""
+    },
+    {
+      "id": 3585132399,
+      "className": "upgrade_chonky",
+      "name": "Fortitude",
+      "nameRu": "Выдержка",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        3633614685
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fortitude.webp",
+      "description": "Если в течение некоторого времени не получать урон, вам даётся восстановление здоровья."
+    },
+    {
+      "id": 1409190604,
+      "className": "upgrade_fury_trance",
+      "name": "Fury Trance",
+      "nameRu": "Яростный экстаз",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [
+        499683006
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fury_trance.webp",
+      "description": ""
+    },
+    {
+      "id": 2956256701,
+      "className": "upgrade_health_nova",
+      "name": "Healing Nova",
+      "nameRu": "Вспышка исцеления",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [
+        1710079648
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_nova.webp",
+      "description": "Лечит вас и союзников поблизости."
+    },
+    {
+      "id": 1252627263,
+      "className": "upgrade_boxing_glove",
+      "name": "Lifestrike",
+      "nameRu": "Витальный удар",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        1437614329
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/lifestrike.webp",
+      "description": "Ваши атаки ближнего боя замедляют врагов и лечат вас на процент от нанесённого в ближнем бою урона, а также на фиксированное количество единиц. Лечение от существ, не являющихся героями, эффективно на 40%. Множитель времени перезарядки составляет 1.5 при нанесении лёгких ударов ближнего боя."
+    },
+    {
+      "id": 600033864,
+      "className": "upgrade_rocket_booster",
+      "name": "Majestic Leap",
+      "nameRu": "Грациозный скачок",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/majestic_leap.webp",
+      "description": "Подбрасывает вас ввысь и даёт вам барьер. Находясь в воздухе, вы можете снова применить этот предмет, чтобы ускорить падение. Нельзя использовать в течение 5 сек. после того, как вас атаковал вражеский герой."
+    },
+    {
+      "id": 1378931225,
+      "className": "upgrade_metal_skin",
+      "name": "Metal Skin",
+      "nameRu": "Металлическая кожа",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/metal_skin.webp",
+      "description": "Даёт невосприимчивость к пулям."
+    },
+    {
+      "id": 1804594021,
+      "className": "upgrade_rescue_beam",
+      "name": "Rescue Beam",
+      "nameRu": "Спасательный луч",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [
+        1710079648
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/rescue_beam.webp",
+      "description": "Лечит вас и выбранного союзного героя в зависимости от максимального здоровья. Один раз за время лечения вы можете притянуть цель к себе. Можно применить на себя."
+    },
+    {
+      "id": 2163598980,
+      "className": "upgrade_tech_purge",
+      "name": "Spirit Resilience",
+      "nameRu": "Спиритическая стойкость",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_resilience.webp",
+      "description": "Если у вас менее 50% здоровья, вы получаете дополнительную сопротивляемость спиритизму."
+    },
+    {
+      "id": 334300056,
+      "className": "upgrade_superior_stamina",
+      "name": "Stamina Mastery",
+      "nameRu": "Превосходная выносливость",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        4139877411
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/stamina_mastery.webp",
+      "description": ""
+    },
+    {
+      "id": 865958998,
+      "className": "upgrade_veil_walker",
+      "name": "Veil Walker",
+      "nameRu": "Незримый покров",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/veil_walker.webp",
+      "description": "Пройдя через вселенскую вуаль, вы получите скрытность, лечение и повышенную скорость передвижения."
+    },
+    {
+      "id": 3270001687,
+      "className": "upgrade_warp_stone",
+      "name": "Warp Stone",
+      "nameRu": "Камень переноса",
+      "type": "vitality",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/warp_stone.webp",
+      "description": "Телепортирует вас вперёд и увеличивает сопротивляемость пулям."
+    },
+    {
+      "id": 1932939246,
+      "className": "upgrade_thermal_detonator",
+      "name": "Alchemical Fire",
+      "nameRu": "Алхимический огонь",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/alchemical_fire.webp",
+      "description": "Вы бросаете колбу, которая взрывается в указанной точке и создаёт область, наносящую растущий спиритический урон каждую секунду и снижающую сопротивляемость пулям у врагов. Урон существам, не являющимися героями, ниже на 50%."
+    },
+    {
+      "id": 3294954488,
+      "className": "upgrade_bulletshredimbue",
+      "name": "Ballistic Enchantment",
+      "nameRu": "Баллистические чары",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        754480263
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/alchemical_seal.webp",
+      "description": "Выбранное умение получает повышенную дальность. Нанесение урона этим умением увеличивает урон от оружия за каждого задетого героя. Слабее действует на существ, не являющихся героями."
+    },
+    {
+      "id": 1414319208,
+      "className": "upgrade_berserker",
+      "name": "Berserker",
+      "nameRu": "Берсерк",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/berserker.webp",
+      "description": "Повышает наносимый урон от оружия, когда вы получаете урон на протяжении долгого времени."
+    },
+    {
+      "id": 989206714,
+      "className": "upgrade_blood_tribute",
+      "name": "Blood Tribute",
+      "nameRu": "Кровавая дань",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/blood_tribute.webp",
+      "description": "Когда включено: вы постоянно жертвуете здоровьем, чтобы повысить скорострельность, сопротивляемость отрицательным эффектам и скорость передвижения."
+    },
+    {
+      "id": 2739107182,
+      "className": "upgrade_burst_fire",
+      "name": "Burst Fire",
+      "nameRu": "Шквальный огонь",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        668299740
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/burst_fire.webp",
+      "description": "Ненадолго увеличивает ваши скорострельность и скорость передвижения при попадании выстрелом по герою."
+    },
+    {
+      "id": 709540378,
+      "className": "upgrade_non_player_bonus_sacrifice",
+      "name": "Cultist Sacrifice",
+      "nameRu": "Жертвенный ритуал",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [
+        1009965641
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/cultist_sacrifice.webp",
+      "description": "Вы поглощаете выбранное существо, не являющееся героем, получая бонусные души в размере 170% и мощный долгосрочный положительный эффект."
+    },
+    {
+      "id": 2463960640,
+      "className": "upgrade_reinforcing_casings",
+      "name": "Escalating Resilience",
+      "nameRu": "Растущая стойкость",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        1548066885
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/escalating_resilience.webp",
+      "description": "Увеличивает вашу сопротивляемость пулям, когда ваши пули задевают героя. Каждый выстрел может дать только одну единицу этого эффекта."
+    },
+    {
+      "id": 690458959,
+      "className": "upgrade_express_shot",
+      "name": "Express Shot",
+      "nameRu": "Экспресс-выстрел",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        3077079169
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/express_shot.webp",
+      "description": "При следующей атаке вы быстро произведёте два выстрела один за другим. Выпущенные при этом пули имеют повышенную скорость и наносят дополнительный урон. Данная атака расходует дополнительный боезапас."
+    },
+    {
+      "id": 4053935515,
+      "className": "upgrade_headhunter",
+      "name": "Headhunter",
+      "nameRu": "Охотник за головами",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        2010028405
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headhunter.webp",
+      "description": "Ваше следующее попадание в голову вражескому герою нанесёт ему доп. урон от оружия. Вы также получите лечение, а ваша скорость передвижения ненадолго повысится."
+    },
+    {
+      "id": 2108215830,
+      "className": "upgrade_dps_aura",
+      "name": "Heroic Aura",
+      "nameRu": "Героическая аура",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/heroic_aura.webp",
+      "description": "Даёт сопротивляемость пулям союзникам поблизости."
+    },
+    {
+      "id": 2678489038,
+      "className": "upgrade_hollow_point_rounds",
+      "name": "Hollow Point",
+      "nameRu": "Разрывник",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hollow_point.webp",
+      "description": "Когда у вас более 65% здоровья, вы наносите дополнительный урон от оружия, а ваши пули снижают сопротивляемость пулям у врагов."
+    },
+    {
+      "id": 2481177645,
+      "className": "upgrade_bullet_armor_reduction_aura",
+      "name": "Hunter's Aura",
+      "nameRu": "Аура охотника",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hunters_aura.webp",
+      "description": "Снижает сопротивляемость пулям и скорострельность у врагов поблизости. Если рядом только один вражеский герой, эффект удваивается."
+    },
+    {
+      "id": 2095565695,
+      "className": "upgrade_close_quarter_combat",
+      "name": "Point Blank",
+      "nameRu": "Стрельба в упор",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        1342610602
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/point_blank.webp",
+      "description": "Когда цель выстрелов находится на малой дальности, вы замедляете её передвижение выстрелами и наносите больше урона оружием."
+    },
+    {
+      "id": 1798666702,
+      "className": "upgrade_cloaking_device_active",
+      "name": "Shadow Weave",
+      "nameRu": "Сплетение теней",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": true,
+      "components": [
+        3399065363
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/shadow_weave.webp",
+      "description": "Даёт скрытность. Получение урона ненадолго раскроет вас."
+    },
+    {
+      "id": 2152872419,
+      "className": "upgrade_sharpshooter",
+      "name": "Sharpshooter",
+      "nameRu": "Прицельная стрельба",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        3331811235,
+        3077079169
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/sharp_shooter.webp",
+      "description": "Вы наносите больше урона оружием, когда цель находится за пределами минимальной дальности."
+    },
+    {
+      "id": 4075861416,
+      "className": "upgrade_spellslinger_headshots",
+      "name": "Spirit Rend",
+      "nameRu": "Спиритический разрыв",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        1144549437
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spellslinger_headshots.webp",
+      "description": ""
+    },
+    {
+      "id": 811521119,
+      "className": "upgrade_chain_lightning",
+      "name": "Tesla Bullets",
+      "nameRu": "Тесла-пули",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [
+        710436191
+      ],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/tesla_bullets.webp",
+      "description": "У ваших выстрелов есть шанс поразить цель электричеством. Электрический заряд также отскочит на ближайшего к цели врага."
+    },
+    {
+      "id": 3696726732,
+      "className": "upgrade_toxic_bullets",
+      "name": "Toxic Bullets",
+      "nameRu": "Токсичные пули",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/toxic_bullets.webp",
+      "description": "От ваших пуль у врагов накапливается эффект кровотечения, который наносит им постепенный урон в процентах от их макс. здоровья, а также снижает им получаемое лечение."
+    },
+    {
+      "id": 3791587546,
+      "className": "upgrade_weighted_shots",
+      "name": "Weighted Shots",
+      "nameRu": "Утяжелённые выстрелы",
+      "type": "weapon",
+      "tier": 3,
+      "cost": 3200,
+      "isActive": false,
+      "components": [
+        393974127
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weighted_shots.webp",
+      "description": "Ваши пули накладывают на врагов накапливаемое снижение скорости передвижения."
+    },
+    {
+      "id": 3812615317,
+      "className": "upgrade_arctic_blast",
+      "name": "Arctic Blast",
+      "nameRu": "Арктический взрыв",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        1976391348
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/arctic_blast.webp",
+      "description": "Вы выпускаете расширяющуюся леденящую волну, которая наносит спиритический урон и замораживает, а затем замедляет задетые цели. У замедленных жертв замораживается восстановление выносливости"
+    },
+    {
+      "id": 2519598785,
+      "className": "upgrade_boundless_spirit",
+      "name": "Boundless Spirit",
+      "nameRu": "Безграничный спиритизм",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        7409189
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/boundless_spirit.webp",
+      "description": ""
+    },
+    {
+      "id": 2617435668,
+      "className": "upgrade_glitch",
+      "name": "Cursed Relic",
+      "nameRu": "Проклятая реликвия",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/curse.webp",
+      "description": "Проклинает врага: прерывает его действия, накладывает безмолвие и обезоруживание и запрещает использовать предметы. Снимает все положительные эффекты, кроме наложенных ультами. Наносимый вами урон снижен на время действия проклятия."
+    },
+    {
+      "id": 630839635,
+      "className": "upgrade_ability_power_shard",
+      "name": "Echo Shard",
+      "nameRu": "Осколок эха",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/echo_shard.webp",
+      "description": ""
+    },
+    {
+      "id": 3005970438,
+      "className": "upgrade_escalating_exposure",
+      "name": "Escalating Exposure",
+      "nameRu": "Растущее воздействие",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        2081037738
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/escalating_exposure.webp",
+      "description": "Нанося спиритический урон, вы получаете накапливаемое повышение спиритизма, которое увеличивает спиритический урон, наносимый вами цели."
+    },
+    {
+      "id": 2533252781,
+      "className": "upgrade_self_bubble",
+      "name": "Ethereal Shift",
+      "nameRu": "Развоплощение",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/ethereal_shift.webp",
+      "description": "Вы мгновенно переходите в состояние пустоты и кратковременно становитесь неуязвимы."
+    },
+    {
+      "id": 2142980412,
+      "className": "upgrade_focus_lens",
+      "name": "Focus Lens",
+      "nameRu": "Фокусная линза",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        1219329868
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/focus_lens.webp",
+      "description": "Накладывает безмолвие на выбранного врага. Часть всего урона, нанесённого в период безмолвия, накладывается на цель по окончании действия эффекта."
+    },
+    {
+      "id": 493591231,
+      "className": "upgrade_ultimate_burst",
+      "name": "Lightning Scroll",
+      "nameRu": "Свиток молнии",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        1102081447
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/lightning_scroll.webp",
+      "description": "Урон от вашего ульта накладывает оглушение и наносит доп. спиритический урон после короткой задержки."
+    },
+    {
+      "id": 2800629741,
+      "className": "upgrade_magic_carpet",
+      "name": "Magic Carpet",
+      "nameRu": "Ковёр-самолёт",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/magic_carpet.webp",
+      "description": "Призывает волшебный ковёр, который уносит вас прочь. Вам даётся невосприимчивость к замедлениям на время полёта, но любое ваше действие его прервёт. Во время призыва нельзя использовать умения."
+    },
+    {
+      "id": 3919289022,
+      "className": "upgrade_ethereal_bullets",
+      "name": "Mercurial Magnum",
+      "nameRu": "Ртутный Магнум",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        84321454
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mercurial_magnum.webp",
+      "description": "Усиленное умение постепенно заряжается, благодаря чему наносит доп. спиритический урон, повышает скорострельность и перезаряжает оружие при использовании. До следующей перезарядки оружия ваши пули наносят доп. спиритический урон, пропорциональный вашей спиритической мощи."
+    },
+    {
+      "id": 3577481646,
+      "className": "upgrade_mystic_reverb",
+      "name": "Mystic Reverb",
+      "nameRu": "Мистический отзвук",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reverb.webp",
+      "description": ""
+    },
+    {
+      "id": 677738769,
+      "className": "upgrade_ability_refresher",
+      "name": "Refresher",
+      "nameRu": "Обновитель",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/refresher.webp",
+      "description": "Сбрасывает перезарядку всех ваших умений и восстанавливает все их заряды."
+    },
+    {
+      "id": 2417568017,
+      "className": "upgrade_discord",
+      "name": "Scourge",
+      "nameRu": "Кара",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/scourge.webp",
+      "description": "Накладывает на союзника сопротивляемость спиритизму, сопротивляемость отриц. эффектам и ауру, которая наносит урон врагам пропорционально их макс. здоровью. Отрицательные эффекты, уже наложенные на цель, ослабляются. Можно применять на себя."
+    },
+    {
+      "id": 343572757,
+      "className": "upgrade_spirit_burn",
+      "name": "Spirit Burn",
+      "nameRu": "Спиритический ожог",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_burn.webp",
+      "description": "Если нанести врагу значительный спиритический урон в течение 5 сек., происходит взрыв, который наносит урон этому врагу и обжигает его. Во время горения враги получают постепенный урон, а получаемое ими лечение уменьшается. Для каждого врага действует отдельная перезарядка: до её окончания нельзя повторно наложить эффект. Если целью выбран не герой, урон уменьшается вдвое."
+    },
+    {
+      "id": 915014646,
+      "className": "upgrade_transcendent_cooldown",
+      "name": "Transcendent Cooldown",
+      "nameRu": "Трансцендентная перезарядка",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        3261353684
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/transcendent_cooldown.webp",
+      "description": "Сокращает время перезарядки ваших умений и предметов."
+    },
+    {
+      "id": 1152158042,
+      "className": "upgrade_aoe_root",
+      "name": "Vortex Web",
+      "nameRu": "Паутинный вихрь",
+      "type": "spirit",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        1813726886
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/vortex_web.webp",
+      "description": ""
+    },
+    {
+      "id": 3361811174,
+      "className": "upgrade_cheat_death",
+      "name": "Cheat Death",
+      "nameRu": "Обман смерти",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/cheat_death.webp",
+      "description": ""
+    },
+    {
+      "id": 2407781327,
+      "className": "upgrade_colossus",
+      "name": "Colossus",
+      "nameRu": "Колосс",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        3633614685
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/colossus.webp",
+      "description": "Вы увеличиваетесь в размерах и получаете бонусы к сопротивляемости пулям и спиритизму, а также наносите повышенный урон ближнего боя. Враги поблизости замедляются и имеют сниженную скорость рывка."
+    },
+    {
+      "id": 1662311306,
+      "className": "upgrade_divine_barrier",
+      "name": "Divine Barrier",
+      "nameRu": "Божественный барьер",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        857669956
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/divine_barrier.webp",
+      "description": "Снимает все отрицательные эффекты (кроме оглушения) с цели, а также даёт ей барьер и бонус к скорости передвижения. Можно применять на себя. При применении не на себя время перезарядки сокращается вдвое."
+    },
+    {
+      "id": 2820116164,
+      "className": "upgrade_diviners_kevlar",
+      "name": "Diviner's Kevlar",
+      "nameRu": "Доспех прорицателя",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/diviners_kevlar.webp",
+      "description": "Применив ульт, вы получаете барьер и временный бонус к спиритической мощи."
+    },
+    {
+      "id": 1427630806,
+      "className": "upgrade_healbuff",
+      "name": "Healing Tempo",
+      "nameRu": "Целебный темп",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        2566692615
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_tempo.webp",
+      "description": "Когда вы накладываете на себя или союзника лечение, у цели будет повышенная скорострельность и bonus move speed. Не распространяется на врождённое восстановление и пассивную кражу здоровья пулями/спиритизмом."
+    },
+    {
+      "id": 951866250,
+      "className": "upgrade_auto_cleanse",
+      "name": "Indomitable",
+      "nameRu": "Непреклонность",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        1644605047
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/indomitable.webp",
+      "description": ""
+    },
+    {
+      "id": 1797283378,
+      "className": "upgrade_infuser",
+      "name": "Infuser",
+      "nameRu": "Насытитель",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        876563814
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/infuser.webp",
+      "description": "Даёт бонус к краже здоровья спиритизмом и спиритической мощи."
+    },
+    {
+      "id": 2037039379,
+      "className": "upgrade_inhibitor",
+      "name": "Inhibitor",
+      "nameRu": "Ограничитель",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/inhibitor.webp",
+      "description": "Ваши пули накладывают на цель накапливаемый эффект, который снижает наносимый ею урон и её лечение."
+    },
+    {
+      "id": 1250307611,
+      "className": "upgrade_juggernaut",
+      "name": "Juggernaut",
+      "nameRu": "Громила",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        2447176615
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/juggernaut.webp",
+      "description": ""
+    },
+    {
+      "id": 865846625,
+      "className": "upgrade_damage_recycler",
+      "name": "Leech",
+      "nameRu": "Кровопийца",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        499683006,
+        876563814
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/leech.webp",
+      "description": "Ослабляет накладываемое на вас врагами снижения лечения."
+    },
+    {
+      "id": 1371725689,
+      "className": "upgrade_phantom_strike",
+      "name": "Phantom Strike",
+      "nameRu": "Фантомный удар",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/phantom_strike.webp",
+      "description": "Телепортирует вас к выбранному врагу и притягивает его к земле, нанося урон, обезоруживая его, и снижая скорость его передвижения."
+    },
+    {
+      "id": 3491236900,
+      "className": "upgrade_deflecting_armor",
+      "name": "Plated Armor",
+      "nameRu": "Латная броня",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/plated_armor.webp",
+      "description": "Даёт шанс нейтрализовать либо наносимый пулями урон от оружия, либо эффекты, накладываемые на вас пулями при попадании."
+    },
+    {
+      "id": 1282141666,
+      "className": "upgrade_siphon_bullets",
+      "name": "Siphon Bullets",
+      "nameRu": "Вытягивающие пули",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/siphon_bullets.webp",
+      "description": ""
+    },
+    {
+      "id": 1955841979,
+      "className": "upgrade_spellbreaker",
+      "name": "Spellbreaker",
+      "nameRu": "Разрушитель чар",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        1047818222
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spellbreaker.webp",
+      "description": "При следующем получении большого спиритического урона он будет существенно снижен."
+    },
+    {
+      "id": 3357231760,
+      "className": "upgrade_unstoppable",
+      "name": "Unstoppable",
+      "nameRu": "Неудержимость",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        1047818222
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/unstoppable.webp",
+      "description": "Временно подавляет отрицательные эффекты и даёт вам невосприимчивость к оглушению, безмолвию, сну, оцепенению и обезоруживанию. Нельзя использовать во время оглушения или сна."
+    },
+    {
+      "id": 1055679805,
+      "className": "upgrade_surging_power",
+      "name": "Vampiric Burst",
+      "nameRu": "Порыв вампиризма",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        499683006
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/vampiric_burst.webp",
+      "description": ""
+    },
+    {
+      "id": 3028234315,
+      "className": "upgrade_absorbing_armor",
+      "name": "Witchmail",
+      "nameRu": "Ведьмовской доспех",
+      "type": "vitality",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/witchmail.webp",
+      "description": "Когда вы получаете большой спиритический урон от врагов, у вашего случайно выбранного умения сокращается время перезарядки."
+    },
+    {
+      "id": 673001892,
+      "className": "upgrade_aprounds",
+      "name": "Armor Piercer",
+      "nameRu": "Бронебой",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        3077079169
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/armor_piercing_rounds.webp",
+      "description": "Ваши пули получают шанс стать неотвратимыми — такие прошивают врагов и игнорируют их сопротивляемость пулям."
+    },
+    {
+      "id": 710436191,
+      "className": "upgrade_capacitor",
+      "name": "Capacitor",
+      "nameRu": "Конденсатор",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": true,
+      "components": [
+        811521119
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/capacitor.webp",
+      "description": "Вы выпускаете снаряд, наносящий урон и накладывающий сильное замедление, которое постепенно развеивается. Цель также не может использовать выносливость, а на её предметы и умения, связанные с движением, накладывается безмолвие."
+    },
+    {
+      "id": 3884003354,
+      "className": "upgrade_banshee_slugs",
+      "name": "Crippling Headshot",
+      "nameRu": "Калечащий выстрел в голову",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        1770441818
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/crippling_headshot.webp",
+      "description": "Попадание в голову уменьшает жертве сопротивляемость пулям и спиритизму, а также получаемое лечение."
+    },
+    {
+      "id": 800008313,
+      "className": "upgrade_crushing_fists",
+      "name": "Crushing Fists",
+      "nameRu": "Сокрушительные кулаки",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        26002154
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/crushing_fists.webp",
+      "description": "Нанесённый вами урон ближнего боя восстанавливает ваш боезапас и накладывает накапливаемый эффект снижения сопротивляемости пулям на врагов. Тяжёлый удар ближнего боя накладывает 2 ед. эффекта. Если на цель наложено макс. число единиц эффекта, она оглушается."
+    },
+    {
+      "id": 339443430,
+      "className": "upgrade_fervor",
+      "name": "Frenzy",
+      "nameRu": "Ярость",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/frenzy.webp",
+      "description": ""
+    },
+    {
+      "id": 365620721,
+      "className": "upgrade_glass_cannon",
+      "name": "Glass Cannon",
+      "nameRu": "Стеклянная пушка",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/glass_cannon.webp",
+      "description": "Каждое убийство героя даёт постоянный бонус к скорострельности (максимум — 8 раз). При смерти владельца теряется один бонус."
+    },
+    {
+      "id": 1396247347,
+      "className": "upgrade_critshot",
+      "name": "Lucky Shot",
+      "nameRu": "Удачный выстрел",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/lucky_shot.webp",
+      "description": "Ваши пули могут стать усиленными и нанести дополнительный урон при попадании. Дополнительный урон не может быть критическим."
+    },
+    {
+      "id": 2480592370,
+      "className": "upgrade_ricochet",
+      "name": "Ricochet",
+      "nameRu": "Рикошет",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/ricochet.webp",
+      "description": "Ваши пули рикошетят во врагов рядом с целью, накладывая эффекты выстрелов и нанося долю изначального урона."
+    },
+    {
+      "id": 1113837674,
+      "className": "upgrade_proc_silence",
+      "name": "Silencer",
+      "nameRu": "Глушитель",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/silencer.webp",
+      "description": "Ваши пули накладывают накапливаемое безмолвие. Жертвы становятся невосприимчивы к накапливанию через 10 сек. после истечения действия безмолвия."
+    },
+    {
+      "id": 2221211450,
+      "className": "upgrade_enchanted_holsters",
+      "name": "Spellslinger",
+      "nameRu": "Метатель чар",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spell_slinger.webp",
+      "description": "При использовании умения или предмета в бою вы получаете суммирующийся положительный эффект, повышающий вашу скорострельность и скорость перезарядки. Каждое новое использование продлевает действие эффекта."
+    },
+    {
+      "id": 2226497419,
+      "className": "upgrade_tech_overflow",
+      "name": "Spiritual Overflow",
+      "nameRu": "Спиритическое переполнение",
+      "type": "weapon",
+      "tier": 4,
+      "cost": 6400,
+      "isActive": false,
+      "components": [
+        876563814
+      ],
+      "upgrades": [],
+      "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spiritual_overflow.webp",
+      "description": "Стреляя в героев, вы накапливаете эффект, который повышает ваши скорострельность, спиритическую мощь и кражу здоровья спиритизмом."
+    }
+  ]
+}

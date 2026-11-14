@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "fetch:static": "node -e \"console.log('Заглушка: скрипт появится в задаче 0.4')\"",
+    "fetch:static": "node scripts/fetch-static.js",
     "fetch:stats": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.1')\"",
     "build:site": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.6')\"",
     "test": "node --test",
