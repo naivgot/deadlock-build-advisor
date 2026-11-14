@@ -6,8 +6,10 @@ export async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-// Создаёт папку, если её нет, и пишет файл с отступами (чтобы его можно было читать глазами).
-export async function writeJson(path, data) {
+// Создаёт папку, если её нет, и пишет файл.
+// По умолчанию — с отступами (удобно читать глазами); compact: true — в одну строку (меньше места).
+export async function writeJson(path, data, { compact = false } = {}) {
   await mkdir(dirname(path), { recursive: true });
-  await writeFile(path, JSON.stringify(data, null, 2) + '\n', 'utf8');
+  const text = compact ? JSON.stringify(data) : JSON.stringify(data, null, 2);
+  await writeFile(path, text + '\n', 'utf8');
 }

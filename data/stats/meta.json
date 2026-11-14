@@ -1,0 +1,30 @@
+{
+  "fetchedAt": "2026-11-14T20:51:54.735Z",
+  "patchDate": "2026-09-29T20:25:11.000Z",
+  "patchTimestamp": 1790713511,
+  "totalMatches": 8348211,
+  "heroes": 44,
+  "netWorthStep": 3000,
+  "rankGroups": [
+    {
+      "id": "low",
+      "minBadge": 11,
+      "maxBadge": 36,
+      "label": "Послушник – Аколит"
+    },
+    {
+      "id": "mid",
+      "minBadge": 41,
+      "maxBadge": 66,
+      "label": "Страж – Ритуалист"
+    },
+    {
+      "id": "high",
+      "minBadge": 71,
+      "maxBadge": 116,
+      "label": "Эмиссар – Этернус"
+    }
+  ],
+  "note": "Группы рангов считаются только по матчам, где у игры есть средний ранг; all — все матчи.",
+  "source": "api.deadlock-api.com"
+}

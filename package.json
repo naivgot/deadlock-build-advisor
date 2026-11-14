@@ -9,7 +9,7 @@
   },
   "scripts": {
     "fetch:static": "node scripts/fetch-static.js",
-    "fetch:stats": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.1')\"",
+    "fetch:stats": "node scripts/fetch-stats.js",
     "build:site": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.6')\"",
     "test": "node --test",
     "dev": "node -e \"console.log('Заглушка: сервер появится в задаче 1.6')\""
