@@ -45,6 +45,9 @@ function shrunkRate(wins, matches, baseline, prior) {
 
 const round = (value, digits) => Number(value.toFixed(digits));
 
+// Числа для текста: «1 632 551», «3,9».
+const num = (value) => Number(value).toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+
 // Все компоненты предмета, включая компоненты компонентов.
 function allComponents(item, itemById, result = new Set()) {
   for (const id of item.components ?? []) {
@@ -197,9 +200,9 @@ function buildConfidence(ctx, settings) {
     return { ...base, level: 'low', label: `Мало данных — советы опираются на справочник контр.${fallbackNote}` };
   }
   if (ctx.heroMatches < settings.confidenceHighMatches) {
-    return { ...base, level: 'medium', label: `Данных немного: ${ctx.heroMatches} матчей.${fallbackNote}` };
+    return { ...base, level: 'medium', label: `Данных немного: ${num(ctx.heroMatches)} матчей.${fallbackNote}` };
   }
-  return { ...base, level: 'high', label: `Данных достаточно: ${ctx.heroMatches} матчей.${fallbackNote}` };
+  return { ...base, level: 'high', label: `Данных достаточно: ${num(ctx.heroMatches)} матчей.${fallbackNote}` };
 }
 
 // Путь билда: популярные предметы по этапам игры (по средней минуте покупки).
@@ -217,17 +220,25 @@ function buildPath(ctx, itemById, counters, owned, settings) {
       entries.push({ ...describe(item), cost: item.cost, pickRate: round(pickRate, 3), winrate: round(wins / matches, 3), minute });
     }
     entries.sort((a, b) => b.pickRate - a.pickRate || a.itemId - b.itemId);
+    const leftovers = [];
     for (const { minute, ...entry } of entries) {
       const phase = minute < settings.earlyUntilMinute ? 'early' : minute < settings.midUntilMinute ? 'mid' : 'late';
-      if (path[phase].length >= settings.pathPerPhase) continue;
+      if (path[phase].length >= settings.pathPerPhase) {
+        leftovers.push(entry);
+        continue;
+      }
       path[phase].push(entry);
       inPath.add(entry.itemId);
     }
+    // Без врагов «ситуативные» — это следующие по популярности предметы, не попавшие в основной путь.
+    if (counters.length === 0) path.situational = leftovers.slice(0, settings.pathPerPhase);
   }
 
-  path.situational = counters
-    .filter((counter) => !inPath.has(counter.itemId) && !owned.has(counter.itemId))
-    .map(({ owned: _owned, ...counter }) => counter);
+  if (counters.length > 0) {
+    path.situational = counters
+      .filter((counter) => !inPath.has(counter.itemId) && !owned.has(counter.itemId))
+      .map(({ owned: _owned, ...counter }) => counter);
+  }
   return path;
 }
 
@@ -247,6 +258,27 @@ function buildAbilityOrder(stats) {
     })),
     order: orders[0]?.abilities ?? null,
   };
+}
+
+/**
+ * Чем контрить выбранного героя: предметы из справочника по его тегам.
+ * Чем больше тегов героя закрывает предмет, тем он выше в списке.
+ */
+export function countersAgainst(heroId, data, limit = 8) {
+  const itemById = new Map((data.items ?? []).map((entry) => [entry.id, entry]));
+  const byItem = new Map();
+  for (const tag of data.heroTags?.heroes?.[heroId]?.tags ?? []) {
+    for (const counter of data.counterItems?.counters?.[tag] ?? []) {
+      const item = itemById.get(counter.itemId);
+      if (!item) continue;
+      const entry = byItem.get(item.id) ?? { ...describe(item), cost: item.cost, why: counter.why, tags: [] };
+      entry.tags.push(tag);
+      byItem.set(item.id, entry);
+    }
+  }
+  return [...byItem.values()]
+    .sort((a, b) => b.tags.length - a.tags.length || a.cost - b.cost || a.itemId - b.itemId)
+    .slice(0, limit);
 }
 
 /**
@@ -307,16 +339,16 @@ export function recommend(input, data, settings = SETTINGS) {
     const reasons = [];
     if (counter) reasons.push(counter.reason);
     const ownedParts = (item.components ?? []).filter((id) => owned.has(id)).map((id) => itemById.get(id).nameRu);
-    if (ownedParts.length > 0) reasons.push(`Улучшение вашего «${ownedParts.join('», «')}» — доплата ${cost} душ`);
+    if (ownedParts.length > 0) reasons.push(`Улучшение вашего «${ownedParts.join('», «')}» — доплата ${num(cost)} душ`);
     if (stat) {
-      const better = stat.lift >= 0.5 ? `побеждают чаще на ${round(stat.lift, 1)} п.п.` : null;
+      const better = stat.lift >= 0.5 ? `шанс победы выше на ${num(stat.lift)}%` : null;
       if (stat.pickRate >= settings.corePickRate) {
         const share = Math.round(stat.pickRate * 100);
-        reasons.push(`Основа билда: на этом этапе его берут в ${share}% игр${better ? ` и ${better}` : ''}`);
+        reasons.push(`Основа билда: на этом этапе его берут в ${share}% игр${better ? `, ${better}` : ''}`);
       } else if (better) {
-        reasons.push(`С ним на этом этапе ${better} (${stat.matches} матчей)`);
+        reasons.push(`С ним на этом этапе ${better} (${num(stat.matches)} матчей)`);
       } else {
-        reasons.push(`Проверенная покупка: винрейт ${round(stat.winrate * 100, 1)}% (${stat.matches} матчей)`);
+        reasons.push(`Проверенная покупка: побед ${num(stat.winrate * 100)}% (${num(stat.matches)} матчей)`);
       }
     }
 

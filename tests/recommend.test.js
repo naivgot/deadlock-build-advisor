@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { recommend } from '../src/logic/recommend.js';
+import { SETTINGS, countersAgainst, recommend } from '../src/logic/recommend.js';
 import { HERO, ITEM, makeData } from './fixtures/recommend-data.js';
 
 const ids = (list) => list.map((entry) => entry.itemId);
@@ -128,6 +128,20 @@ test('путь билда и порядок прокачки собираютс�
   assert.deepEqual(ids(result.buildPath.late), [ITEM.lateItem]);
   assert.deepEqual(result.abilityOrder.order, [12, 11, 12, 12, 11]);
   assert.equal(result.abilityOrder.maxFirst[0].abilityId, 12);
+});
+
+test('без врагов «ситуативные» — популярные предметы, не попавшие в основной путь', () => {
+  const settings = { ...SETTINGS, pathPerPhase: 2 };
+  const result = recommend({ hero: HERO.main, enemies: [], souls: 0, ownedItems: [] }, makeData(), settings);
+  assert.deepEqual(ids(result.buildPath.mid), [ITEM.betterGun, ITEM.bigArmor]);
+  assert.deepEqual(ids(result.buildPath.situational), [ITEM.healCut]);
+});
+
+test('countersAgainst: чем контрить героя, по его тегам', () => {
+  const list = countersAgainst(HERO.healerA, makeData());
+  assert.deepEqual(ids(list), [ITEM.healCut]);
+  assert.equal(list[0].why, 'Режет лечение врага');
+  assert.deepEqual(countersAgainst(777, makeData()), []);
 });
 
 test('функция не меняет входные данные', () => {

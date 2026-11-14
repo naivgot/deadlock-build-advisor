@@ -1,0 +1,209 @@
+/* Тёмная тема, сначала телефон. Цвета собраны в переменных. */
+:root {
+  --bg: #14161b;
+  --card: #1d2027;
+  --card-2: #262a33;
+  --line: #343946;
+  --text: #eceef2;
+  --muted: #9aa1b0;
+  --accent: #f0b54a;
+  --accent-text: #1b1405;
+  --ok: #6fcf8f;
+  --wait: #e0a060;
+  --weapon: #e08a3c;
+  --vitality: #63b96a;
+  --spirit: #a97be0;
+  --radius: 12px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 1.35rem; }
+h2 { font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+h3 { font-size: 1rem; }
+a { color: var(--accent); }
+[hidden] { display: none !important; }
+
+.muted { color: var(--muted); font-size: 0.85rem; font-weight: 400; }
+.count { margin-left: auto; }
+
+.top, main, .footer { max-width: 720px; margin: 0 auto; padding: 0 12px; }
+.top { padding-top: 16px; padding-bottom: 8px; }
+main { padding-bottom: 96px; display: grid; gap: 12px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+.card.is-needed { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+
+.step {
+  display: inline-grid; place-items: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--card-2); color: var(--accent);
+  font-size: 0.85rem; font-weight: 700; flex: none;
+}
+
+/* Поля и кнопки */
+.search, .souls-input, select {
+  width: 100%; min-height: 44px; padding: 8px 12px;
+  background: var(--bg); color: var(--text);
+  border: 1px solid var(--line); border-radius: 10px; font: inherit;
+}
+.btn, .btn-primary, .tab, .chip, .tile { font: inherit; color: inherit; cursor: pointer; }
+.btn {
+  min-height: 44px; padding: 8px 14px;
+  background: var(--card-2); border: 1px solid var(--line); border-radius: 10px;
+  white-space: nowrap;
+}
+.btn-quiet { background: transparent; color: var(--muted); }
+.btn-link { display: block; text-align: center; text-decoration: none; color: var(--accent); }
+.btn-primary {
+  width: 100%; min-height: 54px;
+  background: var(--accent); color: var(--accent-text);
+  border: 0; border-radius: 14px; font-size: 1.1rem; font-weight: 700;
+}
+:is(button, a, input, select, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.sticky {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, var(--bg) 35%);
+}
+.sticky .btn-primary { max-width: 696px; display: block; margin: 0 auto; }
+
+/* Сетки героев и предметов */
+.grid { display: grid; gap: 6px; }
+.grid-heroes { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); }
+.grid-items { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+
+.tile {
+  display: grid; justify-items: center; gap: 2px; padding: 4px 2px;
+  background: var(--card-2); border: 2px solid transparent; border-radius: 10px;
+  min-width: 0;
+}
+.tile.is-selected { border-color: var(--accent); background: #3a3320; }
+.tile:disabled { opacity: 0.3; cursor: default; }
+.tile-name {
+  font-size: 0.68rem; line-height: 1.15; text-align: center; color: var(--muted);
+  max-width: 100%; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow-wrap: anywhere;
+}
+.tile.is-selected .tile-name { color: var(--text); }
+
+.icon { display: block; object-fit: cover; border-radius: 8px; background: var(--bg); flex: none; }
+.icon-hero { width: 48px; height: 48px; }
+.icon-item { width: 44px; height: 44px; }
+.icon-chip { width: 24px; height: 24px; border-radius: 50%; }
+.icon-advice { width: 56px; height: 56px; }
+.icon-ability { width: 36px; height: 36px; background: var(--card-2); }
+
+.tile-item { border-bottom-width: 3px; }
+.tile-item.type-weapon { border-bottom-color: var(--weapon); }
+.tile-item.type-vitality { border-bottom-color: var(--vitality); }
+.tile-item.type-spirit { border-bottom-color: var(--spirit); }
+.tile-item.is-selected { border-color: var(--accent); }
+
+/* Выбранный герой и враги */
+.picked { display: flex; align-items: center; gap: 10px; }
+.picked-text { display: grid; min-width: 0; flex: 1; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips:empty { display: none; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 10px 4px 4px;
+  background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem;
+}
+.chip-x { color: var(--muted); font-size: 1.1rem; line-height: 1; }
+
+details > summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; gap: 8px; color: var(--muted); list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after { content: "▾"; margin-left: 6px; }
+details[open] > summary::after { content: "▴"; }
+details[open] > summary { margin-bottom: 10px; }
+#owned-details > summary { color: var(--text); font-weight: 700; font-size: 1.05rem; }
+details > .search { margin-bottom: 10px; }
+
+/* Души */
+.souls-row { display: flex; gap: 6px; }
+.souls-input { flex: 1; min-width: 0; font-size: 1.15rem; font-weight: 700; }
+.rank-row { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; }
+
+/* Вкладки предметов */
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.tab { min-height: 40px; background: var(--card-2); border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 10px; }
+.tab.type-weapon { border-bottom-color: var(--weapon); }
+.tab.type-vitality { border-bottom-color: var(--vitality); }
+.tab.type-spirit { border-bottom-color: var(--spirit); }
+.tab.is-selected { background: #3a3320; border-color: var(--accent); }
+.tier { margin-bottom: 12px; }
+.tier-title { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+
+/* Результат */
+#result { display: grid; gap: 12px; scroll-margin-top: 8px; }
+.advice-list, .item-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.advice {
+  position: relative; display: flex; gap: 12px; padding: 12px;
+  background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: var(--radius);
+}
+.advice.type-weapon, .item-row.type-weapon { border-left-color: var(--weapon); }
+.advice.type-vitality, .item-row.type-vitality { border-left-color: var(--vitality); }
+.advice.type-spirit, .item-row.type-spirit { border-left-color: var(--spirit); }
+.advice-number {
+  position: absolute; top: -8px; left: -8px; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--accent); color: var(--accent-text); font-size: 0.8rem; font-weight: 700;
+}
+.advice-text { display: grid; gap: 4px; min-width: 0; justify-items: start; }
+.advice-en { font-size: 0.8rem; }
+.reason { font-size: 0.95rem; }
+.description { font-size: 0.8rem; }
+.price { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+.price-ok { color: var(--ok); }
+.price-wait { color: var(--wait); white-space: normal; }
+
+.item-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px;
+  background: var(--card-2); border-left: 4px solid var(--line); border-radius: 10px;
+}
+.item-row-text { display: grid; min-width: 0; flex: 1; }
+.item-row .price { color: var(--muted); }
+
+.confidence { font-size: 0.85rem; padding: 8px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); }
+.confidence-high { color: var(--ok); }
+.confidence-medium { color: var(--wait); }
+.confidence-low { color: var(--wait); border-color: var(--wait); }
+.notice, .load-error { padding: 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--wait); }
+.load-error { max-width: 696px; margin: 12px auto; }
+
+/* Страница героя */
+.back { display: inline-block; margin-bottom: 8px; text-decoration: none; }
+.hero-head { display: flex; align-items: center; gap: 12px; }
+.hero-head .icon-hero { width: 64px; height: 64px; }
+.phase-title { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.ability-order { display: flex; flex-wrap: wrap; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.ability-order li { position: relative; }
+.ability-step {
+  position: absolute; right: -2px; bottom: -2px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px;
+  background: var(--bg); color: var(--muted); font-size: 0.65rem; display: grid; place-items: center;
+}
+.ability-row { display: flex; align-items: center; gap: 10px; }
+
+.footer { padding-top: 8px; padding-bottom: 110px; text-align: center; font-size: 0.85rem; color: var(--muted); }
+
+@media (min-width: 600px) {
+  .grid-heroes { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+  .icon-hero { width: 56px; height: 56px; }
+}
