@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "deadlock-build-advisor",
   "version": "0.1.0",
   "description": "Советник по билдам для Deadlock: что купить следующим и почему",
@@ -10,8 +10,8 @@
   "scripts": {
     "fetch:static": "node scripts/fetch-static.js",
     "fetch:stats": "node scripts/fetch-stats.js",
-    "build:site": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.6')\"",
+    "build:site": "node scripts/build-site.js",
     "test": "node --test",
-    "dev": "node -e \"console.log('Заглушка: сервер появится в задаче 1.6')\""
+    "dev": "node scripts/dev-server.js"
   }
 }

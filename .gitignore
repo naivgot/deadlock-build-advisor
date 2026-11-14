@@ -7,3 +7,7 @@ data/*.tmp/
 
 # Секреты (API-ключ) — никогда не попадают в репозиторий
 .env
+
+# Собирается скриптом build:site
+site/data/
+site/js/logic/
