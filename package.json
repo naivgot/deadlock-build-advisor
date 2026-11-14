@@ -1,0 +1,17 @@
+{
+  "name": "deadlock-build-advisor",
+  "version": "0.1.0",
+  "description": "Советник по билдам для Deadlock: что купить следующим и почему",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "fetch:static": "node -e \"console.log('Заглушка: скрипт появится в задаче 0.4')\"",
+    "fetch:stats": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.1')\"",
+    "build:site": "node -e \"console.log('Заглушка: скрипт появится в задаче 1.6')\"",
+    "test": "node --test",
+    "dev": "node -e \"console.log('Заглушка: сервер появится в задаче 1.6')\""
+  }
+}
