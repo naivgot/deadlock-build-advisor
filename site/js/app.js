@@ -2,6 +2,7 @@
 import { loadCore, loadHero, recommendData } from './data.js';
 import { buildForMatch } from './logic/match-build.js';
 import { abilityCard, buildRow, dataDateText, h, icon, itemRow, registerServiceWorker } from './ui.js';
+import { goal, startCounter } from './counter.js';
 
 const STORAGE_KEY = 'dba-match-v1';
 const $ = (id) => document.getElementById(id);
@@ -137,7 +138,10 @@ function setActive(key) {
 
 function pickHero(id) {
   const key = state.active;
-  if (key === 'me' && state.picks.me !== id) state.done = [];
+  if (key === 'me' && state.picks.me !== id) {
+    state.done = [];
+    goal('hero_selected', { hero: heroById(id)?.name });
+  }
   state.picks[key] = id;
   // Следующее пустое место; когда враги заполнены, союзников не навязываем.
   const next = nextEmptySlot(key);
@@ -302,6 +306,8 @@ async function showBuild({ scroll }) {
   saveState();
   renderResult(result);
   if (scroll) {
+    // Цель — только нажатие кнопки, а не пересчёт после правки состава.
+    goal('build_made', { hero: heroById(heroId)?.name, enemies: result.enemies.length });
     state.active = null;
     renderSlots();
     renderPicker();
@@ -344,5 +350,6 @@ async function start() {
   $('go').addEventListener('click', () => showBuild({ scroll: true }));
 }
 
+startCounter();
 registerServiceWorker();
 start();

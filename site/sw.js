@@ -2,10 +2,10 @@
 // Оболочка (страницы, стили, скрипты) открывается сразу из памяти и обновляется в фоне.
 // Данные — сначала из сети (чтобы совет был по свежей статистике), без сети — из сохранённой копии.
 // Иконки — один раз скачали и больше не качаем.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL = `shell-${VERSION}`;
 const DATA = `data-${VERSION}`;
-const ICONS = `icons-${VERSION}`;
+const ICONS = 'icons-v1'; // иконки не меняются — при новой версии сайта не перекачиваем
 
 const SHELL_FILES = [
   './',
@@ -16,6 +16,7 @@ const SHELL_FILES = [
   'js/hero.js',
   'js/data.js',
   'js/ui.js',
+  'js/counter.js',
   'js/logic/recommend.js',
   'js/logic/match-build.js',
   'manifest.webmanifest',
