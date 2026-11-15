@@ -105,14 +105,22 @@ function itemStat(item, ctx, settings) {
 
 // Насколько тяжёлая линия «пара на пару». Если точная четвёрка встречалась достаточно часто — берём её,
 // иначе складываем влияние каждого героя: средняя линия героя + (против врага − средняя) + (с напарником − средняя).
-// Подходит ли предмет герою по типу урона. Срез лечения и снижение защиты врага работают через твой урон:
-// «Гроза целителей» (спиритизм) — через спирит-урон, «Токсичные пули» (оружие) — через пули.
+// Подходит ли предмет герою по типу урона.
+// 1) Чем срабатывает: «Гроза целителей» — от твоего спирит-урона, «Токсичные пули» — от твоих пуль.
+//    Активные предметы и ауры («Ржавый ствол», «Аура охотника») срабатывают у любого героя.
+// 2) Кому выгодно: снижение защиты от пуль полезно стрелку, от спирита — герою со спирит-уроном.
 // Если тип урона героя неизвестен (нет статистики) — считаем, что подходит.
-const DAMAGE_EFFECTS = ['anti-heal', 'bullet-shred', 'spirit-shred'];
 export function fitsDamage(item, share, settings = MATCH_SETTINGS) {
-  if (!share || !(item.effects ?? []).some((effect) => DAMAGE_EFFECTS.includes(effect))) return true;
-  if (item.type === 'spirit') return share.spirit >= settings.minDamageShare;
-  if (item.type === 'weapon') return share.weapon >= settings.minDamageShare;
+  if (!share) return true;
+  const effects = item.effects ?? [];
+  const has = (effect) => effects.includes(effect);
+  const enough = (type) => share[type] >= settings.minDamageShare;
+  if (has('by-spirit') && !enough('spirit')) return false;
+  if (has('by-weapon') && !enough('weapon')) return false;
+  if (!has('anti-heal')) {
+    if (has('bullet-shred') && !has('spirit-shred') && !enough('weapon')) return false;
+    if (has('spirit-shred') && !has('bullet-shred') && !enough('spirit')) return false;
+  }
   return true;
 }
 

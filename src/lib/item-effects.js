@@ -17,6 +17,9 @@ export const EFFECTS = {
   disarm: 'Обезоруживание',
   slow: 'Замедление',
   'fire-rate-slow': 'Снижает скорострельность врага',
+  // Служебные метки: чем срабатывает эффект предмета (важно, подходит ли он герою по типу урона).
+  'by-spirit': 'Срабатывает от твоего спирит-урона',
+  'by-weapon': 'Срабатывает от твоих пуль',
 };
 
 // Фразы описания, где речь о действии на врага: выкидываем фразы про себя и про защиту.
@@ -75,6 +78,8 @@ const RULES = [
   ['disarm', (p, t) => /\bdisarm/.test(offensive(t))],
   ['slow', (p) => p.SlowPercent >= 15 || p.MaxSlowPercent > 0],
   ['fire-rate-slow', (p) => p.FireRateSlow >= 20],
+  ['by-spirit', (p, t) => /your spirit damage|deal(ing)? (significant )?spirit damage|takes spirit damage|abilities dealing more than/.test(t)],
+  ['by-weapon', (p, t) => /your bullets|headshot/.test(t)],
 ];
 
 // Характеристики предмета из API → { имя: число } (нечисловые и нулевые отбрасываем).

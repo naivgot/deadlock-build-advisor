@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-15T05:46:16.528Z",
+  "fetchedAt": "2026-11-15T06:12:16.933Z",
   "clientVersion": 6861,
   "source": "api.deadlock-api.com",
   "count": 156,
@@ -69,7 +69,9 @@
       ],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_burst.webp",
       "description": "Постепенно заряжается спиритическим уроном, благодаря чему умения, наносящие более 80 ед. урона, причиняют дополнительный урон.",
-      "effects": []
+      "effects": [
+        "by-spirit"
+      ]
     },
     {
       "id": 754480263,
@@ -105,7 +107,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_regen.webp",
       "description": "Нанесение спиритического урона вражеским героям даёт вам бонусное восстановление. Накапливается при нанесении урона разным героям.",
       "effects": [
-        "heal"
+        "heal",
+        "by-spirit"
       ]
     },
     {
@@ -340,7 +343,9 @@
       ],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headshot_booster.webp",
       "description": "Ваше следующее попадание в голову вражескому герою нанесёт ему доп. урон от оружия.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 3077079169,
@@ -445,7 +450,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/bullet_resist_shredder.webp",
       "description": "Снижает сопротивляемость пулям у врагов, которым вы наносите спиритический урон.",
       "effects": [
-        "bullet-shred"
+        "bullet-shred",
+        "by-spirit"
       ]
     },
     {
@@ -533,7 +539,9 @@
       ],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_slow.webp",
       "description": "Когда цель получает спиритический урон, у неё снижается скорость передвижения.",
-      "effects": []
+      "effects": [
+        "by-spirit"
+      ]
     },
     {
       "id": 2081037738,
@@ -551,7 +559,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_vulnerability.webp",
       "description": "Когда враг получает спиритический урон, у него снижается сопротивляемость спиритизму.",
       "effects": [
-        "spirit-shred"
+        "spirit-shred",
+        "by-spirit"
       ]
     },
     {
@@ -624,7 +633,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/suppressor.webp",
       "description": "Нанося спиритический урон врагам, вы также снижаете их скорострельность.",
       "effects": [
-        "fire-rate-slow"
+        "fire-rate-slow",
+        "by-spirit"
       ]
     },
     {
@@ -756,7 +766,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healbane.webp",
       "description": "Наносимый вами спиритический урон снижает врагу получаемое лечение. Если вражеский герой умирает, находясь под действием этого эффекта, вы значительно восстанавливаете здоровье.",
       "effects": [
-        "anti-heal"
+        "anti-heal",
+        "by-spirit"
       ]
     },
     {
@@ -1068,7 +1079,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/slowing_bullets.webp",
       "description": "Ваши пули накладывают на врагов накапливаемое снижение скорости передвижения.",
       "effects": [
-        "slow"
+        "slow",
+        "by-weapon"
       ]
     },
     {
@@ -1088,7 +1100,8 @@
       "description": "Ваши пули накладывают на цель эффект, снижающий её сопротивляемость спиритизму и дающий вам и вашим союзникам кражу здоровья жертвы спиритизмом.",
       "effects": [
         "lifesteal",
-        "spirit-shred"
+        "spirit-shred",
+        "by-weapon"
       ]
     },
     {
@@ -1171,7 +1184,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weakening_headshot.webp",
       "description": "Попадание в голову снижает сопротивляемость пулям у жертвы.",
       "effects": [
-        "bullet-shred"
+        "bullet-shred",
+        "by-weapon"
       ]
     },
     {
@@ -1385,7 +1399,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/tankbuster.webp",
       "description": "Постепенно заряжается спиритическим уроном, благодаря чему умения, наносящие более 165 ед. урона, причиняют дополнительный урон. Игнорирует сопротивляемость спиритизму.",
-      "effects": []
+      "effects": [
+        "by-spirit"
+      ]
     },
     {
       "id": 395944548,
@@ -1725,7 +1741,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/burst_fire.webp",
       "description": "Ненадолго увеличивает ваши скорострельность и скорость передвижения при попадании выстрелом по герою.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 709540378,
@@ -1760,7 +1778,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/escalating_resilience.webp",
       "description": "Увеличивает вашу сопротивляемость пулям, когда ваши пули задевают героя. Каждый выстрел может дать только одну единицу этого эффекта.",
       "effects": [
-        "bullet-resist"
+        "bullet-resist",
+        "by-weapon"
       ]
     },
     {
@@ -1795,7 +1814,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headhunter.webp",
       "description": "Ваше следующее попадание в голову вражескому герою нанесёт ему доп. урон от оружия. Вы также получите лечение, а ваша скорость передвижения ненадолго повысится.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 2108215830,
@@ -1828,7 +1849,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hollow_point.webp",
       "description": "Когда у вас более 65% здоровья, вы наносите дополнительный урон от оружия, а ваши пули снижают сопротивляемость пулям у врагов.",
       "effects": [
-        "bullet-shred"
+        "bullet-shred",
+        "by-weapon"
       ]
     },
     {
@@ -1864,7 +1886,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/point_blank.webp",
       "description": "Когда цель выстрелов находится на малой дальности, вы замедляете её передвижение выстрелами и наносите больше урона оружием.",
       "effects": [
-        "slow"
+        "slow",
+        "by-weapon"
       ]
     },
     {
@@ -1919,7 +1942,8 @@
       "description": "Ваши пули накладывают на цель эффект, снижающий её сопротивляемость спиритизму и дающий вам и вашим союзникам кражу здоровья жертвы спиритизмом. Попадания в голову ещё больше снижают сопротивляемость спиритизму у жертвы.",
       "effects": [
         "lifesteal",
-        "spirit-shred"
+        "spirit-shred",
+        "by-weapon"
       ]
     },
     {
@@ -1937,7 +1961,9 @@
       ],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/tesla_bullets.webp",
       "description": "У ваших выстрелов есть шанс поразить цель электричеством. Электрический заряд также отскочит на ближайшего к цели врага.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 3696726732,
@@ -1953,7 +1979,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/toxic_bullets.webp",
       "description": "От ваших пуль у врагов накапливается эффект кровотечения, который наносит им постепенный урон в процентах от их макс. здоровья, а также снижает им получаемое лечение.",
       "effects": [
-        "anti-heal"
+        "anti-heal",
+        "by-weapon"
       ]
     },
     {
@@ -1973,7 +2000,8 @@
       "description": "Ваши пули накладывают на врагов накапливаемое снижение скорости передвижения.",
       "effects": [
         "status-resist",
-        "slow"
+        "slow",
+        "by-weapon"
       ]
     },
     {
@@ -2062,7 +2090,8 @@
       "description": "Нанося спиритический урон, вы получаете накапливаемое повышение спиритизма, которое увеличивает спиритический урон, наносимый вами цели.",
       "effects": [
         "spirit-resist",
-        "spirit-shred"
+        "spirit-shred",
+        "by-spirit"
       ]
     },
     {
@@ -2152,7 +2181,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mercurial_magnum.webp",
       "description": "Усиленное умение постепенно заряжается, благодаря чему наносит доп. спиритический урон, повышает скорострельность и перезаряжает оружие при использовании. До следующей перезарядки оружия ваши пули наносят доп. спиритический урон, пропорциональный вашей спиритической мощи.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 3577481646,
@@ -2218,7 +2249,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_burn.webp",
       "description": "Если нанести врагу значительный спиритический урон в течение 5 сек., происходит взрыв, который наносит урон этому врагу и обжигает его. Во время горения враги получают постепенный урон, а получаемое ими лечение уменьшается. Для каждого врага действует отдельная перезарядка: до её окончания нельзя повторно наложить эффект. Если целью выбран не герой, урон уменьшается вдвое.",
       "effects": [
-        "anti-heal"
+        "anti-heal",
+        "by-spirit"
       ]
     },
     {
@@ -2405,7 +2437,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/inhibitor.webp",
       "description": "Ваши пули накладывают на цель накапливаемый эффект, который снижает наносимый ею урон и её лечение.",
       "effects": [
-        "anti-heal"
+        "anti-heal",
+        "by-weapon"
       ]
     },
     {
@@ -2496,7 +2529,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/siphon_bullets.webp",
       "description": "Ваши выстрелы на время крадут долю от максимального здоровья жертв. Украденное здоровье возвращается врагам по окончании действия эффекта.",
       "effects": [
-        "lifesteal"
+        "lifesteal",
+        "by-weapon"
       ]
     },
     {
@@ -2589,7 +2623,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/armor_piercing_rounds.webp",
       "description": "Ваши пули получают шанс стать неотвратимыми — такие прошивают врагов и игнорируют их сопротивляемость пулям.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 710436191,
@@ -2629,7 +2665,8 @@
       "effects": [
         "anti-heal",
         "bullet-shred",
-        "spirit-shred"
+        "spirit-shred",
+        "by-weapon"
       ]
     },
     {
@@ -2698,7 +2735,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/lucky_shot.webp",
       "description": "Ваши пули могут стать усиленными и нанести дополнительный урон при попадании. Дополнительный урон не может быть критическим.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 2480592370,
@@ -2713,7 +2752,9 @@
       "upgrades": [],
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/ricochet.webp",
       "description": "Ваши пули рикошетят во врагов рядом с целью, накладывая эффекты выстрелов и нанося долю изначального урона.",
-      "effects": []
+      "effects": [
+        "by-weapon"
+      ]
     },
     {
       "id": 1113837674,
@@ -2729,7 +2770,8 @@
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/silencer.webp",
       "description": "Ваши пули накладывают накапливаемое безмолвие. Жертвы становятся невосприимчивы к накапливанию через 10 сек. после истечения действия безмолвия.",
       "effects": [
-        "silence"
+        "silence",
+        "by-weapon"
       ]
     },
     {

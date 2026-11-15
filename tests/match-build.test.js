@@ -212,8 +212,8 @@ test('прогноз «снизь защиту врага» — только е�
 
 test('контры, работающие через чужой тип урона, не советуем (спирит-срез лечения пушечному герою)', () => {
   const data = makeData();
-  // Делаем Heal Cut спиритическим; у главного героя спиритических покупок меньше 35%.
-  data.items.find((item) => item.id === ITEM.healCut).type = 'spirit';
+  // Heal Cut срабатывает от спирит-урона; у главного героя спиритических покупок меньше 35%.
+  data.items.find((item) => item.id === ITEM.healCut).effects = ['anti-heal', 'by-spirit'];
   const result = buildForMatch({ hero: HERO.main, laneEnemies: [HERO.healerA] }, data);
   const all = [...result.phases.early, ...result.phases.mid, ...result.phases.late, ...result.situational];
   assert.ok(!all.some((entry) => entry.itemId === ITEM.healCut && entry.isCounter), 'не помечаем как контру');

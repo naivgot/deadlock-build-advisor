@@ -55,3 +55,9 @@ test('срез лечения себе — не срез лечения враг
   assert.ok(!effects.includes('anti-heal'));
   assert.ok(effects.includes('cleanse'));
 });
+
+test('чем срабатывает эффект: от спирит-урона или от пуль; активный предмет — ни то ни другое', () => {
+  assert.deepEqual(itemEffects(props({ HealAmpReceivePenaltyPercent: -35 }), "Your spirit damage reduces the enemy's Incoming Healing."), ['anti-heal', 'by-spirit']);
+  assert.deepEqual(itemEffects(props({ HealAmpReceivePenaltyPercent: -40 }), 'Your bullets build up a Bleed on enemies.'), ['anti-heal', 'by-weapon']);
+  assert.deepEqual(itemEffects(props({ BulletArmorReduction: -8, FireRateSlow: 32 }), 'Target an enemy to reduce their Fire Rate and Bullet Resistance.'), ['bullet-shred', 'fire-rate-slow']);
+});
