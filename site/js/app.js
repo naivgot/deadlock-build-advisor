@@ -271,7 +271,7 @@ function renderResult(result) {
       ? card('Тоже подходит', h('p', { class: 'muted' }, 'Почти не уступают основным — можно взять вместо них по вкусу.'), h('ul', { class: 'item-list' }, result.alsoGood.map(row)))
       : null,
     result.abilityOrder ? abilityCard(result.abilityOrder, core.abilities.filter((ability) => ability.heroId === hero.id)) : null,
-    h('a', { class: 'btn btn-link', href: `hero.html?id=${hero.id}` }, `Всё о герое: ${hero.nameRu} →`),
+    h('a', { class: 'btn btn-link', href: `heroes/${hero.slug}/` }, `Всё о герое: ${hero.nameRu} →`),
   ];
   $('result').replaceChildren(...parts.filter(Boolean));
   $('result').hidden = false;
@@ -317,6 +317,20 @@ async function showBuild({ scroll }) {
 
 // ---------- Запуск ----------
 
+// Пришли со страницы героя (адрес …/?hero=1): этот герой — «Ты», дальше выбираем врагов.
+function heroFromLink() {
+  const params = new URLSearchParams(location.search);
+  const id = Number(params.get('hero'));
+  history.replaceState(null, '', location.pathname); // убираем ?hero= из адреса
+  if (!heroById(id) || state.picks.me === id) return;
+  state.picks = { me: id };
+  state.done = [];
+  state.shown = false;
+  state.active = nextEmptySlot();
+  goal('hero_selected', { hero: heroById(id).name, from: 'hero-page' });
+  saveState();
+}
+
 async function start() {
   try {
     core = await loadCore();
@@ -328,6 +342,7 @@ async function start() {
   }
 
   restoreState();
+  heroFromLink();
   $('data-date').textContent = dataDateText(core.meta);
   $('footer-date').textContent = dataDateText(core.meta);
   $('rank').replaceChildren(

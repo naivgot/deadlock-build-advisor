@@ -1,0 +1,244 @@
+// Готовые HTML-страницы героев для поисковиков (Яндекс, Google), sitemap.xml и robots.txt.
+// Текст билда записан прямо в HTML, поэтому поисковик видит его без запуска скриптов.
+// Чистые функции: получают данные, возвращают строку.
+
+// Адрес сайта по умолчанию; при переезде на свой домен — переменная окружения SITE_URL.
+export const DEFAULT_SITE_URL = 'https://naivgot.github.io/deadlock-build-advisor/';
+
+export function siteUrl(env = process.env) {
+  const url = env.SITE_URL || DEFAULT_SITE_URL;
+  return url.endsWith('/') ? url : `${url}/`;
+}
+
+// Имя героя → кусок адреса: «Mo & Krill» → «mo-and-krill».
+export function heroSlug(name) {
+  return String(name)
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Защита от символов, ломающих HTML (<, >, &, кавычки).
+export function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const num = (value) => Number(value).toLocaleString('ru-RU');
+const percent = (share) => `${Math.round(share * 100)}%`;
+const dateRu = (iso) => new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+// «ноябрь 2026» — для заголовка, чтобы было видно, что билд свежий.
+export const monthRu = (iso) => new Date(iso).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).replace(/\s*г\.$/, '');
+
+const PHASES = [
+  ['early', 'Ранние', 'до ~10 минуты'],
+  ['mid', 'Основные', '10–22 минуты'],
+  ['late', 'Поздние', 'после 22 минуты'],
+];
+
+function dataLine(meta) {
+  return `Данные от ${dateRu(meta.fetchedAt)} · патч от ${dateRu(meta.patchDate)} · ${num(meta.totalMatches)} матчей`;
+}
+
+function iconTag(src, root, alt = '', className = 'icon') {
+  if (!src) return `<span class="${className} icon-empty" aria-hidden="true"></span>`;
+  return `<img class="${className}" src="${root}${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" width="64" height="64">`;
+}
+
+function itemRow(item, detail, root) {
+  return (
+    `<li class="item-row type-${escapeHtml(item.type)}">${iconTag(item.icon, root, '', 'icon icon-item')}` +
+    `<div class="item-row-text"><strong>${escapeHtml(item.nameRu)}</strong>` +
+    (detail ? `<span class="muted">${escapeHtml(detail)}</span>` : '') +
+    `</div><span class="price">${num(item.cost)}</span></li>`
+  );
+}
+
+const entryDetail = (entry) =>
+  entry.pickRate === null || entry.pickRate === undefined
+    ? 'мало данных'
+    : `берут в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`;
+
+function buildCard(result, root) {
+  const phases = PHASES.filter(([key]) => result.phases[key].length > 0).map(
+    ([key, title, hint]) =>
+      `<div class="phase"><h3 class="phase-title">${title} · ${hint}</h3>` +
+      `<ol class="item-list">${result.phases[key].map((entry) => itemRow(entry, entryDetail(entry), root)).join('')}</ol></div>`,
+  );
+  const also =
+    result.alsoGood.length > 0
+      ? `<h3 class="phase-title">Тоже подходит</h3><ul class="item-list">${result.alsoGood.map((entry) => itemRow(entry, entryDetail(entry), root)).join('')}</ul>`
+      : '';
+  return (
+    `<section class="card"><h2>Порядок покупки</h2>` +
+    (phases.length > 0 ? phases.join('') : '<p class="muted">Мало данных: по этому герою пока недостаточно матчей.</p>') +
+    `${also}</section>`
+  );
+}
+
+function abilityCard(order, abilities, root) {
+  if (!order) return '';
+  const byId = new Map(abilities.map((ability) => [ability.id, ability]));
+  const name = (id) => byId.get(id)?.nameRu ?? 'Неизвестная способность';
+  const maxFirst = order.maxFirst
+    .map(
+      (entry) =>
+        `<li class="ability-row">${iconTag(byId.get(entry.abilityId)?.icon, root, '', 'icon icon-ability')}` +
+        `<div class="item-row-text"><strong>${escapeHtml(name(entry.abilityId))}</strong>` +
+        `<span class="muted">качают первой в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}</span></div></li>`,
+    )
+    .join('');
+  const steps = (order.order ?? [])
+    .map(
+      (id, index) =>
+        `<li title="${index + 1}. ${escapeHtml(name(id))}">${iconTag(byId.get(id)?.icon, root, name(id), 'icon icon-ability')}` +
+        `<span class="ability-step">${index + 1}</span></li>`,
+    )
+    .join('');
+  return (
+    `<section class="card"><h2>Порядок прокачки</h2><p class="muted">Какую способность качают до максимума первой:</p>` +
+    `<ul class="item-list">${maxFirst}</ul>` +
+    (steps ? `<p class="muted">Самый популярный порядок вложения очков:</p><ol class="ability-order">${steps}</ol>` : '') +
+    `</section>`
+  );
+}
+
+function countersCard(hero, counters, root) {
+  const list =
+    counters.length > 0
+      ? `<ul class="item-list">${counters.map((item) => itemRow(item, item.why, root)).join('')}</ul>`
+      : '<p class="muted">Для этого героя пока нет подсказок.</p>';
+  return (
+    `<section class="card"><h2>Чем контрить: ${escapeHtml(hero.nameRu)}</h2>${list}` +
+    `<p class="muted">Подсказки составлены вручную и ещё проверяются игроками.</p></section>`
+  );
+}
+
+// Общая «шапка» документа: заголовок, описание, превью для Telegram/VK.
+function head({ title, description, url, base, root }) {
+  return `<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtml(description)}">
+  <link rel="canonical" href="${escapeHtml(url)}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:site_name" content="Билд под матч">
+  <meta property="og:title" content="${escapeHtml(title)}">
+  <meta property="og:description" content="${escapeHtml(description)}">
+  <meta property="og:url" content="${escapeHtml(url)}">
+  <meta property="og:image" content="${escapeHtml(base)}icon-512.png">
+  <meta name="theme-color" content="#14161b">
+  <link rel="manifest" href="${root}manifest.webmanifest">
+  <link rel="icon" href="${root}icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="${root}apple-touch-icon.png">
+  <link rel="stylesheet" href="${root}css/style.css">
+</head>`;
+}
+
+function footer(meta, root) {
+  return `  <footer class="footer">
+    <p>Не связан с Valve. Данные: deadlock-api.com.</p>
+    <p class="muted">Посещения считает Яндекс Метрика.</p>
+    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+  </footer>
+  <script type="module">
+    import { startCounter } from '${root}js/counter.js';
+    startCounter();
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('${root}sw.js').catch(() => {});
+  </script>
+</body>
+</html>
+`;
+}
+
+// Названия первых предметов этапа — для описания в поиске.
+const firstNames = (list, count) => list.slice(0, count).map((entry) => entry.nameRu).join(', ');
+
+export function heroPageDescription(hero, result, meta) {
+  const parts = PHASES.filter(([key]) => result.phases[key].length > 0).map(
+    ([key, title]) => `${title.toLowerCase()} — ${firstNames(result.phases[key], 2)}`,
+  );
+  const items = parts.length > 0 ? ` Предметы: ${parts.join('; ')}.` : '';
+  return `Билд на ${hero.nameRu} (${hero.name}) в Deadlock по статистике свежих матчей.${items} Порядок прокачки и чем контрить. Обновлено ${dateRu(meta.fetchedAt).replace(/\s*г\.$/, '')}.`;
+}
+
+// Страница героя: site/heroes/<slug>/index.html
+export function heroPageHtml({ hero, result, counters, abilities, meta, heroStat, base }) {
+  const root = '../../';
+  const slug = heroSlug(hero.name);
+  const title = `${hero.nameRu} (${hero.name}) — билд в Deadlock, ${monthRu(meta.fetchedAt)}`;
+  const stat = heroStat && heroStat[1] > 0 ? ` · побеждает в ${percent(heroStat[0] / heroStat[1])} матчей` : '';
+  return `${head({ title, description: heroPageDescription(hero, result, meta), url: `${base}heroes/${slug}/`, base, root })}
+<body>
+  <header class="top">
+    <a class="back" href="${root}">← Билд под матч</a>
+    <div class="hero-head">${iconTag(hero.icon, root, '', 'icon icon-hero')}
+      <div class="picked-text"><h1>Билд: ${escapeHtml(hero.nameRu)}</h1><span class="muted">${escapeHtml(hero.name)} · ${escapeHtml(hero.role ?? '')}${stat}</span></div>
+    </div>
+    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+  </header>
+
+  <main>
+    <p class="muted">Обычный билд — без учёта соперников. Выбери врагов и союзников, и сайт подстроит его под твой матч.</p>
+    <a class="btn-primary btn-cta" href="${root}?hero=${hero.id}">Подстроить билд под свой матч</a>
+    <p class="confidence confidence-${escapeHtml(result.confidence.level)}">${escapeHtml(result.confidence.label)}</p>
+    ${buildCard(result, root)}
+    ${abilityCard(result.abilityOrder, abilities, root)}
+    ${countersCard(hero, counters, root)}
+    <a class="btn btn-link" href="../">Билды на всех героев →</a>
+  </main>
+
+${footer(meta, root)}`;
+}
+
+// Каталог: site/heroes/index.html — ссылки на страницы всех героев.
+export function heroesIndexHtml({ heroes, meta, base }) {
+  const root = '../';
+  const title = `Билды на всех героев Deadlock — ${monthRu(meta.fetchedAt)}`;
+  const description = `Билды на ${heroes.length} героев Deadlock по статистике свежих матчей: порядок покупки предметов, прокачка способностей и чем контрить.`;
+  const sorted = [...heroes].sort((a, b) => a.nameRu.localeCompare(b.nameRu, 'ru'));
+  const tiles = sorted
+    .map(
+      (hero) =>
+        `<a class="tile" href="${heroSlug(hero.name)}/">${iconTag(hero.icon, root, '', 'icon icon-hero')}<span class="tile-name">${escapeHtml(hero.nameRu)}</span></a>`,
+    )
+    .join('\n      ');
+  return `${head({ title, description, url: `${base}heroes/`, base, root })}
+<body>
+  <header class="top">
+    <a class="back" href="${root}">← Билд под матч</a>
+    <h1>Билды на всех героев</h1>
+    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="grid grid-heroes">
+      ${tiles}
+      </div>
+    </section>
+  </main>
+
+${footer(meta, root)}`;
+}
+
+export function sitemapXml(paths, base, lastmod) {
+  const day = String(lastmod).slice(0, 10);
+  const urls = paths.map((path) => `  <url><loc>${escapeHtml(base + path)}</loc><lastmod>${day}</lastmod></url>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+}
+
+// Поисковики читают robots.txt только из корня домена, поэтому он заработает со своим доменом.
+// Пока сайт на github.io, sitemap добавляется вручную в Яндекс Вебмастере.
+export function robotsTxt(base) {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${base}sitemap.xml\n`;
+}

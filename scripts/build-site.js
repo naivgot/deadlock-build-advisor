@@ -5,7 +5,9 @@ import { access, copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promise
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readJson, writeJson } from '../src/lib/files.js';
-import { heroEffectProfile } from '../src/logic/match-build.js';
+import { buildForMatch, heroEffectProfile } from '../src/logic/match-build.js';
+import { countersAgainst } from '../src/logic/recommend.js';
+import { heroPageHtml, heroesIndexHtml, heroSlug, robotsTxt, siteUrl, sitemapXml } from '../src/lib/seo-pages.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const DATA = join(ROOT, 'data');
@@ -92,6 +94,7 @@ async function main() {
     name: hero.name,
     nameRu: hero.nameRu,
     role: hero.role,
+    slug: heroSlug(hero.name),
     icon: localIcon('heroes', hero),
     abilities: hero.abilities,
   }));
@@ -164,6 +167,8 @@ async function main() {
   }
   if (heroFiles.size === 0) throw new Error('Нет статистики ни по одному герою. Сайт не собран.');
 
+  const pages = await writeSeoPages(core, heroFiles, matchups);
+
   // Логика советов — та же самая, что проверяется тестами. Копируем все её файлы.
   const logicOut = join(SITE, 'js', 'logic');
   await rm(logicOut, { recursive: true, force: true });
@@ -174,8 +179,46 @@ async function main() {
 
   console.log(
     `Сайт собран. Героев: ${heroes.length} (со статистикой: ${heroFiles.size}), предметов: ${items.length}, ` +
-      `иконок скачано: ${downloaded}. Данные от ${statsMeta.fetchedAt.slice(0, 10)}.`,
+      `страниц героев: ${pages}, иконок скачано: ${downloaded}. Данные от ${statsMeta.fetchedAt.slice(0, 10)}.`,
   );
+}
+
+// Готовые страницы героев для поисковиков + каталог, sitemap.xml и robots.txt.
+async function writeSeoPages(core, heroFiles, matchups) {
+  const base = siteUrl();
+  const outDir = join(SITE, 'heroes');
+  await rm(outDir, { recursive: true, force: true });
+  for (const hero of core.heroes) {
+    const stats = heroFiles.get(hero.id);
+    const heroFile = stats ? { ...stats, matchups: matchups[hero.id] ?? {} } : null;
+    const data = {
+      heroes: core.heroes,
+      items: core.items,
+      heroTags: core.heroTags,
+      counterItems: core.counterItems,
+      heroStats: core.heroStats,
+      heroProfiles: core.heroProfiles,
+      meta: core.meta,
+      matchups: { [hero.id]: heroFile?.matchups ?? {} },
+      heroItemStats: heroFile,
+    };
+    const html = heroPageHtml({
+      hero,
+      result: buildForMatch({ hero: hero.id }, data),
+      counters: countersAgainst(hero.id, core),
+      abilities: core.abilities.filter((ability) => ability.heroId === hero.id),
+      meta: core.meta,
+      heroStat: core.heroStats[hero.id]?.all,
+      base,
+    });
+    await mkdir(join(outDir, hero.slug), { recursive: true });
+    await writeFile(join(outDir, hero.slug, 'index.html'), html);
+  }
+  await writeFile(join(outDir, 'index.html'), heroesIndexHtml({ heroes: core.heroes, meta: core.meta, base }));
+  const paths = ['', 'heroes/', ...core.heroes.map((hero) => `heroes/${hero.slug}/`)];
+  await writeFile(join(SITE, 'sitemap.xml'), sitemapXml(paths, base, core.meta.fetchedAt));
+  await writeFile(join(SITE, 'robots.txt'), robotsTxt(base));
+  return core.heroes.length;
 }
 
 main().catch((error) => {

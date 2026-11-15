@@ -4,30 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Билд героя — Deadlock</title>
-  <meta name="description" content="Полный билд героя Deadlock: ранние, основные и поздние предметы, порядок прокачки и чем его контрить.">
+  <!-- Служебная страница: только перекидывает на heroes/<имя>/. Поисковикам её показывать не нужно. -->
+  <meta name="robots" content="noindex">
   <meta name="theme-color" content="#14161b">
-  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon-192.png" type="image/png">
-  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header class="top">
     <a class="back" href="./">← Билд под матч</a>
-    <div id="hero-head" class="hero-head"><h1>Загружаю…</h1></div>
-    <p class="muted" id="data-date"></p>
+    <h1>Открываю страницу героя…</h1>
+    <p class="muted">Если ничего не происходит — <a href="heroes/">выбери героя из списка</a>.</p>
   </header>
-
-  <main id="app" hidden></main>
-
-  <p class="load-error" id="load-error" hidden></p>
-
-  <footer class="footer">
-    <p>Не связан с Valve. Данные: deadlock-api.com.</p>
-    <p class="muted">Посещения считает Яндекс Метрика.</p>
-    <p class="muted" id="footer-date"></p>
-  </footer>
-
   <script type="module" src="js/hero.js"></script>
 </body>
 </html>

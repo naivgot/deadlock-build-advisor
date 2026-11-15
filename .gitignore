@@ -11,3 +11,8 @@ data/*.tmp/
 # Собирается скриптом build:site
 site/data/
 site/js/logic/
+
+# Страницы героев для поисковиков — тоже собирает build:site
+site/heroes/
+site/sitemap.xml
+site/robots.txt

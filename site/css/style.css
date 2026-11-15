@@ -77,6 +77,7 @@ main { padding-bottom: 96px; display: grid; gap: 12px; }
   background: var(--accent); color: var(--accent-text);
   border: 0; border-radius: 14px; font-size: 1.1rem; font-weight: 700;
 }
+.btn-cta { display: grid; place-items: center; text-decoration: none; }
 :is(button, a, input, select, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .sticky {
@@ -96,6 +97,7 @@ main { padding-bottom: 96px; display: grid; gap: 12px; }
   background: var(--card-2); border: 2px solid transparent; border-radius: 10px;
   min-width: 0;
 }
+a.tile { color: inherit; text-decoration: none; }
 .tile.is-selected { border-color: var(--accent); background: #3a3320; }
 .tile:disabled { opacity: 0.3; cursor: default; }
 .tile-name {
