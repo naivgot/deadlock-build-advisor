@@ -67,7 +67,7 @@ test('контра, не влезшая в билд, — в «Ситуативн
   assert.deepEqual(ids(result.situational), [ITEM.healCut]);
   assert.deepEqual(result.situational[0].against, ['Healer A (ру)', 'Healer B (ру)']);
   assert.equal(result.swaps.length, 1);
-  assert.equal(result.swaps[0].replace.itemId, ITEM.lateItem, 'меняем предмет того же типа');
+  assert.equal(result.swaps[0].replace.itemId, ITEM.betterGun, 'меняем предмет того же типа (оружие), не ранний');
   assert.equal(result.swaps[0].take.itemId, ITEM.healCut);
   assert.match(result.swaps[0].text, /Если сильно мешают Healer A \(ру\), Healer B \(ру\)/);
 });
@@ -208,4 +208,14 @@ test('прогноз «снизь защиту врага» — только е�
   const healCut = [...result.phases.mid].find((entry) => entry.itemId === ITEM.healCut);
   assert.ok(!healCut.reasons.some((reason) => reason.startsWith('Прогноз')));
   assert.deepEqual(result.predictions, []);
+});
+
+test('контры, работающие через чужой тип урона, не советуем (спирит-срез лечения пушечному герою)', () => {
+  const data = makeData();
+  // Делаем Heal Cut спиритическим; у главного героя спиритических покупок меньше 35%.
+  data.items.find((item) => item.id === ITEM.healCut).type = 'spirit';
+  const result = buildForMatch({ hero: HERO.main, laneEnemies: [HERO.healerA] }, data);
+  const all = [...result.phases.early, ...result.phases.mid, ...result.phases.late, ...result.situational];
+  assert.ok(!all.some((entry) => entry.itemId === ITEM.healCut && entry.isCounter), 'не помечаем как контру');
+  assert.deepEqual(result.lane.tips, [], 'и не подсказываем на линии');
 });

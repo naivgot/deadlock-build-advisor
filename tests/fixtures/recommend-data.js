@@ -34,7 +34,7 @@ export function makeData() {
     item(ITEM.basicGun, 'Basic Gun', 'weapon', 1, 800),
     item(ITEM.betterGun, 'Better Gun', 'weapon', 2, 1600, [ITEM.basicGun]),
     item(ITEM.rareGem, 'Rare Gem', 'weapon', 2, 1600),
-    item(ITEM.healCut, 'Heal Cut', 'spirit', 2, 1600, [], ['anti-heal']),
+    item(ITEM.healCut, 'Heal Cut', 'weapon', 2, 1600, [], ['anti-heal']),
     item(ITEM.armor, 'Armor', 'vitality', 1, 800, [], ['bullet-resist']),
     item(ITEM.bigArmor, 'Big Armor', 'vitality', 3, 3200),
     item(ITEM.lateItem, 'Late Item', 'spirit', 4, 6400),

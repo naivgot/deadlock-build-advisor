@@ -105,7 +105,18 @@ function itemStat(item, ctx, settings) {
 
 // Насколько тяжёлая линия «пара на пару». Если точная четвёрка встречалась достаточно часто — берём её,
 // иначе складываем влияние каждого героя: средняя линия героя + (против врага − средняя) + (с напарником − средняя).
-export function laneReport(allyId, enemyIds, laneData, data, heroById, settings = MATCH_SETTINGS) {
+// Подходит ли предмет герою по типу урона. Срез лечения и снижение защиты врага работают через твой урон:
+// «Гроза целителей» (спиритизм) — через спирит-урон, «Токсичные пули» (оружие) — через пули.
+// Если тип урона героя неизвестен (нет статистики) — считаем, что подходит.
+const DAMAGE_EFFECTS = ['anti-heal', 'bullet-shred', 'spirit-shred'];
+export function fitsDamage(item, share, settings = MATCH_SETTINGS) {
+  if (!share || !(item.effects ?? []).some((effect) => DAMAGE_EFFECTS.includes(effect))) return true;
+  if (item.type === 'spirit') return share.spirit >= settings.minDamageShare;
+  if (item.type === 'weapon') return share.weapon >= settings.minDamageShare;
+  return true;
+}
+
+export function laneReport(allyId, enemyIds, laneData, data, heroById, settings = MATCH_SETTINGS, share = null) {
   if (enemyIds.length === 0) return null;
   const base = {
     enemies: enemyIds.map((id) => heroById.get(id).nameRu),
@@ -170,7 +181,7 @@ export function laneReport(allyId, enemyIds, laneData, data, heroById, settings 
       for (const tag of data.heroTags?.heroes?.[id]?.tags ?? []) {
         for (const counter of data.counterItems?.counters?.[tag] ?? []) {
           const item = itemById.get(counter.itemId);
-          if (!item || item.tier > settings.laneTipMaxTier) continue;
+          if (!item || item.tier > settings.laneTipMaxTier || !fitsDamage(item, share, settings)) continue;
           const tip = byItem.get(item.id) ?? { ...describe(item), cost: item.cost, why: counter.why, against: new Set() };
           tip.against.add(heroById.get(id).nameRu);
           byItem.set(item.id, tip);
@@ -322,14 +333,18 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   // Линия: враги на линии — те из врагов, кого указали в этой роли.
   const laneEnemyIds = (input.laneEnemies ?? []).filter((id, index, list) => list.indexOf(id) === index && enemies.some((e) => e.id === id));
   const laneAllyId = allies.some((ally) => ally.id === input.laneAlly) ? input.laneAlly : null;
-  const lane = laneReport(laneAllyId, laneEnemyIds, ctx.stats?.lane, data, heroById, settings);
+  const share = damageShare(ctx.itemsAll, itemById);
+  const lane = laneReport(laneAllyId, laneEnemyIds, ctx.stats?.lane, data, heroById, settings, share);
   const laneWeight = settings.laneEnemyWeight * (lane?.verdict === 'hard' ? settings.hardLaneExtra : 1);
   const weightedEnemies = enemies.map((enemy) => (laneEnemyIds.includes(enemy.id) ? { ...enemy, weight: laneWeight } : enemy));
   const counterByItem = collectCounters(heroId, weightedEnemies, data, ctx, settings);
+  for (const id of [...counterByItem.keys()]) {
+    if (itemById.has(id) && !fitsDamage(itemById.get(id), share, settings)) counterByItem.delete(id);
+  }
 
   // Оценка каждого предмета: популярность + насколько чаще побеждают + бонус за контру.
   // Прогноз: какие эффекты скорее всего будут у врагов и союзников (по их обычным покупкам).
-  const predictions = predictEnemyEffects(enemies, data, settings, damageShare(ctx.itemsAll, itemById));
+  const predictions = predictEnemyEffects(enemies, data, settings, share);
   const allyPredictions = predictAllyEffects(allies, data, settings);
 
   const candidates = [];
