@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { apiGet } from '../src/lib/deadlock-api.js';
 import { writeJson } from '../src/lib/files.js';
+import { itemEffects } from '../src/lib/item-effects.js';
 import { stripHtml } from '../src/lib/text.js';
 
 const OUT_DIR = fileURLToPath(new URL('../data/static/', import.meta.url));
@@ -82,6 +83,7 @@ function itemDescription(item) {
 // Предметы стандартного режима: продаются в магазине, не отключены и реально покупаются в обычных матчах.
 function buildItems(itemsRu, itemsEn, boughtIds) {
   const enNames = namesById(itemsEn);
+  const enById = new Map(itemsEn.map((item) => [item.id, item]));
   const shopItems = itemsRu.filter(
     (item) => item.type === 'upgrade' && item.shopable === true && item.disabled !== true,
   );
@@ -102,6 +104,8 @@ function buildItems(itemsRu, itemsEn, boughtIds) {
     upgrades: [],
     icon: item.shop_image_webp ?? item.image_webp ?? null,
     description: itemDescription(item),
+    // Эффекты — по характеристикам и английскому описанию (на русском правила писать сложнее).
+    effects: itemEffects(item.properties, itemDescription(enById.get(item.id) ?? {})),
   }));
 
   // «Во что улучшается» — обратная связь к компонентам.

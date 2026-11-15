@@ -1,7 +1,7 @@
 // Маленький выдуманный мир для тестов логики: 5 героев и 7 предметов.
 // Числа подобраны так, чтобы было понятно, какой совет ожидается.
 
-const item = (id, name, type, tier, cost, components = []) => ({
+const item = (id, name, type, tier, cost, components = [], effects = []) => ({
   id,
   className: `upgrade_${id}`,
   name,
@@ -14,6 +14,7 @@ const item = (id, name, type, tier, cost, components = []) => ({
   upgrades: [],
   icon: null,
   description: '',
+  effects,
 });
 
 export const ITEM = {
@@ -33,8 +34,8 @@ export function makeData() {
     item(ITEM.basicGun, 'Basic Gun', 'weapon', 1, 800),
     item(ITEM.betterGun, 'Better Gun', 'weapon', 2, 1600, [ITEM.basicGun]),
     item(ITEM.rareGem, 'Rare Gem', 'weapon', 2, 1600),
-    item(ITEM.healCut, 'Heal Cut', 'spirit', 2, 1600),
-    item(ITEM.armor, 'Armor', 'vitality', 1, 800),
+    item(ITEM.healCut, 'Heal Cut', 'spirit', 2, 1600, [], ['anti-heal']),
+    item(ITEM.armor, 'Armor', 'vitality', 1, 800, [], ['bullet-resist']),
     item(ITEM.bigArmor, 'Big Armor', 'vitality', 3, 3200),
     item(ITEM.lateItem, 'Late Item', 'spirit', 4, 6400),
   ];
@@ -68,6 +69,11 @@ export function makeData() {
       },
     },
     meta: { netWorthStep: 3000 },
+    // Какие эффекты скорее всего будут у героя: { эффект: [вероятность, id предмета] }.
+    heroProfiles: {
+      [HERO.healerA]: { lifesteal: [0.2, 999] },
+      [HERO.gunner]: { lifesteal: [0.8, 999], 'anti-heal': [0.6, ITEM.healCut] },
+    },
     // Винрейт главного героя — ровно 50%. В группе high слишком мало матчей.
     heroStats: {
       [HERO.main]: { all: [50000, 100000], low: [15000, 30000], mid: [10000, 20000], high: [40, 80] },

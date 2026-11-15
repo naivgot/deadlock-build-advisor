@@ -37,6 +37,31 @@ export const MATCH_SETTINGS = {
   // На тяжёлой линии подсказываем до 3 дешёвых контр (тир 1–2) против врагов на линии.
   laneTipMaxTier: 2,
   maxLaneTips: 3,
+  // Прогноз предметов врагов и союзников. Учитываем эффект, если герой берёт его хотя бы в 30% игр.
+  predictMinProb: 0.3,
+  // Прибавка предмету: 2 п.п. за каждого врага, который наверняка (100%) возьмёт нужный эффект; не больше 3.
+  predictWeight: 2,
+  predictCap: 3,
+  // Если тот же эффект скорее всего возьмёт союзник — минус до 2 п.п.
+  allyPenaltyWeight: 2,
+  allyPenaltyCap: 2,
+  // Что враг обычно берёт → какой эффект против этого полезен.
+  predictRules: [
+    { enemyHas: 'lifesteal', boost: 'anti-heal', label: 'кражу здоровья' },
+    { enemyHas: 'heal', boost: 'anti-heal', label: 'лечение' },
+    // Снижать защиту врага имеет смысл, только если твой основной урон того же типа.
+    { enemyHas: 'bullet-resist', boost: 'bullet-shred', label: 'защиту от пуль', needs: 'weapon' },
+    { enemyHas: 'spirit-resist', boost: 'spirit-shred', label: 'защиту от спирита', needs: 'spirit' },
+    { enemyHas: 'stun', boost: 'status-resist', label: 'предметы с оглушением' },
+    { enemyHas: 'silence', boost: 'status-resist', label: 'предметы с безмолвием' },
+    { enemyHas: 'disarm', boost: 'status-resist', label: 'предметы с обезоруживанием' },
+  ],
+  // Тип урона героя: доля оружейных или спиритических предметов в его покупках — хотя бы 35%.
+  minDamageShare: 0.35,
+  // Сколько героев перечислять в причине прогноза.
+  maxNamesInReason: 3,
+  // Эффекты, которые достаточно одному в команде.
+  allyRules: [{ allyHas: 'anti-heal', label: 'Срез лечения' }],
   // Примерная минута покупки для предметов без статистики — по тиру.
   minuteByTier: { 1: 4, 2: 10, 3: 18, 4: 26, 5: 30 },
 };
@@ -171,6 +196,84 @@ export function laneReport(allyId, enemyIds, laneData, data, heroById, settings 
   };
 }
 
+// Какие эффекты скорее всего будут у героя: { эффект: [вероятность, id предмета] }.
+// Вероятность — доля игр, в которых герой берёт самый популярный предмет с этим эффектом.
+export function heroEffectProfile(itemsAll, heroMatches, items) {
+  const profile = {};
+  if (!itemsAll || !heroMatches) return profile;
+  for (const item of items) {
+    const entry = itemsAll[item.id];
+    if (!entry) continue;
+    const prob = Number(Math.min(1, entry[1] / heroMatches).toFixed(2));
+    for (const effect of item.effects ?? []) {
+      if (!profile[effect] || profile[effect][0] < prob) profile[effect] = [prob, item.id];
+    }
+  }
+  return profile;
+}
+
+const heroProb = (data, heroId, effect) => data.heroProfiles?.[heroId]?.[effect]?.[0] ?? 0;
+const whoText = (who, limit = Infinity) =>
+  who
+    .slice(0, limit)
+    .map((w) => `${w.name} ${Math.round(w.prob * 100)}%`)
+    .join(', ') + (who.length > limit ? ' и др.' : '');
+
+// Доля оружейных и спиритических предметов в покупках героя — чем он в основном наносит урон.
+export function damageShare(itemsAll, itemById) {
+  const totals = { weapon: 0, spirit: 0, vitality: 0 };
+  for (const [id, [, matches]] of Object.entries(itemsAll ?? {})) {
+    const item = itemById.get(Number(id));
+    if (item && item.type in totals) totals[item.type] += matches;
+  }
+  const sum = totals.weapon + totals.spirit + totals.vitality;
+  return sum > 0 ? { weapon: totals.weapon / sum, spirit: totals.spirit / sum } : null;
+}
+
+function predictEnemyEffects(enemies, data, settings, share) {
+  const result = [];
+  for (const rule of settings.predictRules) {
+    // Тип урона неизвестен (нет статистики) — правило применяем.
+    if (rule.needs && share && share[rule.needs] < settings.minDamageShare) continue;
+    const who = enemies
+      .map((enemy) => ({ name: enemy.nameRu, prob: heroProb(data, enemy.id, rule.enemyHas) }))
+      .filter((w) => w.prob >= settings.predictMinProb)
+      .sort((a, b) => b.prob - a.prob);
+    if (who.length > 0) result.push({ effect: rule.enemyHas, ...rule, who, sum: who.reduce((s, w) => s + w.prob, 0) });
+  }
+  return result.sort((a, b) => b.sum - a.sum);
+}
+
+function predictAllyEffects(allies, data, settings) {
+  const result = [];
+  for (const rule of settings.allyRules) {
+    const who = allies
+      .map((ally) => ({ name: ally.nameRu, prob: heroProb(data, ally.id, rule.allyHas) }))
+      .filter((w) => w.prob >= settings.predictMinProb)
+      .sort((a, b) => b.prob - a.prob);
+    if (who.length > 0) result.push({ ...rule, who });
+  }
+  return result;
+}
+
+// Прибавка и объяснения для предмета по прогнозу врагов и союзников.
+function forecastForItem(item, predictions, allyPredictions, settings) {
+  const effects = item.effects ?? [];
+  let bonus = 0;
+  const reasons = [];
+  const best = predictions.filter((p) => effects.includes(p.boost)).sort((a, b) => b.sum - a.sum)[0];
+  if (best) {
+    bonus += Math.min(settings.predictCap, settings.predictWeight * best.sum);
+    reasons.push(`Прогноз: обычно берут ${best.label} — ${whoText(best.who, settings.maxNamesInReason)}`);
+  }
+  for (const rule of allyPredictions) {
+    if (!effects.includes(rule.allyHas)) continue;
+    bonus -= Math.min(settings.allyPenaltyCap, settings.allyPenaltyWeight * rule.who[0].prob);
+    reasons.push(`${rule.label} скорее всего возьмёт и союзник: ${whoText(rule.who, settings.maxNamesInReason)}`);
+  }
+  return { bonus, reasons };
+}
+
 // Оставляет только известных героев, без повторов и без самого игрока.
 function cleanHeroes(ids, heroById, exclude, warnings, label) {
   const result = [];
@@ -225,17 +328,23 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   const counterByItem = collectCounters(heroId, weightedEnemies, data, ctx, settings);
 
   // Оценка каждого предмета: популярность + насколько чаще побеждают + бонус за контру.
+  // Прогноз: какие эффекты скорее всего будут у врагов и союзников (по их обычным покупкам).
+  const predictions = predictEnemyEffects(enemies, data, settings, damageShare(ctx.itemsAll, itemById));
+  const allyPredictions = predictAllyEffects(allies, data, settings);
+
   const candidates = [];
   for (const item of itemById.values()) {
     const stat = itemStat(item, ctx, settings);
     const counter = counterByItem.get(item.id) ?? null;
     if (!stat && !counter) continue;
+    const forecast = forecastForItem(item, predictions, allyPredictions, settings);
     const score =
-      (stat ? stat.lift + settings.popularityWeight * stat.pickRate : 0) + (counter ? counter.bonus : 0);
+      (stat ? stat.lift + settings.popularityWeight * stat.pickRate : 0) + (counter ? counter.bonus : 0) + forecast.bonus;
     candidates.push({
       item,
       stat,
       counter,
+      forecast,
       score,
       minute: stat?.minute ?? settings.minuteByTier[item.tier] ?? 20,
       inPathPool: Boolean(counter) || stat.pickRate >= settings.minPathPickRate,
@@ -272,6 +381,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     pickRate: c.stat ? Number(c.stat.pickRate.toFixed(3)) : null,
     winrate: c.stat ? Number(c.stat.winrate.toFixed(3)) : null,
     isCounter: Boolean(c.counter),
+    score: Number(c.score.toFixed(2)),
     reason: reasons[0],
     reasons,
   });
@@ -280,6 +390,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   for (const c of path) {
     const reasons = [];
     if (c.counter) reasons.push(c.counter.reason);
+    reasons.push(...c.forecast.reasons);
     if (c.stat) reasons.push(statReason(c.stat, settings));
     else reasons.push('По этому герою мало данных — совет из справочника контр');
     const ownedFrom = (c.item.components ?? []).filter((id) => inPath.has(id)).map((id) => itemById.get(id).nameRu);
@@ -296,7 +407,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     .sort((a, b) => b.counter.bonus - a.counter.bonus || a.item.cost - b.item.cost || a.item.id - b.item.id)
     .slice(0, settings.maxSituational);
   const situational = situationalPool.map((c) => ({
-    ...entry(c, [c.counter.reason, ...(c.stat ? [statReason(c.stat, settings)] : [])]),
+    ...entry(c, [c.counter.reason, ...c.forecast.reasons, ...(c.stat ? [statReason(c.stat, settings)] : [])]),
     against: c.counter.against,
     why: c.counter.why,
   }));
@@ -336,11 +447,12 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
         c.stat.lift >= settings.alsoGoodMinLift,
     )
     .slice(0, settings.maxAlsoGood)
-    .map((c) => entry(c, [statReason(c.stat, settings)]));
+    .map((c) => entry(c, [...c.forecast.reasons, statReason(c.stat, settings)]));
 
   const empty = path.length === 0;
   return {
     lane,
+    predictions: predictions.map(({ effect, label, who }) => ({ effect, label, who })),
     phases,
     situational,
     alsoGood,

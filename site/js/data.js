@@ -34,6 +34,7 @@ export function recommendData(core, heroId, heroFile) {
     heroTags: core.heroTags,
     counterItems: core.counterItems,
     heroStats: core.heroStats,
+    heroProfiles: core.heroProfiles ?? {},
     meta: core.meta,
     matchups: { [heroId]: heroFile?.matchups ?? {} },
     heroItemStats: heroFile,

@@ -171,3 +171,41 @@ test('линия: у героя нет данных по линиям — чес
   assert.equal(result.lane.verdict, 'unknown');
   assert.match(result.lane.text, /мало данных/i);
 });
+
+test('прогноз: враг обычно берёт кражу здоровья — срез лечения ценнее, причина с цифрой', () => {
+  const data = makeData();
+  const plain = buildForMatch({ hero: HERO.main }, data);
+  const vsGunner = buildForMatch({ hero: HERO.main, enemies: [HERO.gunner] }, data);
+  const find = (result) => [...result.phases.mid].find((entry) => entry.itemId === ITEM.healCut);
+
+  assert.ok(find(vsGunner).reasons.includes('Прогноз: обычно берут кражу здоровья — Gunner (ру) 80%'));
+  assert.ok(find(vsGunner).score > find(plain).score);
+  assert.equal(vsGunner.predictions[0].effect, 'lifesteal');
+});
+
+test('прогноз: редкие покупки врага (меньше 30% игр) не учитываем', () => {
+  const result = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, makeData());
+  const healCut = [...result.phases.mid].find((entry) => entry.itemId === ITEM.healCut);
+  assert.ok(!healCut.reasons.some((reason) => reason.startsWith('Прогноз')));
+});
+
+test('прогноз: если срез лечения скорее всего возьмёт союзник, тебе он менее срочен', () => {
+  const data = makeData();
+  const alone = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, data);
+  const withAlly = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA], allies: [HERO.gunner] }, data);
+  const find = (result) => [...result.phases.mid, ...result.situational].find((entry) => entry.itemId === ITEM.healCut);
+
+  assert.ok(find(withAlly).score < find(alone).score);
+  assert.ok(find(withAlly).reasons.includes('Срез лечения скорее всего возьмёт и союзник: Gunner (ру) 60%'));
+});
+
+test('прогноз «снизь защиту врага» — только если твой урон того же типа', () => {
+  const data = makeData();
+  data.items.find((item) => item.id === ITEM.healCut).effects = ['spirit-shred'];
+  data.heroProfiles[HERO.gunner] = { 'spirit-resist': [0.9, 999] };
+  // У главного героя спиритические покупки — только Heal Cut и Late Item (35 из 190 тысяч, меньше 35%).
+  const result = buildForMatch({ hero: HERO.main, enemies: [HERO.gunner] }, data);
+  const healCut = [...result.phases.mid].find((entry) => entry.itemId === ITEM.healCut);
+  assert.ok(!healCut.reasons.some((reason) => reason.startsWith('Прогноз')));
+  assert.deepEqual(result.predictions, []);
+});

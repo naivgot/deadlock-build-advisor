@@ -196,7 +196,8 @@ const PHASES = [
   ['late', 'Поздние', 'после 22 минуты'],
 ];
 
-const LANE_LABELS = { hard: 'Тяжёлая', even: 'Ровная', easy: 'Лёгкая', unknown: 'Мало данных' };
+
+const LANE_LABELS ={ hard: 'Тяжёлая', even: 'Ровная', easy: 'Лёгкая', unknown: 'Мало данных' };
 
 function laneCard(lane) {
   const who = `${lane.ally ? `Ты и ${lane.ally}` : 'Ты'} против ${lane.enemies.join(' и ')}`;
@@ -231,6 +232,19 @@ function renderResult(result) {
     ),
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
     result.lane ? laneCard(result.lane) : null,
+    result.predictions.length > 0
+      ? card(
+          'Чего ждать от врагов',
+          h('p', { class: 'muted' }, 'Прогноз по тому, что эти герои обычно покупают (доля их игр):'),
+          h(
+            'ul',
+            { class: 'swap-list' },
+            result.predictions.slice(0, 4).map((p) =>
+              h('li', {}, h('strong', {}, `Берут ${p.label}`), h('span', { class: 'muted' }, p.who.slice(0, 4).map((w) => `${w.name} ${Math.round(w.prob * 100)}%`).join(', '))),
+            ),
+          ),
+        )
+      : null,
     result.enemies.length === 0 ? h('p', { class: 'notice' }, 'Враги не выбраны — показан обычный билд героя. Добавь врагов, чтобы подстроить его под матч.') : null,
     result.message ? h('p', { class: 'notice' }, result.message) : null,
     card(

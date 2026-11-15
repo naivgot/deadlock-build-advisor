@@ -5,6 +5,7 @@ import { access, copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promise
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readJson, writeJson } from '../src/lib/files.js';
+import { heroEffectProfile } from '../src/logic/match-build.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const DATA = join(ROOT, 'data');
@@ -104,6 +105,7 @@ async function main() {
     components: item.components,
     icon: localIcon('items', item),
     description: item.description,
+    effects: item.effects ?? [],
   }));
   const abilities = staticAbilities.abilities.map((ability) => ({
     id: ability.id,
@@ -116,6 +118,17 @@ async function main() {
   }));
 
   const downloaded = await downloadIcons(icons);
+
+  // Профили героев: какие эффекты у них скорее всего будут (по их обычным покупкам) — для прогноза.
+  const heroFiles = new Map();
+  const heroProfiles = {};
+  for (const hero of heroes) {
+    const path = join(DATA, 'stats', 'heroes', `${hero.id}.json`);
+    if (!(await exists(path))) continue; // новый герой без статистики — сайт покажет «мало данных»
+    const stats = await readJson(path);
+    heroFiles.set(hero.id, stats);
+    heroProfiles[hero.id] = heroEffectProfile(stats.items?.all, heroStats[hero.id]?.all?.[1], items);
+  }
 
   // Данные кладём заново целиком, чтобы не оставалось файлов удалённых героев.
   const outData = join(SITE, 'data');
@@ -136,18 +149,14 @@ async function main() {
     heroTags: { tags: heroTags.tags, heroes: heroTags.heroes },
     counterItems: { counters: counterItems.counters },
     heroStats,
+    heroProfiles,
   };
   await writeJson(join(outData, 'core.json'), core, { compact: true });
 
-  let heroFiles = 0;
-  for (const hero of heroes) {
-    const path = join(DATA, 'stats', 'heroes', `${hero.id}.json`);
-    if (!(await exists(path))) continue; // новый герой без статистики — сайт покажет «мало данных»
-    const stats = await readJson(path);
-    await writeJson(join(outData, 'heroes', `${hero.id}.json`), { ...stats, matchups: matchups[hero.id] ?? {} }, { compact: true });
-    heroFiles++;
+  for (const [heroId, stats] of heroFiles) {
+    await writeJson(join(outData, 'heroes', `${heroId}.json`), { ...stats, matchups: matchups[heroId] ?? {} }, { compact: true });
   }
-  if (heroFiles === 0) throw new Error('Нет статистики ни по одному герою. Сайт не собран.');
+  if (heroFiles.size === 0) throw new Error('Нет статистики ни по одному герою. Сайт не собран.');
 
   // Логика советов — та же самая, что проверяется тестами. Копируем все её файлы.
   const logicOut = join(SITE, 'js', 'logic');
@@ -158,7 +167,7 @@ async function main() {
   }
 
   console.log(
-    `Сайт собран. Героев: ${heroes.length} (со статистикой: ${heroFiles}), предметов: ${items.length}, ` +
+    `Сайт собран. Героев: ${heroes.length} (со статистикой: ${heroFiles.size}), предметов: ${items.length}, ` +
       `иконок скачано: ${downloaded}. Данные от ${statsMeta.fetchedAt.slice(0, 10)}.`,
   );
 }
