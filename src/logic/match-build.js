@@ -27,6 +27,16 @@ export const MATCH_SETTINGS = {
   alsoGoodMinPickRate: 0.03,
   alsoGoodMinLift: -0.5,
   maxSwaps: 3,
+  // Линия. Враг на линии весит в полтора раза больше обычного, на тяжёлой линии — ещё в полтора.
+  laneEnemyWeight: 1.5,
+  hardLaneExtra: 1.5,
+  // Линия «тяжёлая» или «лёгкая», если к 15-й минуте разница в душах обычно больше 350.
+  laneThreshold: 350,
+  minLaneMatches: 300,
+  minLaneDuoMatches: 400,
+  // На тяжёлой линии подсказываем до 3 дешёвых контр (тир 1–2) против врагов на линии.
+  laneTipMaxTier: 2,
+  maxLaneTips: 3,
   // Примерная минута покупки для предметов без статистики — по тиру.
   minuteByTier: { 1: 4, 2: 10, 3: 18, 4: 26, 5: 30 },
 };
@@ -68,6 +78,99 @@ function itemStat(item, ctx, settings) {
   };
 }
 
+// Насколько тяжёлая линия «пара на пару». Если точная четвёрка встречалась достаточно часто — берём её,
+// иначе складываем влияние каждого героя: средняя линия героя + (против врага − средняя) + (с напарником − средняя).
+export function laneReport(allyId, enemyIds, laneData, data, heroById, settings = MATCH_SETTINGS) {
+  if (enemyIds.length === 0) return null;
+  const base = {
+    enemies: enemyIds.map((id) => heroById.get(id).nameRu),
+    ally: allyId ? heroById.get(allyId).nameRu : null,
+    tips: [],
+  };
+
+  let estimate = null;
+  if (laneData) {
+    const key = allyId && enemyIds.length === 2 ? `${allyId}|${[...enemyIds].sort((a, b) => a - b).join(',')}` : null;
+    const duo = key ? laneData.duos?.[key] : null;
+    if (duo && duo[1] >= settings.minLaneDuoMatches) {
+      estimate = { basis: 'exact', winrate: duo[0] / duo[1], netWorth: duo[2], matches: duo[1] };
+    } else {
+      const parts = [...enemyIds.map((id) => laneData.vs?.[id]), ...(allyId ? [laneData.with?.[allyId]] : [])];
+      const all = Object.values(laneData.vs ?? {});
+      const total = all.reduce((sum, cell) => sum + cell[1], 0);
+      if (total > 0 && parts.every((cell) => cell && cell[1] >= settings.minLaneMatches)) {
+        const avgNetWorth = all.reduce((sum, cell) => sum + cell[2] * cell[1], 0) / total;
+        const avgWinrate = all.reduce((sum, cell) => sum + cell[0], 0) / total;
+        estimate = {
+          basis: 'heroes',
+          netWorth: avgNetWorth + parts.reduce((sum, cell) => sum + (cell[2] - avgNetWorth), 0),
+          winrate: avgWinrate + parts.reduce((sum, cell) => sum + (cell[0] / cell[1] - avgWinrate), 0),
+          matches: Math.min(...parts.map((cell) => cell[1])),
+        };
+      }
+    }
+  }
+
+  if (!estimate) {
+    return {
+      ...base,
+      verdict: 'unknown',
+      basis: null,
+      netWorthDiff: null,
+      winrate: null,
+      matches: 0,
+      text: 'По этой линии мало данных — насколько она тяжёлая, пока подсказать не можем.',
+    };
+  }
+
+  const netWorthDiff = Math.round(estimate.netWorth);
+  const verdict = netWorthDiff <= -settings.laneThreshold ? 'hard' : netWorthDiff >= settings.laneThreshold ? 'easy' : 'even';
+  const label = { hard: 'Линия тяжёлая', even: 'Линия ровная', easy: 'Линия лёгкая' }[verdict];
+  const amount = Math.round(Math.abs(netWorthDiff) / 10) * 10;
+  const diffText =
+    amount === 0
+      ? 'к 15-й минуте души обычно поровну'
+      : `к 15-й минуте ты обычно ${netWorthDiff < 0 ? 'отстаёшь' : 'опережаешь'} примерно на ${num(amount)} душ`;
+  const basisText =
+    estimate.basis === 'exact'
+      ? `по ${num(estimate.matches)} матчам именно с такой линией`
+      : 'оценка по каждому герою отдельно';
+
+  // На тяжёлой линии — дешёвые предметы против врагов на линии из справочника контр.
+  const tips = [];
+  if (verdict === 'hard') {
+    const itemById = new Map((data.items ?? []).map((item) => [item.id, item]));
+    const byItem = new Map();
+    for (const id of enemyIds) {
+      for (const tag of data.heroTags?.heroes?.[id]?.tags ?? []) {
+        for (const counter of data.counterItems?.counters?.[tag] ?? []) {
+          const item = itemById.get(counter.itemId);
+          if (!item || item.tier > settings.laneTipMaxTier) continue;
+          const tip = byItem.get(item.id) ?? { ...describe(item), cost: item.cost, why: counter.why, against: new Set() };
+          tip.against.add(heroById.get(id).nameRu);
+          byItem.set(item.id, tip);
+        }
+      }
+    }
+    for (const tip of [...byItem.values()]
+      .sort((a, b) => b.against.size - a.against.size || a.cost - b.cost || a.itemId - b.itemId)
+      .slice(0, settings.maxLaneTips)) {
+      tips.push({ ...tip, against: [...tip.against] });
+    }
+  }
+
+  return {
+    ...base,
+    verdict,
+    basis: estimate.basis,
+    netWorthDiff,
+    winrate: Number(estimate.winrate.toFixed(3)),
+    matches: estimate.matches,
+    text: `${label}: ${diffText}. Побед ${num(estimate.winrate * 100)}% (${basisText}).`,
+    tips,
+  };
+}
+
 // Оставляет только известных героев, без повторов и без самого игрока.
 function cleanHeroes(ids, heroById, exclude, warnings, label) {
   const result = [];
@@ -92,7 +195,7 @@ function statReason(stat, settings) {
 
 /**
  * input: { hero, laneAlly, allies, laneEnemies, enemies, rankGroup } — id героев.
- * Возвращает { phases: { early, mid, late }, situational, alsoGood, swaps, abilityOrder, confidence,
+ * Возвращает { lane, phases: { early, mid, late }, situational, alsoGood, swaps, abilityOrder, confidence,
  *              enemies, allies, message, warnings }.
  * Союзники пока только запоминаются: их учёт — задачи 1.5в и 1.5г.
  */
@@ -112,7 +215,14 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   const ctx = pickStats(heroId, rankGroup, data, settings);
   ctx.tierAll = tierBaselines(ctx.itemsAll, itemById);
   ctx.tierGroup = tierBaselines(ctx.itemsGroup, itemById);
-  const counterByItem = collectCounters(heroId, enemies, data, ctx, settings);
+
+  // Линия: враги на линии — те из врагов, кого указали в этой роли.
+  const laneEnemyIds = (input.laneEnemies ?? []).filter((id, index, list) => list.indexOf(id) === index && enemies.some((e) => e.id === id));
+  const laneAllyId = allies.some((ally) => ally.id === input.laneAlly) ? input.laneAlly : null;
+  const lane = laneReport(laneAllyId, laneEnemyIds, ctx.stats?.lane, data, heroById, settings);
+  const laneWeight = settings.laneEnemyWeight * (lane?.verdict === 'hard' ? settings.hardLaneExtra : 1);
+  const weightedEnemies = enemies.map((enemy) => (laneEnemyIds.includes(enemy.id) ? { ...enemy, weight: laneWeight } : enemy));
+  const counterByItem = collectCounters(heroId, weightedEnemies, data, ctx, settings);
 
   // Оценка каждого предмета: популярность + насколько чаще побеждают + бонус за контру.
   const candidates = [];
@@ -230,6 +340,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
 
   const empty = path.length === 0;
   return {
+    lane,
     phases,
     situational,
     alsoGood,

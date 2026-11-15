@@ -118,3 +118,56 @@ test('функция не меняет входные данные', () => {
   buildForMatch({ hero: HERO.main, enemies: [HERO.healerA], allies: [HERO.gunner] }, data);
   assert.equal(JSON.stringify(data), before);
 });
+
+test('линия: без врагов на линии отчёта нет', () => {
+  assert.equal(buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, makeData()).lane, null);
+});
+
+test('линия: точная четвёрка «пара на пару», если по ней достаточно матчей', () => {
+  const result = buildForMatch(
+    { hero: HERO.main, laneAlly: HERO.gunner, laneEnemies: [HERO.healerB, HERO.healerA] },
+    makeData(),
+  );
+  assert.equal(result.lane.basis, 'exact');
+  assert.equal(result.lane.verdict, 'hard');
+  assert.equal(result.lane.netWorthDiff, -500);
+  assert.equal(result.lane.matches, 2000);
+  assert.match(result.lane.text, /Линия тяжёлая/);
+  assert.match(result.lane.text, /отстаёшь примерно на 500 душ/);
+});
+
+test('линия: без точной четвёрки — сумма влияний отдельных героев', () => {
+  const data = makeData();
+  // Средняя разница в душах по всем линиям героя: (-600 + 100 + 300) / 3 ≈ -67.
+  const even = buildForMatch({ hero: HERO.main, laneEnemies: [HERO.healerB] }, data);
+  assert.equal(even.lane.basis, 'heroes');
+  assert.equal(even.lane.verdict, 'even');
+  assert.equal(even.lane.netWorthDiff, 100);
+
+  const withAlly = buildForMatch({ hero: HERO.main, laneAlly: HERO.gunner, laneEnemies: [HERO.healerB] }, data);
+  assert.equal(withAlly.lane.netWorthDiff, 567, 'напарник добавляет своё влияние: 100 + (400 − (−67))');
+  assert.equal(withAlly.lane.verdict, 'easy');
+});
+
+test('линия: на тяжёлой линии советуем дешёвые контры против врагов на линии', () => {
+  const result = buildForMatch({ hero: HERO.main, laneEnemies: [HERO.healerA] }, makeData());
+  assert.equal(result.lane.verdict, 'hard');
+  assert.deepEqual(result.lane.tips.map((tip) => tip.itemId), [ITEM.healCut]);
+  assert.match(result.lane.tips[0].why, /Режет лечение/);
+});
+
+test('враг на тяжёлой линии весит больше обычного врага', () => {
+  const settings = { ...MATCH_SETTINGS, phaseQuota: { early: 1, mid: 2, late: 1 } };
+  const plain = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, makeData(), settings);
+  const lane = buildForMatch({ hero: HERO.main, laneEnemies: [HERO.healerA] }, makeData(), settings);
+  assert.ok(!pathIds(plain).includes(ITEM.healCut), 'обычный враг: контра не влезла в билд');
+  assert.ok(pathIds(lane).includes(ITEM.healCut), 'тот же враг на тяжёлой линии: контра в билде');
+});
+
+test('линия: у героя нет данных по линиям — честно «мало данных»', () => {
+  const data = makeData();
+  delete data.heroItemStats.lane;
+  const result = buildForMatch({ hero: HERO.main, laneEnemies: [HERO.healerA] }, data);
+  assert.equal(result.lane.verdict, 'unknown');
+  assert.match(result.lane.text, /мало данных/i);
+});

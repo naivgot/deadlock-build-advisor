@@ -245,3 +245,10 @@ details > .search { margin-bottom: 10px; }
 .swap-list { margin: 0; padding-left: 18px; display: grid; gap: 8px; }
 .swap-list li { display: grid; gap: 2px; }
 #settings > summary { color: var(--text); font-weight: 700; }
+
+/* Линия */
+.lane-badge { padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; background: var(--card-2); color: var(--muted); }
+.lane-hard { border-color: #b4553f; }
+.lane-hard .lane-badge { background: #4a2a22; color: #ff9f86; }
+.lane-easy .lane-badge { background: #213a29; color: var(--ok); }
+.lane-even .lane-badge { background: #3a3320; color: var(--accent); }

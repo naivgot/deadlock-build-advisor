@@ -159,7 +159,7 @@ export function collectCounters(heroId, enemies, data, ctx, settings) {
     const hard =
       matchup && matchup[1] >= settings.minMatchupMatches &&
       matchup[0] / matchup[1] < ctx.heroWrAll - settings.hardMatchupGap;
-    const weight = hard ? settings.hardMatchupMultiplier : 1;
+    const weight = (hard ? settings.hardMatchupMultiplier : 1) * (enemy.weight ?? 1);
     const seen = new Set();
 
     for (const tag of data.heroTags?.heroes?.[enemy.id]?.tags ?? []) {

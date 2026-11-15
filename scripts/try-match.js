@@ -26,13 +26,17 @@ const data = {
   matchups: await readJson(join(DATA, 'stats', 'matchups.json')),
   heroItemStats: await readJson(join(DATA, 'stats', 'heroes', `${hero}.json`)).catch(() => null),
 };
-const r = buildForMatch({ hero, laneEnemies: list(arg('lane')).map(find), enemies: list(arg('enemies')).map(find), rankGroup: arg('rank', 'all') }, data);
+const ally = arg('ally') ? find(arg('ally')) : null;
+const r = buildForMatch({ hero, laneAlly: ally, laneEnemies: list(arg('lane')).map(find), enemies: list(arg('enemies')).map(find), rankGroup: arg('rank', 'all') }, data);
 const show = (title, rows) => {
   if (!rows.length) return;
   console.log(`\n${title}:`);
   for (const e of rows) console.log(`  ~${String(e.minute).padStart(2)} мин  ${e.nameRu} (${e.cost})${e.isCounter ? ' [контра]' : ''} — ${e.reasons.join(' · ')}`);
 };
 console.log(`Враги: ${r.enemies.join(', ') || '—'} | ${r.confidence.label}`);
+if (r.lane) console.log(`
+${r.lane.text}${r.lane.tips.length ? '
+  Раньше возьми: ' + r.lane.tips.map((t) => t.nameRu).join(', ') : ''}`);
 show('Ранние', r.phases.early); show('Основные', r.phases.mid); show('Поздние', r.phases.late);
 show('Ситуативные', r.situational); show('Тоже подходит', r.alsoGood);
 for (const s of r.swaps) console.log(`\nЗамена: ${s.text}. ${s.why}`);

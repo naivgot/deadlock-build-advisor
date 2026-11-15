@@ -1,16 +1,18 @@
-// Запросы к API: пауза между запросами и повтор при 429/503.
+// Запросы к API: пауза между запросами и повтор при временных ошибках сервера.
 
-const RETRY_STATUSES = new Set([429, 503]);
+// 429 — слишком много запросов, 502/503 и 520–524 — сервер или посредник временно не справился.
+// 504 не повторяем: по документации API тот же тяжёлый запрос несколько минут падает сразу — надо сужать фильтры.
+const RETRY_STATUSES = new Set([429, 502, 503, 520, 521, 522, 523, 524]);
 
 let lastRequestAt = 0;
 
 const realSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Сколько ждать перед повтором: сначала смотрим заголовок Retry-After, иначе 2, 4, 8 секунд.
+// Сколько ждать перед повтором: сначала смотрим заголовок Retry-After, иначе 5, 10, 20 секунд.
 function retryDelayMs(response, attempt) {
   const retryAfter = Number(response.headers.get('retry-after'));
   if (Number.isFinite(retryAfter) && retryAfter > 0) return retryAfter * 1000;
-  return 2000 * 2 ** attempt;
+  return 5000 * 2 ** attempt;
 }
 
 /**
@@ -48,7 +50,8 @@ export async function fetchJson(url, options = {}) {
       continue;
     }
 
-    const body = (await response.text()).slice(0, 200);
+    const text = await response.text();
+    const body = text.trimStart().startsWith('<') ? '(HTML-страница ошибки)' : text.slice(0, 200);
     const tried = attempt > 0 ? ` после ${attempt + 1} попыток` : '';
     throw new Error(`Запрос не удался${tried}: ${url} — код ${response.status}. Ответ сервера: ${body}`);
   }

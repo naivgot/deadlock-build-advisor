@@ -196,6 +196,27 @@ const PHASES = [
   ['late', 'Поздние', 'после 22 минуты'],
 ];
 
+const LANE_LABELS = { hard: 'Тяжёлая', even: 'Ровная', easy: 'Лёгкая', unknown: 'Мало данных' };
+
+function laneCard(lane) {
+  const who = `${lane.ally ? `Ты и ${lane.ally}` : 'Ты'} против ${lane.enemies.join(' и ')}`;
+  return h(
+    'section',
+    { class: `card lane-card lane-${lane.verdict}` },
+    h('div', { class: 'result-head' }, h('h2', {}, 'Линия'), h('span', { class: 'lane-badge' }, LANE_LABELS[lane.verdict])),
+    h('p', { class: 'muted' }, who),
+    h('p', {}, lane.text),
+    lane.tips.length > 0
+      ? h(
+          'div',
+          { class: 'phase' },
+          h('h3', { class: 'phase-title' }, 'Чтобы пережить линию, раньше возьми одно из:'),
+          h('ul', { class: 'item-list' }, lane.tips.map((tip) => itemRow(tip, `${tip.against.join(', ')}: ${tip.why}`))),
+        )
+      : null,
+  );
+}
+
 function renderResult(result) {
   const hero = heroById(state.picks.me);
   const card = (title, ...children) => h('section', { class: 'card' }, h('h2', {}, title), ...children);
@@ -209,6 +230,7 @@ function renderResult(result) {
       h('button', { type: 'button', class: 'btn btn-quiet', onclick: newMatch }, 'Новый матч'),
     ),
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
+    result.lane ? laneCard(result.lane) : null,
     result.enemies.length === 0 ? h('p', { class: 'notice' }, 'Враги не выбраны — показан обычный билд героя. Добавь врагов, чтобы подстроить его под матч.') : null,
     result.message ? h('p', { class: 'notice' }, result.message) : null,
     card(

@@ -12,6 +12,7 @@ import {
   abilityOrderMinMatches,
   compactItemStats,
   compactItemStatsByNetWorth,
+  compactLane,
   compactMatchups,
   compactMaxFirst,
   groupHeroStats,
@@ -43,6 +44,18 @@ async function loadHeroes() {
   }
 }
 
+const LANE_DUO_MIN_MATCHES = 400;
+
+// Необязательные данные: при ошибке пишем предупреждение и продолжаем без них.
+async function optional(label, load) {
+  try {
+    return await load();
+  } catch (error) {
+    console.warn(`  Предупреждение — пропущено (${label}): ${error.message.slice(0, 160)}`);
+    return null;
+  }
+}
+
 // Все запросы по одному герою. Запросы идут по очереди, пауза — внутри apiGet.
 async function fetchHero(hero, patchTimestamp, heroMatches) {
   const base = { hero_id: hero.id, min_unix_timestamp: patchTimestamp };
@@ -61,6 +74,20 @@ async function fetchHero(hero, patchTimestamp, heroMatches) {
     await apiGet('/v1/analytics/item-stats', { ...base, bucket: `net_worth_by_${NET_WORTH_STEP}` }),
   );
 
+  // Линии «пара на пару»: победы и разница в душах на 15-й минуте. Ответ большой, сразу сжимаем.
+  const lane = await optional(`${hero.nameRu}: линии`, async () =>
+    compactLane(
+      await apiGet('/v1/analytics/lane-matchup-stats', {
+        hero_ids: hero.id,
+        min_unix_timestamp: patchTimestamp,
+        group_by: 'hero_ids,enemy_hero_ids',
+        min_matches: 5,
+      }),
+      hero.id,
+      LANE_DUO_MIN_MATCHES,
+    ),
+  );
+
   const maxFirst = compactMaxFirst(await apiGet('/v1/analytics/ability-max-first-stats', base));
   const orders = pickAbilityOrders(
     await apiGet('/v1/analytics/ability-order-stats', {
@@ -69,7 +96,7 @@ async function fetchHero(hero, patchTimestamp, heroMatches) {
     }),
   );
 
-  return { heroId: hero.id, items, itemsByNetWorth: byNetWorth, abilities: { maxFirst, orders } };
+  return { heroId: hero.id, items, itemsByNetWorth: byNetWorth, lane, abilities: { maxFirst, orders } };
 }
 
 async function main() {

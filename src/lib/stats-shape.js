@@ -89,3 +89,45 @@ export function pickAbilityOrders(rows, limit = 10) {
 export function abilityOrderMinMatches(heroMatches) {
   return Math.max(20, Math.round((heroMatches ?? 0) * 0.002));
 }
+
+// Статистика предметов героя против каждого врага (весь матч): { врагId: { предметId: [победы, матчи] } }.
+// Редкие сочетания отбрасываем — по ним всё равно ничего не сказать, а файл растёт.
+export function compactEnemyItemStats(rows, minMatches = 200) {
+  const result = {};
+  for (const row of rows) {
+    if (row.matches < minMatches) continue;
+    (result[row.bucket] ??= {})[row.item_id] = [row.wins, row.matches];
+  }
+  return result;
+}
+
+// Линии «пара на пару» для одного героя.
+// vs — против каждого врага на линии, with — с каждым напарником, duos — точные четвёрки с достаточной выборкой.
+// Каждое значение: [победы, матчи, средняя разница в душах на 15-й минуте].
+export function compactLane(rows, heroId, minDuoMatches = 150) {
+  const sums = { vs: {}, with: {}, duos: {} };
+  const add = (bucket, key, row) => {
+    const cell = (bucket[key] ??= [0, 0, 0, 0]);
+    cell[0] += row.wins;
+    cell[1] += row.matches_played;
+    cell[2] += row.net_worth_diff * row.sample_matches;
+    cell[3] += row.sample_matches;
+  };
+  for (const row of rows) {
+    if (!row.hero_ids.includes(heroId)) continue;
+    const ally = row.hero_ids.find((id) => id !== heroId);
+    for (const enemy of row.enemy_hero_ids) add(sums.vs, enemy, row);
+    if (ally !== undefined) add(sums.with, ally, row);
+    if (ally !== undefined && row.matches_played >= minDuoMatches) {
+      add(sums.duos, `${ally}|${[...row.enemy_hero_ids].sort((a, b) => a - b).join(',')}`, row);
+    }
+  }
+  const finish = (bucket) =>
+    Object.fromEntries(
+      Object.entries(bucket).map(([key, [wins, matches, nw, samples]]) => [
+        key,
+        [wins, matches, samples > 0 ? Math.round(nw / samples) : 0],
+      ]),
+    );
+  return { vs: finish(sums.vs), with: finish(sums.with), duos: finish(sums.duos) };
+}

@@ -109,6 +109,12 @@ export function makeData() {
         [ITEM.bigArmor]: { 3000: [5400, 10000], 6000: [8100, 15000] },
         [ITEM.lateItem]: { 9000: [9000, 15000] },
       },
+      // Линии: против кого [победы, матчи, разница в душах на 15-й минуте], с каким напарником, точные четвёрки.
+      lane: {
+        vs: { [HERO.healerA]: [3000, 8000, -600], [HERO.healerB]: [4000, 8000, 100], [HERO.gunner]: [4200, 8000, 300] },
+        with: { [HERO.gunner]: [4500, 8000, 400], [HERO.newbie]: [3800, 8000, -100] },
+        duos: { [`${HERO.gunner}|${HERO.healerA},${HERO.healerB}`]: [900, 2000, -500] },
+      },
       abilities: {
         maxFirst: [
           { abilityId: 12, wins: 30000, matches: 60000 },

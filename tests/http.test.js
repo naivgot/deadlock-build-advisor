@@ -53,3 +53,12 @@ test('не повторяет при 404 и показывает ответ се
   );
   assert.equal(calls.length, 1);
 });
+
+test('повторяет при временной ошибке посредника (502) и не тащит HTML в текст ошибки', async () => {
+  const { fetchImpl, calls } = fakeFetch([{ status: 502 }, { status: 200, body: { ok: 1 } }]);
+  assert.deepEqual(await fetchJson('https://example.test/f', { fetchImpl, sleep: noSleep }), { ok: 1 });
+  assert.equal(calls.length, 2);
+
+  const html = async () => new Response('<!doctype html><html>ошибка</html>', { status: 500 });
+  await assert.rejects(fetchJson('https://example.test/g', { fetchImpl: html, sleep: noSleep }), /\(HTML-страница ошибки\)/);
+});
