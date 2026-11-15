@@ -1,0 +1,78 @@
+# Раз в сутки (и по кнопке) скачивает свежие данные, проверяет их тестами, собирает сайт и публикует на GitHub Pages.
+# Если любой шаг упал — публикации нет, на сайте остаются вчерашние данные, а GitHub присылает письмо об ошибке.
+# При изменении кода (push) сайт пересобирается на данных из репозитория, без долгого сбора статистики.
+name: Обновление данных и сайта
+
+on:
+  schedule:
+    - cron: '30 3 * * *' # каждый день в 06:30 по Минску (03:30 UTC)
+  workflow_dispatch: # кнопка «Run workflow» на вкладке Actions
+  push:
+    branches: [main]
+    paths: ['site/**', 'src/**', 'scripts/build-site.js', 'data/**', '.github/workflows/**']
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Две публикации одновременно не запускаем: новая ждёт, пока закончится старая.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Скачать код
+        uses: actions/checkout@v4
+
+      - name: Установить Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Скачать героев и предметы
+        if: github.event_name != 'push'
+        run: npm run fetch:static
+        env:
+          DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
+
+      - name: Скачать статистику патча
+        if: github.event_name != 'push'
+        timeout-minutes: 240
+        run: npm run fetch:stats
+        env:
+          DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
+
+      - name: Тесты
+        run: npm test
+
+      - name: Собрать сайт на свежих данных
+        if: github.event_name != 'push'
+        run: npm run build:site
+
+      - name: Собрать сайт на данных из репозитория
+        if: github.event_name == 'push'
+        run: npm run build:site -- --allow-stale
+
+      - name: Подготовить публикацию
+        uses: actions/configure-pages@v5
+
+      - name: Упаковать сайт
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Опубликовать на GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
