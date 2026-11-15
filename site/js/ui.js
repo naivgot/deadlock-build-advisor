@@ -112,3 +112,8 @@ export function abilityCard(order, abilities) {
     steps.length > 0 ? h('ol', { class: 'ability-order' }, steps) : null,
   );
 }
+
+// Сервис-воркер: сайт можно установить на телефон и открыть без интернета (см. sw.js).
+export function registerServiceWorker() {
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+}

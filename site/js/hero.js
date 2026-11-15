@@ -2,7 +2,7 @@
 import { loadCore, loadHero, recommendData } from './data.js';
 import { buildForMatch } from './logic/match-build.js';
 import { countersAgainst } from './logic/recommend.js';
-import { abilityCard, dataDateText, h, icon, itemRow, percent } from './ui.js';
+import { abilityCard, dataDateText, h, icon, itemRow, percent, registerServiceWorker } from './ui.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -87,4 +87,5 @@ async function start() {
   $('app').hidden = false;
 }
 
+registerServiceWorker();
 start();

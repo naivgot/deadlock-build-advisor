@@ -1,7 +1,7 @@
 // Главная страница: состав матча → билд на весь матч.
 import { loadCore, loadHero, recommendData } from './data.js';
 import { buildForMatch } from './logic/match-build.js';
-import { abilityCard, buildRow, dataDateText, h, icon, itemRow } from './ui.js';
+import { abilityCard, buildRow, dataDateText, h, icon, itemRow, registerServiceWorker } from './ui.js';
 
 const STORAGE_KEY = 'dba-match-v1';
 const $ = (id) => document.getElementById(id);
@@ -344,4 +344,5 @@ async function start() {
   $('go').addEventListener('click', () => showBuild({ scroll: true }));
 }
 
+registerServiceWorker();
 start();
