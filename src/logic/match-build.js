@@ -60,6 +60,9 @@ export const MATCH_SETTINGS = {
   minDamageShare: 0.35,
   // Сколько героев перечислять в причине прогноза.
   maxNamesInReason: 3,
+  // Статистика союзников (задача 1.5е): половина измеренного эффекта, всего не больше ±2,5 п.п.
+  allyStatWeight: 0.5,
+  allyStatCap: 2.5,
   // Эффекты, которые достаточно одному в команде.
   allyRules: [{ allyHas: 'anti-heal', label: 'Срез лечения' }],
   // Примерная минута покупки для предметов без статистики — по тиру.
@@ -275,11 +278,22 @@ function predictAllyEffects(allies, data, settings) {
   return result;
 }
 
-// Прибавка и объяснения для предмета по прогнозу врагов и союзников.
-function forecastForItem(item, predictions, allyPredictions, settings) {
+// Прибавка и объяснения для предмета по прогнозу врагов и союзников и по статистике союзников.
+function forecastForItem(item, predictions, allyPredictions, settings, allyEffects = null, allies = []) {
   const effects = item.effects ?? [];
   let bonus = 0;
   const reasons = [];
+  // Статистика: «с этим союзником предмет даёт на N% больше/меньше побед, чем обычно».
+  let allyBonus = 0;
+  for (const ally of allies) {
+    const cell = allyEffects?.[ally.id]?.[item.id];
+    if (!cell) continue;
+    allyBonus += settings.allyStatWeight * cell[0];
+    reasons.push(
+      `С союзником ${ally.nameRu} с ним побеждают на ${num(Math.abs(cell[0]))}% ${cell[0] > 0 ? 'чаще' : 'реже'} обычного (последние дни)`,
+    );
+  }
+  bonus += Math.max(-settings.allyStatCap, Math.min(settings.allyStatCap, allyBonus));
   const best = predictions.filter((p) => effects.includes(p.boost)).sort((a, b) => b.sum - a.sum)[0];
   if (best) {
     bonus += Math.min(settings.predictCap, settings.predictWeight * best.sum);
@@ -360,7 +374,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     const stat = itemStat(item, ctx, settings);
     const counter = counterByItem.get(item.id) ?? null;
     if (!stat && !counter) continue;
-    const forecast = forecastForItem(item, predictions, allyPredictions, settings);
+    const forecast = forecastForItem(item, predictions, allyPredictions, settings, ctx.stats?.allyEffects, allies);
     const score =
       (stat ? stat.lift + settings.popularityWeight * stat.pickRate : 0) + (counter ? counter.bonus : 0) + forecast.bonus;
     candidates.push({

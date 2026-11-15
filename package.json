@@ -10,6 +10,7 @@
   "scripts": {
     "fetch:static": "node scripts/fetch-static.js",
     "fetch:stats": "node scripts/fetch-stats.js",
+    "fetch:allies": "node scripts/fetch-allies.js",
     "build:site": "node scripts/build-site.js",
     "test": "node --test",
     "dev": "node scripts/dev-server.js"

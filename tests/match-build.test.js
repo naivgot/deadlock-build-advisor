@@ -219,3 +219,15 @@ test('контры, работающие через чужой тип урона
   assert.ok(!all.some((entry) => entry.itemId === ITEM.healCut && entry.isCounter), 'не помечаем как контру');
   assert.deepEqual(result.lane.tips, [], 'и не подсказываем на линии');
 });
+
+test('статистика союзников: предмет с этим союзником работает лучше или хуже обычного', () => {
+  const data = makeData();
+  const alone = buildForMatch({ hero: HERO.main }, data);
+  const withAlly = buildForMatch({ hero: HERO.main, allies: [HERO.gunner] }, data);
+  const find = (result, id) => result.phases.mid.find((entry) => entry.itemId === id);
+
+  assert.ok(find(withAlly, ITEM.bigArmor).score > find(alone, ITEM.bigArmor).score);
+  assert.ok(find(withAlly, ITEM.bigArmor).reasons.includes('С союзником Gunner (ру) с ним побеждают на 4% чаще обычного (последние дни)'));
+  assert.ok(find(withAlly, ITEM.betterGun).score < find(alone, ITEM.betterGun).score);
+  assert.ok(find(withAlly, ITEM.betterGun).reasons.some((reason) => /на 3% реже обычного/.test(reason)));
+});

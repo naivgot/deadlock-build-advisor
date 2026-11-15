@@ -126,6 +126,9 @@ async function main() {
     const path = join(DATA, 'stats', 'heroes', `${hero.id}.json`);
     if (!(await exists(path))) continue; // новый герой без статистики — сайт покажет «мало данных»
     const stats = await readJson(path);
+    // Статистика союзников (медленный сбор fetch:allies) — только того же патча.
+    const allies = await readJson(join(DATA, 'allies', `${hero.id}.json`)).catch(() => null);
+    if (allies && allies.patchTimestamp === statsMeta.patchTimestamp) stats.allyEffects = allies.effects;
     heroFiles.set(hero.id, stats);
     heroProfiles[hero.id] = heroEffectProfile(stats.items?.all, heroStats[hero.id]?.all?.[1], items);
   }

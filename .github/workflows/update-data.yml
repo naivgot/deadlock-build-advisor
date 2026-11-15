@@ -1,6 +1,6 @@
 # Раз в сутки (и по кнопке) скачивает свежие данные, проверяет их тестами, собирает сайт и публикует на GitHub Pages.
 # Если любой шаг упал — публикации нет, на сайте остаются вчерашние данные, а GitHub присылает письмо об ошибке.
-# При изменении кода (push) сайт пересобирается на данных из репозитория, без долгого сбора статистики.
+# При изменении кода (push) сайт пересобирается без долгого сбора: данные берутся из кэша последнего ночного запуска.
 name: Обновление данных и сайта
 
 on:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch: # кнопка «Run workflow» на вкладке Actions
   push:
     branches: [main]
-    paths: ['site/**', 'src/**', 'scripts/build-site.js', 'data/**', '.github/workflows/**']
+    paths: ['site/**', 'src/**', 'scripts/build-site.js', 'data/manual/**', 'data/allies/**', '.github/workflows/update-data.yml']
 
 permissions:
   contents: read
@@ -34,6 +34,7 @@ jobs:
         with:
           node-version: 22
 
+      # Ночной запуск: свежие данные из API.
       - name: Скачать героев и предметы
         if: github.event_name != 'push'
         run: npm run fetch:static
@@ -47,6 +48,26 @@ jobs:
         env:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
+      - name: Сохранить данные в кэш для следующих сборок
+        if: github.event_name != 'push'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/static
+            data/stats
+          key: data-${{ github.run_id }}
+
+      # Сборка после изменения кода: последние данные из кэша (если кэша нет — данные из репозитория).
+      - name: Взять данные последнего ночного запуска
+        if: github.event_name == 'push'
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/static
+            data/stats
+          key: data-none
+          restore-keys: data-
+
       - name: Тесты
         run: npm test
 
@@ -54,7 +75,7 @@ jobs:
         if: github.event_name != 'push'
         run: npm run build:site
 
-      - name: Собрать сайт на данных из репозитория
+      - name: Собрать сайт на данных из кэша
         if: github.event_name == 'push'
         run: npm run build:site -- --allow-stale
 
