@@ -1,21 +1,37 @@
-// Главная страница: выбор героя, врагов, душ и предметов → три совета.
+// Главная страница: состав матча → билд на весь матч.
 import { loadCore, loadHero, recommendData } from './data.js';
-import { recommend } from './logic/recommend.js';
-import { TYPE_NAMES, dataDateText, formatNumber, h, icon, itemRow } from './ui.js';
+import { buildForMatch } from './logic/match-build.js';
+import { abilityCard, buildRow, dataDateText, h, icon, itemRow } from './ui.js';
 
-const MAX_ENEMIES = 6;
-const STORAGE_KEY = 'dba-state-v1';
+const STORAGE_KEY = 'dba-match-v1';
 const $ = (id) => document.getElementById(id);
 
-const state = { hero: null, enemies: [], souls: 0, owned: [], rank: 'all', itemTab: 'weapon', shown: false };
+// Места в составе матча. Порядок в списке = порядок, в котором их предлагаем заполнить.
+const SLOTS = [
+  { key: 'me', box: 'slots-lane-ally', label: 'Ты', pick: 'Выбери своего героя' },
+  { key: 'laneEnemy1', box: 'slots-lane-enemy', label: 'Враг', pick: 'Враг на твоей линии' },
+  { key: 'laneEnemy2', box: 'slots-lane-enemy', label: 'Враг', pick: 'Второй враг на линии' },
+  { key: 'enemy1', box: 'slots-enemy', label: 'Враг', pick: 'Остальные враги' },
+  { key: 'enemy2', box: 'slots-enemy', label: 'Враг', pick: 'Остальные враги' },
+  { key: 'enemy3', box: 'slots-enemy', label: 'Враг', pick: 'Остальные враги' },
+  { key: 'enemy4', box: 'slots-enemy', label: 'Враг', pick: 'Остальные враги' },
+  { key: 'laneAlly', box: 'slots-lane-ally', label: 'Напарник', pick: 'Напарник по линии (необязательно)' },
+  { key: 'ally1', box: 'slots-ally', label: 'Союзник', pick: 'Союзники (необязательно)' },
+  { key: 'ally2', box: 'slots-ally', label: 'Союзник', pick: 'Союзники (необязательно)' },
+  { key: 'ally3', box: 'slots-ally', label: 'Союзник', pick: 'Союзники (необязательно)' },
+  { key: 'ally4', box: 'slots-ally', label: 'Союзник', pick: 'Союзники (необязательно)' },
+];
+const SLOT_KEYS = SLOTS.map((slot) => slot.key);
+
+const state = { picks: {}, active: 'me', rank: 'all', done: [], shown: false };
 let core = null;
 
 // ---------- Память браузера ----------
 
 function saveState() {
   try {
-    const { hero, enemies, souls, owned, rank } = state;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ hero, enemies, souls, owned, rank }));
+    const { picks, rank, done, shown } = state;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ picks, rank, done, shown }));
   } catch {
     // память браузера недоступна (например, приватный режим) — работаем без неё
   }
@@ -32,282 +48,229 @@ function restoreState() {
 
   // Берём только то, что до сих пор существует в данных.
   const heroIds = new Set(core.heroes.map((hero) => hero.id));
-  const itemIds = new Set(core.items.map((item) => item.id));
-  if (heroIds.has(saved.hero)) state.hero = saved.hero;
-  if (Array.isArray(saved.enemies)) {
-    state.enemies = saved.enemies.filter((id) => heroIds.has(id) && id !== state.hero).slice(0, MAX_ENEMIES);
+  const used = new Set();
+  for (const key of SLOT_KEYS) {
+    const id = saved.picks?.[key];
+    if (heroIds.has(id) && !used.has(id)) {
+      state.picks[key] = id;
+      used.add(id);
+    }
   }
-  if (Array.isArray(saved.owned)) state.owned = saved.owned.filter((id) => itemIds.has(id));
-  if (Number.isFinite(saved.souls) && saved.souls >= 0) state.souls = saved.souls;
+  if (Array.isArray(saved.done)) state.done = saved.done.filter((id) => Number.isInteger(id));
   if (saved.rank === 'all' || core.meta.rankGroups.some((group) => group.id === saved.rank)) state.rank = saved.rank;
+  state.shown = Boolean(saved.shown && state.picks.me);
+  state.active = state.shown ? null : nextEmptySlot();
 }
 
-// ---------- Общие помощники ----------
+// ---------- Состав матча ----------
 
 const heroById = (id) => core.heroes.find((hero) => hero.id === id);
-const itemById = (id) => core.items.find((item) => item.id === id);
+const nextEmptySlot = (after = null) => {
+  const start = after ? SLOT_KEYS.indexOf(after) + 1 : 0;
+  return [...SLOT_KEYS.slice(start), ...SLOT_KEYS.slice(0, start)].find((key) => !state.picks[key]) ?? null;
+};
 
-function matches(entry, query) {
-  const needle = query.trim().toLowerCase();
-  return !needle || entry.nameRu.toLowerCase().includes(needle) || entry.name.toLowerCase().includes(needle);
-}
+// Порядок мест на экране (он отличается от порядка заполнения: «Ты» и напарник стоят рядом).
+const DISPLAY_ORDER = ['me', 'laneAlly', 'laneEnemy1', 'laneEnemy2', 'enemy1', 'enemy2', 'enemy3', 'enemy4', 'ally1', 'ally2', 'ally3', 'ally4'];
 
-function heroTile(hero, { selected, disabled, onclick }) {
-  return h(
-    'button',
-    { type: 'button', class: `tile${selected ? ' is-selected' : ''}`, disabled, 'aria-pressed': String(Boolean(selected)), onclick },
-    icon(hero.icon, '', 'icon icon-hero'),
-    h('span', { class: 'tile-name' }, hero.nameRu),
-  );
-}
-
-// После любого изменения: запомнить и, если советы уже на экране, пересчитать их.
-function changed() {
-  saveState();
-  if (state.shown) showAdvice({ scroll: false });
-}
-
-// ---------- Шаг 1: мой герой ----------
-
-function renderHero() {
-  const picked = $('hero-picked');
-  const picker = $('hero-picker');
-  const hero = state.hero ? heroById(state.hero) : null;
-
-  picked.hidden = !hero;
-  picker.hidden = Boolean(hero);
-  picked.replaceChildren();
-  if (hero) {
-    picked.append(
-      icon(hero.icon, '', 'icon icon-hero'),
-      h('div', { class: 'picked-text' }, h('strong', {}, hero.nameRu), h('span', { class: 'muted' }, hero.role)),
-      h('button', { type: 'button', class: 'btn btn-quiet', onclick: () => pickHero(null) }, 'Изменить'),
-    );
-    return;
-  }
-
-  const query = $('hero-search').value;
-  $('hero-grid').replaceChildren(
-    ...core.heroes.filter((entry) => matches(entry, query)).map((entry) => heroTile(entry, { onclick: () => pickHero(entry.id) })),
-  );
-}
-
-function pickHero(id) {
-  state.hero = id;
-  if (id !== null) state.enemies = state.enemies.filter((enemy) => enemy !== id);
-  $('hero-search').value = '';
-  renderHero();
-  renderEnemies();
-  if (id === null) {
-    state.shown = false;
-    $('result').hidden = true;
-    saveState();
-  } else {
-    changed();
-  }
-}
-
-// ---------- Шаг 2: враги ----------
-
-function renderEnemies() {
-  $('enemy-count').textContent = `${state.enemies.length} из ${MAX_ENEMIES}`;
-  $('enemy-picked').replaceChildren(
-    ...state.enemies.map((id) => {
-      const hero = heroById(id);
-      return h(
-        'button',
-        { type: 'button', class: 'chip', title: 'Убрать', 'aria-label': `Убрать: ${hero.nameRu}`, onclick: () => toggleEnemy(id) },
-        icon(hero.icon, '', 'icon icon-chip'),
-        hero.nameRu,
-        h('span', { class: 'chip-x', 'aria-hidden': 'true' }, '×'),
-      );
-    }),
-  );
-
-  const full = state.enemies.length >= MAX_ENEMIES;
-  const query = $('enemy-search').value;
-  $('enemy-grid').replaceChildren(
-    ...core.heroes
-      .filter((entry) => matches(entry, query))
-      .map((entry) => {
-        const selected = state.enemies.includes(entry.id);
-        return heroTile(entry, {
-          selected,
-          disabled: entry.id === state.hero || (full && !selected),
-          onclick: () => toggleEnemy(entry.id),
-        });
-      }),
-  );
-}
-
-function toggleEnemy(id) {
-  if (state.enemies.includes(id)) state.enemies = state.enemies.filter((enemy) => enemy !== id);
-  else if (state.enemies.length < MAX_ENEMIES && id !== state.hero) state.enemies.push(id);
-  if (state.enemies.length >= MAX_ENEMIES) $('enemy-details').open = false;
-  renderEnemies();
-  changed();
-}
-
-// ---------- Шаг 3: души и ранг ----------
-
-function setSouls(value) {
-  state.souls = Math.max(0, Math.round(Number(value) || 0));
-  $('souls').value = state.souls;
-  changed();
-}
-
-function renderRank() {
-  $('rank').replaceChildren(
-    h('option', { value: 'all' }, 'Все ранги'),
-    ...core.meta.rankGroups.map((group) => h('option', { value: group.id }, group.label)),
-  );
-  $('rank').value = state.rank;
-}
-
-// ---------- Шаг 4: купленные предметы ----------
-
-function renderOwned() {
-  $('owned-count').textContent = state.owned.length > 0 ? `выбрано: ${state.owned.length}` : 'необязательно';
-
-  $('item-tabs').replaceChildren(
-    ...Object.entries(TYPE_NAMES).map(([type, label]) =>
+function renderSlots() {
+  for (const box of new Set(SLOTS.map((slot) => slot.box))) $(box).replaceChildren();
+  for (const slot of DISPLAY_ORDER.map((key) => SLOTS.find((entry) => entry.key === key))) {
+    const hero = state.picks[slot.key] ? heroById(state.picks[slot.key]) : null;
+    const active = state.active === slot.key;
+    $(slot.box).append(
       h(
         'button',
         {
           type: 'button',
-          role: 'tab',
-          class: `tab type-${type}${state.itemTab === type ? ' is-selected' : ''}`,
-          'aria-selected': String(state.itemTab === type),
-          onclick: () => {
-            state.itemTab = type;
-            renderOwned();
-          },
+          class: `slot${active ? ' is-active' : ''}${hero ? ' is-filled' : ''}${slot.key === 'me' ? ' slot-me' : ''}`,
+          'aria-pressed': String(active),
+          'aria-label': `${slot.label}: ${hero ? hero.nameRu : 'не выбран'}`,
+          onclick: () => setActive(slot.key),
         },
-        label,
+        hero ? icon(hero.icon, '', 'icon icon-slot') : h('span', { class: 'slot-empty', 'aria-hidden': 'true' }, '+'),
+        h('span', { class: 'slot-name' }, hero ? hero.nameRu : slot.label),
       ),
-    ),
-  );
-
-  // При поиске ищем по всем вкладкам сразу, иначе показываем выбранную вкладку.
-  const query = $('item-search').value;
-  const visible = core.items.filter((item) => (query.trim() ? matches(item, query) : item.type === state.itemTab));
-  const tiers = [...new Set(visible.map((item) => item.tier))].sort((a, b) => a - b);
-
-  if (visible.length === 0) {
-    $('item-grid').replaceChildren(h('p', { class: 'muted' }, 'Ничего не найдено'));
-    return;
+    );
   }
-  $('item-grid').replaceChildren(
-    ...tiers.map((tier) => {
-      const inTier = visible.filter((item) => item.tier === tier);
+  const alliesPicked = SLOT_KEYS.some((key) => key.startsWith('ally') && state.picks[key]);
+  if (alliesPicked || state.active?.startsWith('ally')) $('allies-details').open = true;
+}
+
+function renderPicker() {
+  const slot = SLOTS.find((entry) => entry.key === state.active);
+  $('picker').hidden = !slot;
+  if (!slot) return;
+
+  $('picker-title').textContent = slot.pick;
+  $('slot-clear').hidden = !state.picks[slot.key];
+  const used = new Set(Object.values(state.picks));
+  const query = $('hero-search').value.trim().toLowerCase();
+  const heroes = core.heroes.filter(
+    (hero) => !query || hero.nameRu.toLowerCase().includes(query) || hero.name.toLowerCase().includes(query),
+  );
+  $('hero-grid').replaceChildren(
+    ...heroes.map((hero) => {
+      const here = state.picks[slot.key] === hero.id;
       return h(
-        'div',
-        { class: 'tier' },
-        h('h3', { class: 'tier-title' }, `${formatNumber(inTier[0].cost)} душ`),
-        h(
-          'div',
-          { class: 'grid grid-items' },
-          inTier.map((item) => {
-            const selected = state.owned.includes(item.id);
-            return h(
-              'button',
-              {
-                type: 'button',
-                class: `tile tile-item type-${item.type}${selected ? ' is-selected' : ''}`,
-                'aria-pressed': String(selected),
-                onclick: () => toggleOwned(item.id),
-              },
-              icon(item.icon, '', 'icon icon-item'),
-              h('span', { class: 'tile-name' }, item.nameRu),
-            );
-          }),
-        ),
+        'button',
+        {
+          type: 'button',
+          class: `tile${here ? ' is-selected' : ''}`,
+          disabled: used.has(hero.id) && !here,
+          onclick: () => pickHero(hero.id),
+        },
+        icon(hero.icon, '', 'icon icon-hero'),
+        h('span', { class: 'tile-name' }, hero.nameRu),
       );
     }),
   );
 }
 
-function toggleOwned(id) {
-  state.owned = state.owned.includes(id) ? state.owned.filter((item) => item !== id) : [...state.owned, id];
-  renderOwned();
+function setActive(key) {
+  state.active = state.active === key && state.picks[key] ? null : key;
+  $('hero-search').value = '';
+  renderSlots();
+  renderPicker();
+  if (state.active) $('picker').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function pickHero(id) {
+  const key = state.active;
+  if (key === 'me' && state.picks.me !== id) state.done = [];
+  state.picks[key] = id;
+  // Следующее пустое место; когда враги заполнены, союзников не навязываем.
+  const next = nextEmptySlot(key);
+  state.active = next && !(next.startsWith('ally') && !key.startsWith('ally')) ? next : null;
+  $('hero-search').value = '';
+  renderSlots();
+  renderPicker();
   changed();
+}
+
+function clearSlot() {
+  delete state.picks[state.active];
+  if (state.active === 'me') {
+    state.done = [];
+    state.shown = false;
+    $('result').hidden = true;
+  }
+  renderSlots();
+  renderPicker();
+  changed();
+}
+
+function newMatch() {
+  const me = state.picks.me;
+  state.picks = me ? { me } : {};
+  state.done = [];
+  state.shown = false;
+  state.active = nextEmptySlot();
+  $('result').hidden = true;
+  renderSlots();
+  renderPicker();
+  saveState();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// После любого изменения: запомнить и, если билд уже на экране, пересчитать его.
+function changed() {
+  saveState();
+  if (state.shown) showBuild({ scroll: false });
 }
 
 // ---------- Результат ----------
 
-function adviceCard(advice, index) {
-  const item = itemById(advice.itemId);
-  const price = advice.affordable
-    ? h('span', { class: 'price price-ok' }, `${formatNumber(advice.cost)} душ`)
-    : h('span', { class: 'price price-wait' }, `${formatNumber(advice.cost)} душ · не хватает ${formatNumber(advice.missingSouls)}`);
-
-  return h(
-    'li',
-    { class: `advice type-${advice.type}` },
-    h('span', { class: 'advice-number', 'aria-hidden': 'true' }, index + 1),
-    icon(advice.icon, '', 'icon icon-advice'),
-    h(
-      'div',
-      { class: 'advice-text' },
-      h('h3', {}, advice.nameRu, ' ', h('span', { class: 'muted advice-en' }, advice.name)),
-      price,
-      h('p', { class: 'reason' }, advice.reasons[0]),
-      advice.reasons.slice(1).map((reason) => h('p', { class: 'reason muted' }, reason)),
-      item?.description ? h('p', { class: 'description muted' }, item.description) : null,
-    ),
-  );
+function toggleDone(id) {
+  state.done = state.done.includes(id) ? state.done.filter((x) => x !== id) : [...state.done, id];
+  saveState();
+  for (const row of document.querySelectorAll(`[data-item="${id}"]`)) {
+    row.classList.toggle('is-done', state.done.includes(id));
+    row.setAttribute('aria-pressed', String(state.done.includes(id)));
+  }
 }
+
+const PHASES = [
+  ['early', 'Ранние', 'до ~10 минуты'],
+  ['mid', 'Основные', '10–22 минуты'],
+  ['late', 'Поздние', 'после 22 минуты'],
+];
 
 function renderResult(result) {
-  const hero = heroById(state.hero);
-  const box = $('result');
-  const anyAffordable = result.next.some((advice) => advice.affordable);
+  const hero = heroById(state.picks.me);
+  const card = (title, ...children) => h('section', { class: 'card' }, h('h2', {}, title), ...children);
+  const row = (entry) => buildRow(entry, { done: state.done.includes(entry.itemId), onclick: () => toggleDone(entry.itemId) });
 
-  // replaceChildren превращает null в текст «null», поэтому пустые места убираем заранее.
   const parts = [
-    h('h2', {}, anyAffordable || result.next.length === 0 ? 'Купи сейчас' : 'Копи на это'),
-    result.message ? h('p', { class: 'notice' }, result.message) : null,
-    h('ol', { class: 'advice-list' }, result.next.map(adviceCard)),
+    h(
+      'div',
+      { class: 'result-head' },
+      h('h2', {}, `Билд: ${hero.nameRu}`),
+      h('button', { type: 'button', class: 'btn btn-quiet', onclick: newMatch }, 'Новый матч'),
+    ),
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
-    result.counters.length > 0
-      ? h(
-          'div',
-          { class: 'card' },
-          h('h2', {}, 'Против этих врагов'),
-          h(
-            'ul',
-            { class: 'item-list' },
-            result.counters.map((counter) =>
-              itemRow(counter, `${counter.owned ? 'Уже куплено. ' : ''}${counter.against.join(', ')}: ${counter.why}`),
-            ),
-          ),
+    result.enemies.length === 0 ? h('p', { class: 'notice' }, 'Враги не выбраны — показан обычный билд героя. Добавь врагов, чтобы подстроить его под матч.') : null,
+    result.message ? h('p', { class: 'notice' }, result.message) : null,
+    card(
+      'Порядок покупки',
+      h('p', { class: 'muted' }, 'Тапни купленное — строка зачеркнётся, чтобы после смерти сразу видеть, что дальше.'),
+      PHASES.filter(([key]) => result.phases[key].length > 0).map(([key, title, hint]) =>
+        h('div', { class: 'phase' }, h('h3', { class: 'phase-title' }, `${title} · ${hint}`), h('ol', { class: 'item-list' }, result.phases[key].map(row))),
+      ),
+    ),
+    result.swaps.length > 0
+      ? card(
+          'Если матч пошёл не так',
+          h('ul', { class: 'swap-list' }, result.swaps.map((swap) => h('li', {}, h('strong', {}, swap.text), h('span', { class: 'muted' }, swap.why)))),
         )
       : null,
-    h('a', { class: 'btn btn-link', href: `hero.html?id=${hero.id}` }, `Полный билд: ${hero.nameRu} →`),
+    result.situational.length > 0
+      ? card('Ситуативные — против этого состава', h('ul', { class: 'item-list' }, result.situational.map(row)))
+      : null,
+    result.alsoGood.length > 0
+      ? card('Тоже подходит', h('p', { class: 'muted' }, 'Почти не уступают основным — можно взять вместо них по вкусу.'), h('ul', { class: 'item-list' }, result.alsoGood.map(row)))
+      : null,
+    result.abilityOrder ? abilityCard(result.abilityOrder, core.abilities.filter((ability) => ability.heroId === hero.id)) : null,
+    h('a', { class: 'btn btn-link', href: `hero.html?id=${hero.id}` }, `Всё о герое: ${hero.nameRu} →`),
   ];
-  box.replaceChildren(...parts.filter(Boolean));
-  box.hidden = false;
+  $('result').replaceChildren(...parts.filter(Boolean));
+  $('result').hidden = false;
 }
 
-async function showAdvice({ scroll }) {
-  if (!state.hero) {
-    $('step-hero').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    $('step-hero').classList.add('is-needed');
-    setTimeout(() => $('step-hero').classList.remove('is-needed'), 1200);
+async function showBuild({ scroll }) {
+  if (!state.picks.me) {
+    setActive('me');
+    $('team').classList.add('is-needed');
+    setTimeout(() => $('team').classList.remove('is-needed'), 1200);
     return;
   }
 
-  const heroId = state.hero;
+  const heroId = state.picks.me;
   const heroFile = await loadHero(heroId);
-  if (heroId !== state.hero) return; // пока грузили, героя сменили
+  if (heroId !== state.picks.me) return; // пока грузили, героя сменили
 
-  const result = recommend(
-    { hero: heroId, enemies: state.enemies, souls: state.souls, ownedItems: state.owned, rankGroup: state.rank },
+  const ids = (keys) => keys.map((key) => state.picks[key]).filter(Boolean);
+  const result = buildForMatch(
+    {
+      hero: heroId,
+      laneAlly: state.picks.laneAlly ?? null,
+      laneEnemies: ids(['laneEnemy1', 'laneEnemy2']),
+      enemies: ids(['enemy1', 'enemy2', 'enemy3', 'enemy4']),
+      allies: ids(['ally1', 'ally2', 'ally3', 'ally4']),
+      rankGroup: state.rank,
+    },
     recommendData(core, heroId, heroFile),
   );
+
   state.shown = true;
+  saveState();
   renderResult(result);
-  if (scroll) $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (scroll) {
+    state.active = null;
+    renderSlots();
+    renderPicker();
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 // ---------- Запуск ----------
@@ -325,31 +288,24 @@ async function start() {
   restoreState();
   $('data-date').textContent = dataDateText(core.meta);
   $('footer-date').textContent = dataDateText(core.meta);
-  $('souls').value = state.souls;
-  if (state.enemies.length >= MAX_ENEMIES) $('enemy-details').open = false;
+  $('rank').replaceChildren(
+    h('option', { value: 'all' }, 'Все ранги'),
+    ...core.meta.rankGroups.map((group) => h('option', { value: group.id }, group.label)),
+  );
+  $('rank').value = state.rank;
 
-  renderHero();
-  renderEnemies();
-  renderRank();
-  renderOwned();
+  renderSlots();
+  renderPicker();
   $('app').hidden = false;
+  if (state.shown) showBuild({ scroll: false });
 
-  $('hero-search').addEventListener('input', renderHero);
-  $('enemy-search').addEventListener('input', renderEnemies);
-  $('item-search').addEventListener('input', renderOwned);
-  $('souls').addEventListener('input', (event) => {
-    state.souls = Math.max(0, Math.round(Number(event.target.value) || 0));
-    changed();
-  });
-  for (const button of document.querySelectorAll('[data-add]')) {
-    button.addEventListener('click', () => setSouls(state.souls + Number(button.dataset.add)));
-  }
-  $('souls-reset').addEventListener('click', () => setSouls(0));
+  $('hero-search').addEventListener('input', renderPicker);
+  $('slot-clear').addEventListener('click', clearSlot);
   $('rank').addEventListener('change', (event) => {
     state.rank = event.target.value;
     changed();
   });
-  $('go').addEventListener('click', () => showAdvice({ scroll: true }));
+  $('go').addEventListener('click', () => showBuild({ scroll: true }));
 }
 
 start();

@@ -39,14 +39,14 @@ export const SETTINGS = {
 };
 
 // Винрейт с поправкой на маленькую выборку: тянем к обычному значению (baseline).
-function shrunkRate(wins, matches, baseline, prior) {
+export function shrunkRate(wins, matches, baseline, prior) {
   return (wins + prior * baseline) / (matches + prior);
 }
 
 const round = (value, digits) => Number(value.toFixed(digits));
 
 // Числа для текста: «1 632 551», «3,9».
-const num = (value) => Number(value).toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+export const num = (value) => Number(value).toLocaleString('ru-RU', { maximumFractionDigits: 1 });
 
 // Все компоненты предмета, включая компоненты компонентов.
 function allComponents(item, itemById, result = new Set()) {
@@ -84,7 +84,7 @@ function bucketBaselines(byNetWorth) {
 }
 
 // Какую статистику героя используем: выбранную группу рангов или, если в ней мало матчей, все ранги.
-function pickStats(heroId, rankGroup, data, settings) {
+export function pickStats(heroId, rankGroup, data, settings) {
   const stats = data.heroItemStats?.heroId === heroId ? data.heroItemStats : null;
   const heroStats = data.heroStats?.[heroId] ?? null;
   const all = heroStats?.all ?? null;
@@ -152,7 +152,7 @@ function statScore(item, ctx, settings) {
 }
 
 // Слой 3: какие предметы помогают против выбранных врагов.
-function collectCounters(heroId, enemies, data, ctx, settings) {
+export function collectCounters(heroId, enemies, data, ctx, settings) {
   const byItem = new Map();
   for (const enemy of enemies) {
     const matchup = data.matchups?.[heroId]?.[enemy.id];
@@ -188,12 +188,12 @@ function collectCounters(heroId, enemies, data, ctx, settings) {
   return byItem;
 }
 
-function describe(item) {
+export function describe(item) {
   return { itemId: item.id, name: item.name, nameRu: item.nameRu, type: item.type, tier: item.tier, icon: item.icon ?? null };
 }
 
 // Слой 5: насколько можно доверять советам.
-function buildConfidence(ctx, settings) {
+export function buildConfidence(ctx, settings) {
   const fallbackNote = ctx.fellBack ? ' Статистика всех рангов: в выбранной группе мало матчей.' : '';
   const base = { matches: ctx.heroMatches, rankGroup: ctx.rankGroup };
   if (!ctx.itemsAll || ctx.heroMatches < settings.confidenceMediumMatches) {
@@ -242,7 +242,7 @@ function buildPath(ctx, itemById, counters, owned, settings) {
   return path;
 }
 
-function buildAbilityOrder(stats) {
+export function buildAbilityOrder(stats) {
   const abilities = stats?.abilities;
   if (!abilities) return null;
   const maxFirst = abilities.maxFirst ?? [];

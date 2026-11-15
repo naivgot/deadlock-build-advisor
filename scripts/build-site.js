@@ -1,7 +1,7 @@
 // Готовит сайт к публикации: кладёт в site/ данные, иконки и логику советов.
 // Запуск: npm run build:site
 // Если данные старше 3 дней, сборка падает. Для локального просмотра старых данных: добавь --allow-stale.
-import { access, copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
+import { access, copyFile, mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readJson, writeJson } from '../src/lib/files.js';
@@ -149,9 +149,13 @@ async function main() {
   }
   if (heroFiles === 0) throw new Error('Нет статистики ни по одному герою. Сайт не собран.');
 
-  // Логика советов — та же самая, что проверяется тестами.
-  await mkdir(join(SITE, 'js', 'logic'), { recursive: true });
-  await copyFile(join(ROOT, 'src', 'logic', 'recommend.js'), join(SITE, 'js', 'logic', 'recommend.js'));
+  // Логика советов — та же самая, что проверяется тестами. Копируем все её файлы.
+  const logicOut = join(SITE, 'js', 'logic');
+  await rm(logicOut, { recursive: true, force: true });
+  await mkdir(logicOut, { recursive: true });
+  for (const file of await readdir(join(ROOT, 'src', 'logic'))) {
+    if (file.endsWith('.js')) await copyFile(join(ROOT, 'src', 'logic', file), join(logicOut, file));
+  }
 
   console.log(
     `Сайт собран. Героев: ${heroes.length} (со статистикой: ${heroFiles}), предметов: ${items.length}, ` +

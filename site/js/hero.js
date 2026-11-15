@@ -1,73 +1,36 @@
-// Страница героя: полный путь билда, порядок прокачки, чем его контрить.
+// Страница героя: обычный билд (без учёта врагов), порядок прокачки, чем его контрить.
 import { loadCore, loadHero, recommendData } from './data.js';
-import { countersAgainst, recommend } from './logic/recommend.js';
-import { dataDateText, h, icon, itemRow, percent } from './ui.js';
+import { buildForMatch } from './logic/match-build.js';
+import { countersAgainst } from './logic/recommend.js';
+import { abilityCard, dataDateText, h, icon, itemRow, percent } from './ui.js';
 
 const $ = (id) => document.getElementById(id);
 
 const PHASES = [
-  ['early', 'Ранние', 'первые ~10 минут'],
+  ['early', 'Ранние', 'до ~10 минуты'],
   ['mid', 'Основные', '10–22 минуты'],
-  ['late', 'Поздние', 'после 22 минут'],
-  ['situational', 'Ещё популярные', 'берут реже, по ситуации'],
+  ['late', 'Поздние', 'после 22 минуты'],
 ];
 
-function buildSection(path) {
-  const blocks = PHASES.filter(([key]) => path[key].length > 0).map(([key, title, hint]) =>
+const detail = (entry) =>
+  entry.pickRate === null ? 'мало данных' : `берут в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`;
+
+function buildSection(result) {
+  const blocks = PHASES.filter(([key]) => result.phases[key].length > 0).map(([key, title, hint]) =>
     h(
       'div',
       { class: 'phase' },
       h('h3', { class: 'phase-title' }, `${title} · ${hint}`),
-      h('ul', { class: 'item-list' }, path[key].map((item) => itemRow(item, `берут в ${percent(item.pickRate)} игр, побед ${percent(item.winrate)}`))),
+      h('ul', { class: 'item-list' }, result.phases[key].map((entry) => itemRow(entry, detail(entry)))),
     ),
   );
   return h(
     'section',
     { class: 'card' },
-    h('h2', {}, 'Путь билда'),
+    h('h2', {}, 'Обычный билд'),
     blocks.length > 0 ? blocks : h('p', { class: 'muted' }, 'Мало данных: по этому герою пока недостаточно матчей.'),
-  );
-}
-
-function abilitySection(order, abilities) {
-  if (!order) {
-    return h('section', { class: 'card' }, h('h2', {}, 'Порядок прокачки'), h('p', { class: 'muted' }, 'Мало данных.'));
-  }
-  const byId = new Map(abilities.map((ability) => [ability.id, ability]));
-
-  const maxFirst = order.maxFirst.map((entry) => {
-    const ability = byId.get(entry.abilityId);
-    return h(
-      'li',
-      { class: 'ability-row' },
-      icon(ability?.icon, '', 'icon icon-ability'),
-      h(
-        'div',
-        { class: 'item-row-text' },
-        h('strong', {}, ability?.nameRu ?? 'Неизвестная способность'),
-        h('span', { class: 'muted' }, `качают первой в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`),
-      ),
-    );
-  });
-
-  const steps = (order.order ?? []).map((abilityId, index) => {
-    const ability = byId.get(abilityId);
-    return h(
-      'li',
-      { title: `${index + 1}. ${ability?.nameRu ?? ''}` },
-      icon(ability?.icon, ability?.nameRu ?? '', 'icon icon-ability'),
-      h('span', { class: 'ability-step' }, index + 1),
-    );
-  });
-
-  return h(
-    'section',
-    { class: 'card' },
-    h('h2', {}, 'Порядок прокачки'),
-    h('p', { class: 'muted' }, 'Какую способность качают до максимума первой:'),
-    h('ul', { class: 'item-list' }, maxFirst),
-    steps.length > 0 ? h('p', { class: 'muted' }, 'Самый популярный порядок вложения очков:') : null,
-    steps.length > 0 ? h('ol', { class: 'ability-order' }, steps) : null,
+    result.alsoGood.length > 0 ? h('h3', { class: 'phase-title' }, 'Тоже подходит') : null,
+    result.alsoGood.length > 0 ? h('ul', { class: 'item-list' }, result.alsoGood.map((entry) => itemRow(entry, detail(entry)))) : null,
   );
 }
 
@@ -111,16 +74,16 @@ async function start() {
   $('footer-date').textContent = dataDateText(core.meta);
 
   const heroFile = await loadHero(heroId);
-  // Тот же расчёт, что и на главной, только без врагов и без душ — нужен путь билда и прокачка.
-  const result = recommend({ hero: heroId, enemies: [], souls: 0, ownedItems: [] }, recommendData(core, heroId, heroFile));
+  const result = buildForMatch({ hero: heroId }, recommendData(core, heroId, heroFile));
 
-  $('app').replaceChildren(
+  const parts = [
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
-    buildSection(result.buildPath),
-    abilitySection(result.abilityOrder, core.abilities.filter((ability) => ability.heroId === heroId)),
+    buildSection(result),
+    result.abilityOrder ? abilityCard(result.abilityOrder, core.abilities.filter((ability) => ability.heroId === heroId)) : null,
     countersSection(hero, countersAgainst(heroId, core)),
-    h('a', { class: 'btn btn-link', href: './' }, '← Подобрать предметы под свой матч'),
-  );
+    h('a', { class: 'btn btn-link', href: './' }, '← Собрать билд под свой матч'),
+  ];
+  $('app').replaceChildren(...parts.filter(Boolean));
   $('app').hidden = false;
 }
 

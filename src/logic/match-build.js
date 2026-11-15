@@ -1,0 +1,244 @@
+// Билд на матч: весь путь покупок по порядку, с учётом врагов. Считается один раз на экране загрузки.
+// Чистая функция: не трогает страницу и сеть, не меняет входные данные.
+import {
+  SETTINGS,
+  buildAbilityOrder,
+  buildConfidence,
+  collectCounters,
+  describe,
+  num,
+  pickStats,
+  shrunkRate,
+} from './recommend.js';
+
+export const MATCH_SETTINGS = {
+  ...SETTINGS,
+  // Сколько предметов в основном пути на каждом этапе.
+  phaseQuota: { early: 4, mid: 5, late: 5 },
+  // Не больше стольких контр в основном пути (всего и на каждом этапе) — остальные уходят в «Ситуативные».
+  // Иначе против шести врагов контры вытесняют основу билда.
+  maxCountersInPath: 4,
+  maxCountersPerPhase: 2,
+  // В основной путь попадают предметы, которые герой берёт хотя бы в 5% игр (или контры).
+  minPathPickRate: 0.05,
+  maxSituational: 6,
+  // «Тоже подходит»: берут хотя бы в 3% игр и не хуже обычного больше чем на 0,5%.
+  maxAlsoGood: 4,
+  alsoGoodMinPickRate: 0.03,
+  alsoGoodMinLift: -0.5,
+  maxSwaps: 3,
+  // Примерная минута покупки для предметов без статистики — по тиру.
+  minuteByTier: { 1: 4, 2: 10, 3: 18, 4: 26, 5: 30 },
+};
+
+// Обычный винрейт покупок каждого тира на этом герое: { тир: доля побед }.
+// Дорогие предметы покупают в долгих играх и чаще те, кто уже побеждает, поэтому
+// предмет сравниваем с предметами своего тира, а не со всеми («равные с равными»).
+function tierBaselines(source, itemById) {
+  const totals = {};
+  for (const [id, [wins, matches]] of Object.entries(source ?? {})) {
+    const item = itemById.get(Number(id));
+    if (!item) continue;
+    const total = (totals[item.tier] ??= [0, 0]);
+    total[0] += wins;
+    total[1] += matches;
+  }
+  const result = {};
+  for (const [tier, [wins, matches]] of Object.entries(totals)) result[tier] = matches > 0 ? wins / matches : 0.5;
+  return result;
+}
+
+// Статистика предмета на герое: как часто берут, когда и насколько чаще с ним побеждают.
+function itemStat(item, ctx, settings) {
+  const group = ctx.itemsGroup?.[item.id];
+  const useGroup = group && group[1] >= settings.minItemMatches;
+  const entry = useGroup ? group : ctx.itemsAll?.[item.id];
+  if (!entry || entry[1] < settings.minItemMatches) return null;
+
+  const heroMatches = useGroup ? ctx.heroMatches : ctx.heroMatchesAll;
+  const baseline = (useGroup ? ctx.tierGroup : ctx.tierAll)[item.tier] ?? (useGroup ? ctx.heroWr : ctx.heroWrAll);
+  if (!heroMatches) return null;
+  const [wins, matches, minute] = entry;
+  return {
+    pickRate: matches / heroMatches,
+    winrate: wins / matches,
+    lift: (shrunkRate(wins, matches, baseline, settings.priorMatches) - baseline) * 100,
+    minute,
+    matches,
+  };
+}
+
+// Оставляет только известных героев, без повторов и без самого игрока.
+function cleanHeroes(ids, heroById, exclude, warnings, label) {
+  const result = [];
+  for (const id of ids ?? []) {
+    if (id === null || id === undefined) continue;
+    if (!heroById.has(id)) warnings.push(`Неизвестный ${label} пропущен: ${id}`);
+    else if (exclude.has(id)) warnings.push(`${heroById.get(id).nameRu} уже выбран(а) в другой роли — пропущен(а) как ${label}`);
+    else {
+      exclude.add(id);
+      result.push(heroById.get(id));
+    }
+  }
+  return result;
+}
+
+function statReason(stat, settings) {
+  const parts = [`Берут в ${Math.round(stat.pickRate * 100)}% игр`];
+  if (stat.lift >= 0.5) parts.push(`шанс победы выше на ${num(stat.lift)}%`);
+  else if (stat.lift <= -0.5) parts.push('но с похожими по цене предметами побеждают чуть чаще');
+  return parts.join(', ');
+}
+
+/**
+ * input: { hero, laneAlly, allies, laneEnemies, enemies, rankGroup } — id героев.
+ * Возвращает { phases: { early, mid, late }, situational, alsoGood, swaps, abilityOrder, confidence,
+ *              enemies, allies, message, warnings }.
+ * Союзники пока только запоминаются: их учёт — задачи 1.5в и 1.5г.
+ */
+export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
+  const { hero: heroId, rankGroup = 'all' } = input;
+  const warnings = [];
+  const heroById = new Map((data.heroes ?? []).map((entry) => [entry.id, entry]));
+  const itemById = new Map((data.items ?? []).map((entry) => [entry.id, entry]));
+  if (!heroById.has(heroId)) throw new Error(`Неизвестный герой: ${heroId}`);
+
+  // Враги важнее союзников: сначала разбираем их. Враг на линии и тот же враг в общем списке — один враг.
+  const used = new Set([heroId]);
+  const enemyIds = [...new Set([...(input.laneEnemies ?? []), ...(input.enemies ?? [])])];
+  const enemies = cleanHeroes(enemyIds, heroById, used, warnings, 'враг');
+  const allies = cleanHeroes([input.laneAlly, ...(input.allies ?? [])], heroById, used, warnings, 'союзник');
+
+  const ctx = pickStats(heroId, rankGroup, data, settings);
+  ctx.tierAll = tierBaselines(ctx.itemsAll, itemById);
+  ctx.tierGroup = tierBaselines(ctx.itemsGroup, itemById);
+  const counterByItem = collectCounters(heroId, enemies, data, ctx, settings);
+
+  // Оценка каждого предмета: популярность + насколько чаще побеждают + бонус за контру.
+  const candidates = [];
+  for (const item of itemById.values()) {
+    const stat = itemStat(item, ctx, settings);
+    const counter = counterByItem.get(item.id) ?? null;
+    if (!stat && !counter) continue;
+    const score =
+      (stat ? stat.lift + settings.popularityWeight * stat.pickRate : 0) + (counter ? counter.bonus : 0);
+    candidates.push({
+      item,
+      stat,
+      counter,
+      score,
+      minute: stat?.minute ?? settings.minuteByTier[item.tier] ?? 20,
+      inPathPool: Boolean(counter) || stat.pickRate >= settings.minPathPickRate,
+    });
+  }
+  candidates.sort((a, b) => b.score - a.score || a.item.cost - b.item.cost || a.item.id - b.item.id);
+
+  // Основной путь: лучшие по оценке на каждом этапе, с ограничением на число контр.
+  const phaseOf = (minute) =>
+    minute < settings.earlyUntilMinute ? 'early' : minute < settings.midUntilMinute ? 'mid' : 'late';
+  const taken = { early: 0, mid: 0, late: 0 };
+  const countersIn = { early: 0, mid: 0, late: 0 };
+  let counters = 0;
+  const path = [];
+  for (const c of candidates) {
+    if (!c.inPathPool) continue;
+    const phase = phaseOf(c.minute);
+    if (taken[phase] >= settings.phaseQuota[phase]) continue;
+    if (c.counter && (counters >= settings.maxCountersInPath || countersIn[phase] >= settings.maxCountersPerPhase)) continue;
+    taken[phase]++;
+    if (c.counter) {
+      counters++;
+      countersIn[phase]++;
+    }
+    path.push(c);
+  }
+  const inPath = new Set(path.map((c) => c.item.id));
+  path.sort((a, b) => a.minute - b.minute || a.item.cost - b.item.cost || a.item.id - b.item.id);
+
+  const entry = (c, reasons) => ({
+    ...describe(c.item),
+    cost: c.item.cost,
+    minute: Math.round(c.minute),
+    pickRate: c.stat ? Number(c.stat.pickRate.toFixed(3)) : null,
+    winrate: c.stat ? Number(c.stat.winrate.toFixed(3)) : null,
+    isCounter: Boolean(c.counter),
+    reason: reasons[0],
+    reasons,
+  });
+
+  const phases = { early: [], mid: [], late: [] };
+  for (const c of path) {
+    const reasons = [];
+    if (c.counter) reasons.push(c.counter.reason);
+    if (c.stat) reasons.push(statReason(c.stat, settings));
+    else reasons.push('По этому герою мало данных — совет из справочника контр');
+    const ownedFrom = (c.item.components ?? []).filter((id) => inPath.has(id)).map((id) => itemById.get(id).nameRu);
+    if (ownedFrom.length > 0) reasons.push(`Улучшение «${ownedFrom.join('», «')}»`);
+    const upgradesTo = path.filter((other) => (other.item.components ?? []).includes(c.item.id));
+    if (upgradesTo.length > 0) reasons.push(`Потом улучшается в «${upgradesTo.map((u) => u.item.nameRu).join('», «')}»`);
+
+    phases[phaseOf(c.minute)].push(entry(c, reasons));
+  }
+
+  // Ситуативные: контры, которым не хватило места в основном пути.
+  const situationalPool = candidates
+    .filter((c) => c.counter && !inPath.has(c.item.id))
+    .sort((a, b) => b.counter.bonus - a.counter.bonus || a.item.cost - b.item.cost || a.item.id - b.item.id)
+    .slice(0, settings.maxSituational);
+  const situational = situationalPool.map((c) => ({
+    ...entry(c, [c.counter.reason, ...(c.stat ? [statReason(c.stat, settings)] : [])]),
+    against: c.counter.against,
+    why: c.counter.why,
+  }));
+
+  // Условные замены: «если враг сильно мешает — вместо X возьми контру Y» (тот же тип предмета, не ранний этап).
+  const swaps = [];
+  const replaced = new Set();
+  for (const c of situationalPool) {
+    if (swaps.length >= settings.maxSwaps) break;
+    const target = path
+      .filter(
+        (p) =>
+          p.item.type === c.item.type &&
+          !p.counter &&
+          !replaced.has(p.item.id) &&
+          p.minute >= settings.earlyUntilMinute,
+      )
+      .sort((a, b) => a.score - b.score)[0];
+    if (!target) continue;
+    replaced.add(target.item.id);
+    swaps.push({
+      text: `Если сильно мешают ${c.counter.against.join(', ')} — вместо «${target.item.nameRu}» возьми «${c.item.nameRu}»`,
+      why: c.counter.why,
+      replace: { ...describe(target.item), cost: target.item.cost },
+      take: { ...describe(c.item), cost: c.item.cost },
+    });
+  }
+
+  // «Тоже подходит»: не попали в путь, но берут часто и побеждают не хуже обычного.
+  const alsoGood = candidates
+    .filter(
+      (c) =>
+        !inPath.has(c.item.id) &&
+        !c.counter &&
+        c.stat &&
+        c.stat.pickRate >= settings.alsoGoodMinPickRate &&
+        c.stat.lift >= settings.alsoGoodMinLift,
+    )
+    .slice(0, settings.maxAlsoGood)
+    .map((c) => entry(c, [statReason(c.stat, settings)]));
+
+  const empty = path.length === 0;
+  return {
+    phases,
+    situational,
+    alsoGood,
+    swaps,
+    abilityOrder: buildAbilityOrder(ctx.stats),
+    confidence: buildConfidence(ctx, settings),
+    enemies: enemies.map((hero) => hero.nameRu),
+    allies: allies.map((hero) => hero.nameRu),
+    message: empty ? 'По этому герою пока мало данных. Выбери врагов — подскажем предметы против них.' : null,
+    warnings,
+  };
+}

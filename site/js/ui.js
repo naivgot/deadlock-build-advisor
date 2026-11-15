@@ -47,3 +47,68 @@ export function itemRow(item, detail) {
     h('span', { class: 'price' }, formatNumber(item.cost)),
   );
 }
+
+// Строка билда: тап зачёркивает её (отметка «купил»). Причины — под названием.
+export function buildRow(entry, { done, onclick }) {
+  const [first, ...rest] = entry.reasons;
+  return h(
+    'li',
+    {},
+    h(
+      'button',
+      {
+        type: 'button',
+        class: `item-row build-row type-${entry.type}${done ? ' is-done' : ''}${entry.isCounter ? ' is-counter' : ''}`,
+        'data-item': entry.itemId,
+        'aria-pressed': String(Boolean(done)),
+        onclick,
+      },
+      icon(entry.icon, '', 'icon icon-item'),
+      h(
+        'span',
+        { class: 'item-row-text' },
+        h('strong', {}, entry.nameRu, entry.isCounter ? h('span', { class: 'badge' }, 'контра') : null),
+        h('span', { class: 'reason-line' }, first),
+        rest.map((reason) => h('span', { class: 'muted' }, reason)),
+      ),
+      h('span', { class: 'row-meta' }, h('span', { class: 'price' }, formatNumber(entry.cost)), h('span', { class: 'muted' }, `~${entry.minute} мин`)),
+    ),
+  );
+}
+
+// Порядок прокачки: какую способность качать первой и самый популярный порядок.
+export function abilityCard(order, abilities) {
+  const byId = new Map(abilities.map((ability) => [ability.id, ability]));
+  const maxFirst = order.maxFirst.map((entry) => {
+    const ability = byId.get(entry.abilityId);
+    return h(
+      'li',
+      { class: 'ability-row' },
+      icon(ability?.icon, '', 'icon icon-ability'),
+      h(
+        'div',
+        { class: 'item-row-text' },
+        h('strong', {}, ability?.nameRu ?? 'Неизвестная способность'),
+        h('span', { class: 'muted' }, `качают первой в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`),
+      ),
+    );
+  });
+  const steps = (order.order ?? []).map((abilityId, index) => {
+    const ability = byId.get(abilityId);
+    return h(
+      'li',
+      { title: `${index + 1}. ${ability?.nameRu ?? ''}` },
+      icon(ability?.icon, ability?.nameRu ?? '', 'icon icon-ability'),
+      h('span', { class: 'ability-step' }, index + 1),
+    );
+  });
+  return h(
+    'section',
+    { class: 'card' },
+    h('h2', {}, 'Порядок прокачки'),
+    h('p', { class: 'muted' }, 'Какую способность качают до максимума первой:'),
+    h('ul', { class: 'item-list' }, maxFirst),
+    steps.length > 0 ? h('p', { class: 'muted' }, 'Самый популярный порядок вложения очков:') : null,
+    steps.length > 0 ? h('ol', { class: 'ability-order' }, steps) : null,
+  );
+}
