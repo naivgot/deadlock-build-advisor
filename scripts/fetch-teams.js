@@ -1,6 +1,6 @@
-// Медленный сбор: как союзники меняют пользу предметов. По одному SQL-запросу на героя.
-// Запуск: npm run fetch:allies          (все герои, ~3 часа из-за лимита API: 20 SQL-запросов в час)
-//         node scripts/fetch-allies.js --heroes=1,6   (только эти герои)
+// Медленный сбор: как союзники и враги меняют пользу предметов. По одному SQL-запросу на героя.
+// Запуск: npm run fetch:teams          (все герои, ~3 часа из-за лимита API: 20 SQL-запросов в час)
+//         node scripts/fetch-teams.js --heroes=1,6   (только эти герои)
 // Если запрос по герою не удался — оставляем прошлые данные этого героя (если они того же патча).
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -8,11 +8,11 @@ import { fileURLToPath } from 'node:url';
 import { apiUrl } from '../src/lib/deadlock-api.js';
 import { readJson, writeJson } from '../src/lib/files.js';
 import { fetchJson } from '../src/lib/http.js';
-import { allyItemEffects } from '../src/logic/ally-effects.js';
+import { teamItemEffects } from '../src/logic/ally-effects.js';
 
 const DATA_DIR = fileURLToPath(new URL('../data/', import.meta.url));
 // Отдельная папка: ежедневный fetch:stats целиком заменяет data/stats/ и стёр бы эти данные.
-const OUT_DIR = join(DATA_DIR, 'allies');
+const OUT_DIR = join(DATA_DIR, 'teams');
 const WINDOW_DAYS = 5;
 // Лимит API: 2 SQL-запроса в минуту и 20 в час с одного IP. Берём с запасом — 15 в час.
 const PAUSE_MS = 4 * 60 * 1000;
@@ -28,9 +28,10 @@ function heroFilterFromArgs() {
   return arg ? new Set(arg.slice('--heroes='.length).split(',').map(Number)) : null;
 }
 
-// Один запрос: предметы героя с каждым союзником + строка item_id = 0 «все матчи с этим союзником».
+// Один запрос: предметы героя с каждым другим героем матча (союзником и врагом)
+// + строка item_id = 0 «все матчи с этим героем».
 // Окно — последние 5 дней, но не раньше начала патча.
-export function alliesQuery(heroId, itemIds, fromUnix) {
+export function teamsQuery(heroId, itemIds, fromUnix) {
   return `
 WITH m AS (
   SELECT match_id, team, hero_id, won, "items.item_id" AS items
@@ -38,17 +39,17 @@ WITH m AS (
   WHERE start_time >= to_timestamp(${fromUnix}) AND game_mode = 'Normal'
 ),
 pairs AS MATERIALIZED (
-  SELECT me.won, me.items, ally.hero_id AS ally_id
+  SELECT me.won, me.items, other.hero_id AS other_id, (me.team = other.team) AS ally
   FROM (SELECT * FROM m WHERE hero_id = ${heroId}) me
-  JOIN m ally ON me.match_id = ally.match_id AND me.team = ally.team AND ally.hero_id <> ${heroId}
+  JOIN m other ON me.match_id = other.match_id AND other.hero_id <> ${heroId}
 )
-SELECT ally_id, item_id, count(*) AS matches, sum(won::INT) AS wins
-FROM (SELECT ally_id, won, unnest(list_distinct(items)) AS item_id FROM pairs)
+SELECT ally, other_id, item_id, count(*) AS matches, sum(won::INT) AS wins
+FROM (SELECT ally, other_id, won, unnest(list_distinct(items)) AS item_id FROM pairs)
 WHERE item_id IN (${itemIds.join(',')})
-GROUP BY ally_id, item_id
+GROUP BY ally, other_id, item_id
 HAVING count(*) >= 200
 UNION ALL
-SELECT ally_id, 0 AS item_id, count(*) AS matches, sum(won::INT) AS wins FROM pairs GROUP BY ally_id`;
+SELECT ally, other_id, 0 AS item_id, count(*) AS matches, sum(won::INT) AS wins FROM pairs GROUP BY ally, other_id`;
 }
 
 async function previous(heroId) {
@@ -74,7 +75,7 @@ async function main() {
   for (const [index, hero] of heroes.entries()) {
     const label = `[${index + 1}/${heroes.length}] ${hero.nameRu}`;
     try {
-      const rows = await fetchJson(apiUrl('/v1/sql', { query: alliesQuery(hero.id, itemIds, fromUnix) }), {
+      const rows = await fetchJson(apiUrl('/v1/sql', { query: teamsQuery(hero.id, itemIds, fromUnix) }), {
         headers,
         pauseMs: PAUSE_MS,
       });
@@ -82,7 +83,7 @@ async function main() {
       await writeJson(
         join(OUT_DIR, `${hero.id}.json`),
         // Храним уже посчитанные эффекты (около 5 КБ на героя), а не сырые строки (около 300 КБ).
-        { heroId: hero.id, fetchedAt: new Date().toISOString(), patchTimestamp: meta.patchTimestamp, from: fromUnix, to: now, effects: allyItemEffects(rows) },
+        { heroId: hero.id, fetchedAt: new Date().toISOString(), patchTimestamp: meta.patchTimestamp, from: fromUnix, to: now, effects: teamItemEffects(rows) },
         { compact: true },
       );
       ok++;

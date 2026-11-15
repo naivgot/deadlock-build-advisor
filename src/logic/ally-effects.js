@@ -58,3 +58,12 @@ export function allyItemEffects(rows, settings = ALLY_SETTINGS) {
   }
   return result;
 }
+
+// Строки объединённого запроса: { ally: true/false, other_id, item_id, matches, wins }.
+// Та же формула работает и для врагов: «предмет против врага E даёт на N п.п. больше/меньше побед, чем обычно».
+// → { allies: { героId: { предметId: [эффект, матчей] } }, enemies: { … } }
+export function teamItemEffects(rows, settings = ALLY_SETTINGS) {
+  const side = (isAlly) =>
+    rows.filter((row) => Boolean(row.ally) === isAlly).map((row) => ({ ...row, ally_id: row.other_id }));
+  return { allies: allyItemEffects(side(true), settings), enemies: allyItemEffects(side(false), settings) };
+}

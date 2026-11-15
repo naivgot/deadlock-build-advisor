@@ -1,7 +1,7 @@
-# Медленный сбор статистики союзников (задача 1.5е): ~3 часа из-за лимита SQL-запросов API.
-# Результат — маленькие файлы data/allies/*.json — коммитится в репозиторий и попадает на сайт при следующей ночной сборке.
+# Медленный сбор статистики союзников и врагов (задачи 1.5д и 1.5е): ~3 часа из-за лимита SQL-запросов API.
+# Результат — маленькие файлы data/teams/*.json — коммитится в репозиторий и попадает на сайт при следующей ночной сборке.
 # Если отдельные герои не собрались — остаются их прошлые данные; сбор от этого не падает.
-name: Статистика союзников
+name: Статистика союзников и врагов
 
 on:
   schedule:
@@ -38,9 +38,9 @@ jobs:
           key: data-none
           restore-keys: data-
 
-      - name: Собрать статистику союзников
+      - name: Собрать статистику союзников и врагов
         timeout-minutes: 280
-        run: npm run fetch:allies
+        run: npm run fetch:teams
         env:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
@@ -48,11 +48,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/allies
+          git add data/teams
           if git diff --cached --quiet; then
-            echo "Данные союзников не изменились"
+            echo "Данные не изменились"
             exit 0
           fi
-          git commit -m "Статистика союзников от $(date -u +%Y-%m-%d)"
+          git commit -m "Статистика союзников и врагов от $(date -u +%Y-%m-%d)"
           git pull --rebase
           git push

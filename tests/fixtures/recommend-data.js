@@ -117,6 +117,8 @@ export function makeData() {
       },
       // Статистика союзников: { союзник: { предмет: [эффект в п.п., матчей] } }.
       allyEffects: { [HERO.gunner]: { [ITEM.bigArmor]: [4, 2000], [ITEM.betterGun]: [-3, 1500] } },
+      // То же против врагов.
+      enemyEffects: { [HERO.healerB]: { [ITEM.bigArmor]: [5, 3000] } },
       // Линии: против кого [победы, матчи, разница в душах на 15-й минуте], с каким напарником, точные четвёрки.
       lane: {
         vs: { [HERO.healerA]: [3000, 8000, -600], [HERO.healerB]: [4000, 8000, 100], [HERO.gunner]: [4200, 8000, 300] },

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { allyItemEffects } from '../src/logic/ally-effects.js';
+import { allyItemEffects, teamItemEffects } from '../src/logic/ally-effects.js';
 
 // Герой играет с союзниками 15 и 20. Предмет 7 с союзником 15 работает заметно лучше обычного.
 const rows = [
@@ -29,4 +29,12 @@ test('маленькие эффекты и маленькие выборки н�
 test('без строк «все матчи с союзником» ничего не считаем', () => {
   assert.deepEqual(allyItemEffects(rows.filter((row) => row.item_id !== 0)), {});
   assert.deepEqual(allyItemEffects([]), {});
+});
+
+test('teamItemEffects делит строки на союзников и врагов и считает одинаково', () => {
+  const asTeam = (ally) => rows.map((row) => ({ ally, other_id: row.ally_id, item_id: row.item_id, wins: row.wins, matches: row.matches }));
+  const effects = teamItemEffects([...asTeam(true), ...asTeam(false).map((row) => ({ ...row, other_id: row.other_id + 100 }))]);
+  assert.deepEqual(effects.allies[15][7], [9.4, 5000]);
+  assert.deepEqual(effects.enemies[115][7], [9.4, 5000]);
+  assert.equal(effects.enemies[15], undefined);
 });

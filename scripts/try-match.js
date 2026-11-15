@@ -26,8 +26,11 @@ const data = {
   matchups: await readJson(join(DATA, 'stats', 'matchups.json')),
   heroItemStats: await readJson(join(DATA, 'stats', 'heroes', `${hero}.json`)).catch(() => null),
 };
-const alliesFile = await readJson(join(DATA, 'allies', `${hero}.json`)).catch(() => null);
-if (alliesFile && data.heroItemStats) data.heroItemStats.allyEffects = alliesFile.effects;
+const teamsFile = await readJson(join(DATA, 'teams', `${hero}.json`)).catch(() => null);
+if (teamsFile && data.heroItemStats) {
+  data.heroItemStats.allyEffects = teamsFile.effects.allies;
+  data.heroItemStats.enemyEffects = teamsFile.effects.enemies;
+}
 data.heroProfiles = {};
 for (const h of heroes) {
   const stats = await readJson(join(DATA, 'stats', 'heroes', `${h.id}.json`)).catch(() => null);

@@ -231,3 +231,12 @@ test('статистика союзников: предмет с этим сою
   assert.ok(find(withAlly, ITEM.betterGun).score < find(alone, ITEM.betterGun).score);
   assert.ok(find(withAlly, ITEM.betterGun).reasons.some((reason) => /на 3% реже обычного/.test(reason)));
 });
+
+test('статистика врагов: предмет против этого врага работает лучше обычного', () => {
+  const data = makeData();
+  const alone = buildForMatch({ hero: HERO.main }, data);
+  const vs = buildForMatch({ hero: HERO.main, enemies: [HERO.healerB] }, data);
+  const find = (result) => result.phases.mid.find((entry) => entry.itemId === ITEM.bigArmor);
+  assert.ok(find(vs).score > find(alone).score);
+  assert.ok(find(vs).reasons.includes('Против Healer B (ру) с ним побеждают на 5% чаще обычного (последние дни)'));
+});
