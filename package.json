@@ -13,6 +13,7 @@
     "fetch:teams": "node scripts/fetch-teams.js",
     "fetch:patch": "node scripts/fetch-patch.js",
     "fetch:sells": "node scripts/fetch-sells.js",
+    "fetch:builds": "node scripts/fetch-builds.js",
     "build:site": "node scripts/build-site.js",
     "test": "node --test",
     "dev": "node scripts/dev-server.js"

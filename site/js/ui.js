@@ -89,6 +89,75 @@ export function buildRow(entry, { done, onclick }) {
   );
 }
 
+// Копирует текст: сначала современным способом, если браузер не разрешил — старым (через скрытое поле).
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.append(field);
+    field.select();
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    field.remove();
+    return ok;
+  }
+}
+
+// Готовые билды из игры, похожие на совет: ID для поиска в игре + чего в них не хватает.
+export function gameBuildsCard(builds) {
+  if (!builds || builds.length === 0) return null;
+  const copy = (id) => async (event) => {
+    const button = event.currentTarget;
+    button.textContent = (await copyText(String(id))) ? 'Скопировано' : 'Не вышло — выдели ID';
+    setTimeout(() => (button.textContent = 'Копировать'), 1500);
+  };
+  return h(
+    'section',
+    { class: 'card' },
+    h('h2', {}, 'Готовый билд из игры'),
+    h('p', { class: 'muted' }, 'Популярные билды игроков, ближе всего к этому совету. Введи ID в поиске билдов в игре.'),
+    h(
+      'ul',
+      { class: 'swap-list game-builds' },
+      builds.map((build) =>
+        h(
+          'li',
+          {},
+          h(
+            'div',
+            { class: 'game-build-head' },
+            h('strong', { class: 'game-build-id' }, `ID ${build.id}`),
+            h('button', { type: 'button', class: 'btn btn-quiet', onclick: copy(build.id) }, 'Копировать'),
+          ),
+          build.name ? h('span', {}, `«${build.name}»`) : null,
+          h(
+            'span',
+            { class: 'muted' },
+            `совпадает ${build.common} из ${build.total} предметов совета · ${formatNumber(build.matches)} матчей за неделю · побед ${percent(build.winrate)}`,
+          ),
+          h(
+            'span',
+            { class: 'muted' },
+            build.missing.length > 0
+              ? `Чего в нём нет: ${build.missing.map((item) => `«${item.nameRu}»`).join(', ')} — докупи сверх него`
+              : 'Все предметы совета в нём есть',
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 // Порядок прокачки: какую способность качать первой и самый популярный порядок.
 export function abilityCard(order, abilities) {
   const byId = new Map(abilities.map((ability) => [ability.id, ability]));

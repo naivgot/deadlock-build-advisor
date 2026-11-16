@@ -117,6 +117,28 @@ function abilityCard(order, abilities, root) {
   );
 }
 
+function gameBuildsCard(builds) {
+  if (!builds || builds.length === 0) return '';
+  const rows = builds
+    .map(
+      (build) =>
+        `<li><strong class="game-build-id">ID ${build.id}</strong>` +
+        (build.name ? `<span>«${escapeHtml(build.name)}»</span>` : '') +
+        `<span class="muted">совпадает ${build.common} из ${build.total} предметов билда · ${num(build.matches)} матчей за неделю · побед ${percent(build.winrate)}</span>` +
+        `<span class="muted">${
+          build.missing.length > 0
+            ? `Чего в нём нет: ${build.missing.map((item) => `«${escapeHtml(item.nameRu)}»`).join(', ')} — докупи сверх него`
+            : 'Все предметы билда в нём есть'
+        }</span></li>`,
+    )
+    .join('');
+  return (
+    `<section class="card"><h2>Готовый билд из игры</h2>` +
+    `<p class="muted">Популярные билды игроков, ближе всего к этому билду. Введи ID в поиске билдов в игре.</p>` +
+    `<ul class="swap-list game-builds">${rows}</ul></section>`
+  );
+}
+
 function countersCard(hero, counters, root) {
   const list =
     counters.length > 0
@@ -201,6 +223,7 @@ export function heroPageHtml({ hero, result, counters, abilities, meta, heroStat
     <a class="btn-primary btn-cta" href="${root}?hero=${hero.id}">Подстроить билд под свой матч</a>
     <p class="confidence confidence-${escapeHtml(result.confidence.level)}">${escapeHtml(result.confidence.label)}</p>
     ${buildCard(result, root)}
+    ${gameBuildsCard(result.gameBuilds)}
     ${abilityCard(result.abilityOrder, abilities, root)}
     ${countersCard(hero, counters, root)}
     <a class="btn btn-link" href="../">Билды на всех героев →</a>

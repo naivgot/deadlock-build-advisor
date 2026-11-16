@@ -10,6 +10,7 @@ import {
   pickStats,
   shrunkRate,
 } from './recommend.js';
+import { matchGameBuilds } from './game-builds.js';
 
 export const MATCH_SETTINGS = {
   ...SETTINGS,
@@ -601,9 +602,16 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     .slice(0, settings.maxAlsoGood)
     .map((c) => entry(c, [...c.forecast.reasons, statReason(c.stat, settings)]));
 
+  // Готовые игровые билды, похожие на этот совет: ID ищется в игре, недостающее — докупить.
+  const gameBuilds = matchGameBuilds(
+    path.map((c) => c.item.id),
+    ctx.stats?.gameBuilds,
+  ).map((build) => ({ ...build, missing: build.missing.map((id) => ({ ...describe(itemById.get(id)), cost: itemById.get(id).cost })) }));
+
   const empty = path.length === 0;
   return {
     lane,
+    gameBuilds,
     predictions: predictions.map(({ effect, label, who }) => ({ effect, label, who })),
     phases,
     situational,

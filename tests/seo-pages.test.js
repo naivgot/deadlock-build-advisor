@@ -72,6 +72,20 @@ test('страница героя: заголовок, описание, адр�
   assert.doesNotMatch(html, /Поздние/, 'пустой этап не показываем');
 });
 
+test('страница героя: карточка игрового билда с ID и недостающими предметами', () => {
+  const withBuilds = {
+    ...result,
+    gameBuilds: [{ id: 317831, name: 'Gun <Haze>', common: 3, total: 4, matches: 28955, winrate: 0.54, missing: [{ nameRu: 'Г' }] }],
+  };
+  const html = heroPageHtml({ hero, result: withBuilds, counters, abilities, meta, heroStat: [52, 100], base });
+  assert.match(html, /Готовый билд из игры/);
+  assert.match(html, /ID 317831/);
+  assert.match(html, /«Gun &lt;Haze&gt;»/);
+  assert.match(html, /совпадает 3 из 4/);
+  assert.match(html, /Чего в нём нет: «Г»/);
+  assert.doesNotMatch(heroPageHtml({ hero, result, counters, abilities, meta, base }), /Готовый билд из игры/);
+});
+
 test('страница героя без статистики честно пишет «мало данных»', () => {
   const empty = { ...result, phases: { early: [], mid: [], late: [] }, alsoGood: [], abilityOrder: null };
   const html = heroPageHtml({ hero, result: empty, counters: [], abilities, meta, heroStat: undefined, base });

@@ -1,7 +1,7 @@
 // Главная страница: состав матча → билд на весь матч.
 import { loadCore, loadHero, recommendData } from './data.js';
 import { buildForMatch } from './logic/match-build.js';
-import { abilityCard, buildRow, dataDateText, h, icon, itemRow, registerServiceWorker } from './ui.js';
+import { abilityCard, buildRow, dataDateText, gameBuildsCard, h, icon, itemRow, registerServiceWorker } from './ui.js';
 import { goal, startCounter } from './counter.js';
 
 const STORAGE_KEY = 'dba-match-v1';
@@ -258,6 +258,7 @@ function renderResult(result) {
         h('div', { class: 'phase' }, h('h3', { class: 'phase-title' }, `${title} · ${hint}`), h('ol', { class: 'item-list' }, result.phases[key].map(row))),
       ),
     ),
+    gameBuildsCard(result.gameBuilds),
     result.swaps.length > 0
       ? card(
           'Если матч пошёл не так',

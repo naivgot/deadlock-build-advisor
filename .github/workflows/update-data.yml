@@ -65,6 +65,15 @@ jobs:
         env:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
+      # Популярные игровые билды для карточки «Готовый билд из игры» (Д2б). Не вышло — останутся вчерашние.
+      - name: Скачать игровые билды
+        if: env.QUICK != 'true'
+        continue-on-error: true
+        timeout-minutes: 60
+        run: npm run fetch:builds
+        env:
+          DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
+
       - name: Сохранить данные в кэш для следующих сборок
         if: env.QUICK != 'true'
         uses: actions/cache/save@v4
@@ -73,6 +82,7 @@ jobs:
             data/static
             data/stats
             data/patch
+            data/builds
           key: data-${{ github.run_id }}
 
       # Сборка после изменения кода: последние данные из кэша (если кэша нет — данные из репозитория).
@@ -84,6 +94,7 @@ jobs:
             data/static
             data/stats
             data/patch
+            data/builds
           key: data-none
           restore-keys: data-
 

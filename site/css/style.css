@@ -260,3 +260,5 @@ details > .search { margin-bottom: 10px; }
 .post-text { white-space: pre-wrap; font: inherit; font-size: 0.9rem; margin: 0; }
 .badge-upgrade { background: #22303a; color: #8cc8f0; }
 .badge-sell { background: #3a2626; color: #f0a08c; }
+.game-build-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.game-build-id { font-size: 1.05rem; user-select: all; }

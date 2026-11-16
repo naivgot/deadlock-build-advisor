@@ -129,6 +129,9 @@ async function main() {
   // Продажи предметов и число слотов (fetch:sells) — только того же патча.
   const sellsFile = await readJson(join(DATA, 'sells', 'summary.json')).catch(() => null);
   const sells = sellsFile && sellsFile.patchTimestamp === statsMeta.patchTimestamp ? sellsFile : null;
+  // Популярные игровые билды (fetch:builds) — только того же патча.
+  const buildsFile = await readJson(join(DATA, 'builds', 'summary.json')).catch(() => null);
+  const gameBuilds = buildsFile && buildsFile.patchTimestamp === statsMeta.patchTimestamp ? buildsFile : null;
   for (const hero of heroes) {
     const path = join(DATA, 'stats', 'heroes', `${hero.id}.json`);
     if (!(await exists(path))) continue; // новый герой без статистики — сайт покажет «мало данных»
@@ -140,6 +143,7 @@ async function main() {
       stats.enemyEffects = teams.effects.enemies;
     }
     if (sells?.heroes[hero.id]) stats.sells = sells.heroes[hero.id];
+    if (gameBuilds?.heroes[hero.id]) stats.gameBuilds = gameBuilds.heroes[hero.id];
     heroFiles.set(hero.id, stats);
     heroProfiles[hero.id] = heroEffectProfile(stats.items?.all, heroStats[hero.id]?.all?.[1], items);
   }
