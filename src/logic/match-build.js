@@ -69,6 +69,9 @@ export const MATCH_SETTINGS = {
   allyRules: [{ allyHas: 'anti-heal', label: 'Срез лечения' }],
   // Примерная минута покупки для предметов без статистики — по тиру.
   minuteByTier: { 1: 4, 2: 10, 3: 18, 4: 26, 5: 30 },
+  // Продажи: подписываем «обычно продают», если продают хотя бы в 40% игр (и данных не меньше 300 покупок).
+  sellNoteRate: 0.4,
+  sellNoteMinBought: 300,
 };
 
 // Обычный винрейт покупок каждого тира на этом герое: { тир: доля побед }.
@@ -375,6 +378,47 @@ export function componentLinks(items) {
   return links;
 }
 
+// Раскладка билда по слотам. path — [{ item, minute }] в порядке покупки, links — componentLinks().
+// sells — продажи героя { id: [куплен, продан, минута продажи] }, slots — сколько предметов помещается
+// (null — не знаем, место не считаем). Возвращает Map: id → { sellBefore: [что продать перед покупкой],
+// soldAt: минута, когда предмет продадут ради места, или null, usual: { rate, minute } — обычно продают }.
+export function planSlots(path, links, sells, slots, settings = MATCH_SETTINGS) {
+  const plan = new Map(path.map((c) => [c.item.id, { sellBefore: [], soldAt: null, usual: null }]));
+  const sellRate = (item) => {
+    const row = sells?.[item.id];
+    return row && row[0] > 0 ? row[1] / row[0] : 0;
+  };
+  const inventory = [];
+  for (const c of path) {
+    const link = links.get(c.item.id);
+    // Улучшение забирает свои компоненты — их слоты освобождаются.
+    for (const component of link.from) {
+      const index = inventory.indexOf(component);
+      if (index >= 0) inventory.splice(index, 1);
+    }
+    if (slots && inventory.length >= slots) {
+      // Продаём то, что этот герой чаще всего продаёт; компонент, который ещё ждёт улучшения, не трогаем.
+      const victim = inventory
+        .filter((item) => !links.get(item.id).into)
+        .sort((a, b) => sellRate(b) - sellRate(a) || a.cost - b.cost || a.id - b.id)[0];
+      if (victim) {
+        inventory.splice(inventory.indexOf(victim), 1);
+        plan.get(victim.id).soldAt = Math.round(c.minute);
+        plan.get(c.item.id).sellBefore.push(victim);
+      }
+    }
+    inventory.push(c.item);
+  }
+  for (const c of path) {
+    const row = sells?.[c.item.id];
+    // Компонент, который уйдёт в улучшение, не «продают» — он улучшается.
+    if (!row || links.get(c.item.id).into || row[2] === null) continue;
+    const rate = sellRate(c.item);
+    if (rate >= settings.sellNoteRate && row[0] >= settings.sellNoteMinBought) plan.get(c.item.id).usual = { rate, minute: row[2] };
+  }
+  return plan;
+}
+
 export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   const { hero: heroId, rankGroup = 'all' } = input;
   const warnings = [];
@@ -462,6 +506,8 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   }
   path.sort((a, b) => a.minute - b.minute || a.item.cost - b.item.cost || a.item.id - b.item.id);
   const links = componentLinks(path.map((c) => c.item));
+  const slots = data.meta?.slots ?? null;
+  const slotPlan = planSlots(path, links, ctx.stats?.sells, slots, settings);
 
   const entry = (c, reasons) => ({
     ...describe(c.item),
@@ -488,11 +534,22 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
       reasons.push(`«${component.nameRu}» к этому времени уже уйдёт в «${by.nameRu}» — этот предмет берёшь отдельно`);
     }
     if (link.into) reasons.push(`Потом улучшишь в «${link.into.nameRu}»`);
+    const slot = slotPlan.get(c.item.id);
+    if (slot.sellBefore.length > 0) {
+      reasons.push(`Все ${slots} слотов заняты — перед покупкой продай «${slot.sellBefore.map((item) => item.nameRu).join('», «')}»`);
+    }
+    if (slot.soldAt !== null) reasons.push(`Около ${slot.soldAt} мин продашь, чтобы освободить место`);
+    if (slot.usual) {
+      reasons.push(`Этот предмет продают в ${Math.round(slot.usual.rate * 100)}% игр, обычно к ~${slot.usual.minute} мин`);
+    }
 
     phases[phaseOf(c.minute)].push({
       ...entry(c, reasons),
       upgradeFrom: link.from.map((item) => item.nameRu),
       upgradeInto: link.into?.nameRu ?? null,
+      sellBefore: slot.sellBefore.map((item) => item.nameRu),
+      soldAt: slot.soldAt,
+      usualSell: slot.usual ? { rate: Number(slot.usual.rate.toFixed(2)), minute: slot.usual.minute } : null,
     });
   }
 

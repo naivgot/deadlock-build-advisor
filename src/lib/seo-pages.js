@@ -68,7 +68,9 @@ const entryDetail = (entry) => {
   // Цепочка улучшений: «из „Спешная стрельба“», «→ „Быстрый стрелок“».
   const from = entry.upgradeFrom?.length > 0 ? ` · улучшение из «${entry.upgradeFrom.join('», «')}»` : '';
   const into = entry.upgradeInto ? ` · потом → «${entry.upgradeInto}»` : '';
-  return stat + from + into;
+  const sellMinute = entry.soldAt ?? entry.usualSell?.minute;
+  const sell = sellMinute ? ` · продать ~${sellMinute} мин` : '';
+  return stat + from + into + sell;
 };
 
 function buildCard(result, root) {

@@ -40,6 +40,14 @@ jobs:
           key: data-none
           restore-keys: data-
 
+      # Продажи предметов и число слотов (задача Д2): 2 SQL-запроса. Если не вышло — остаются вчерашние данные.
+      - name: Собрать продажи предметов
+        continue-on-error: true
+        timeout-minutes: 10
+        run: npm run fetch:sells
+        env:
+          DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
+
       - name: Собрать статистику союзников и врагов
         timeout-minutes: 280
         run: npm run fetch:teams
@@ -51,7 +59,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/teams
+          git add data/teams data/sells
           if git diff --cached --quiet; then
             echo "Данные не изменились"
             exit 0

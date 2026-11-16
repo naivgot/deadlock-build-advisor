@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { MATCH_SETTINGS, buildForMatch, componentLinks } from '../src/logic/match-build.js';
+import { MATCH_SETTINGS, buildForMatch, componentLinks, planSlots } from '../src/logic/match-build.js';
 import { HERO, ITEM, makeData } from './fixtures/recommend-data.js';
 
 const ids = (list) => list.map((entry) => entry.itemId);
@@ -261,4 +261,58 @@ test('статистика врагов: предмет против этого 
   const find = (result) => result.phases.mid.find((entry) => entry.itemId === ITEM.bigArmor);
   assert.ok(find(vs).score > find(alone).score);
   assert.ok(find(vs).reasons.includes('Против Healer B (ру) с ним побеждают на 5% чаще обычного (последние дни)'));
+});
+
+// ---------- Слоты и продажа ----------
+
+const it = (id, cost = 800, components = []) => ({ id, nameRu: `П${id}`, cost, components });
+const steps = (...items) => items.map((item, index) => ({ item, minute: (index + 1) * 5 }));
+
+test('planSlots: когда место кончилось — продаём то, что герой чаще продаёт', () => {
+  const [a, b, c, d] = [it(1), it(2), it(3), it(4)];
+  const path = steps(a, b, c, d);
+  const sells = { 1: [1000, 100, 20], 2: [1000, 600, 25] };
+  const plan = planSlots(path, componentLinks([a, b, c, d]), sells, 3);
+  assert.deepEqual(plan.get(4).sellBefore, [b]);
+  assert.equal(plan.get(2).soldAt, 20, 'продают в момент покупки четвёртого предмета');
+  assert.equal(plan.get(1).soldAt, null);
+});
+
+test('planSlots: улучшение встаёт на место компонента, ждущий улучшения компонент не продаём', () => {
+  const comp = it(1);
+  const [x, y] = [it(2), it(3)];
+  const up = it(4, 3200, [1]);
+  const z = it(5);
+  const sells = { 1: [1000, 900, 10], 2: [1000, 500, 30], 3: [1000, 100, 30] };
+  // comp, x, y — слоты полны; до улучшения покупаем ещё w: продать можно только x или y (comp ждёт улучшения)
+  const w = it(6);
+  const items = [comp, x, y, w, up, z];
+  const plan = planSlots(steps(...items), componentLinks(items), sells, 3);
+  assert.deepEqual(plan.get(6).sellBefore, [x], 'comp ждёт улучшения — его не трогаем');
+  assert.deepEqual(plan.get(4).sellBefore, [], 'улучшение заняло слот компонента');
+  assert.equal(plan.get(5).sellBefore.length, 1, 'дальше места опять нет');
+});
+
+test('planSlots: «обычно продают» — только при частых продажах и не для компонента', () => {
+  const comp = it(1);
+  const up = it(2, 1600, [1]);
+  const often = it(3);
+  const items = [comp, often, up];
+  const sells = { 1: [1000, 900, 10], 3: [1000, 500, 28], 2: [100, 90, 30] };
+  const plan = planSlots(steps(...items), componentLinks(items), sells, null);
+  assert.deepEqual(plan.get(3).usual, { rate: 0.5, minute: 28 });
+  assert.equal(plan.get(1).usual, null, 'компонент улучшается, а не продаётся');
+  assert.equal(plan.get(2).usual, null, 'мало покупок');
+  assert.ok([...plan.values()].every((p) => p.sellBefore.length === 0), 'слоты неизвестны — место не считаем');
+});
+
+test('билд на матч: при малом числе слотов советует, что продать', () => {
+  const data = makeData();
+  data.meta = { ...data.meta, slots: 3 };
+  const result = buildForMatch({ hero: HERO.main }, data);
+  const all = [...result.phases.early, ...result.phases.mid, ...result.phases.late];
+  const buyer = all.find((entry) => entry.sellBefore.length > 0);
+  assert.ok(buyer, 'кто-то требует продажи');
+  assert.ok(buyer.reasons.some((reason) => /Все 3 слотов заняты — перед покупкой продай/.test(reason)));
+  assert.ok(all.some((entry) => entry.soldAt !== null));
 });

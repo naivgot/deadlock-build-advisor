@@ -48,6 +48,12 @@ export function itemRow(item, detail) {
   );
 }
 
+// Метка «продать ~N мин»: продашь ради места или этот предмет обычно продают.
+function sellBadge(entry) {
+  const minute = entry.soldAt ?? entry.usualSell?.minute;
+  return minute ? h('span', { class: 'badge badge-sell' }, `продать ~${minute} мин`) : null;
+}
+
 // Строка билда: тап зачёркивает её (отметка «купил»). Причины — под названием.
 export function buildRow(entry, { done, onclick }) {
   const [first, ...rest] = entry.reasons;
@@ -73,6 +79,7 @@ export function buildRow(entry, { done, onclick }) {
           entry.nameRu,
           entry.isCounter ? h('span', { class: 'badge' }, 'контра') : null,
           entry.upgradeFrom?.length > 0 ? h('span', { class: 'badge badge-upgrade' }, '↑ улучшение') : null,
+          sellBadge(entry),
         ),
         h('span', { class: 'reason-line' }, first),
         rest.map((reason) => h('span', { class: 'muted' }, reason)),

@@ -31,6 +31,12 @@ if (teamsFile && data.heroItemStats) {
   data.heroItemStats.allyEffects = teamsFile.effects.allies;
   data.heroItemStats.enemyEffects = teamsFile.effects.enemies;
 }
+// Продажи и число слотов (npm run fetch:sells).
+const sells = await readJson(join(DATA, 'sells', 'summary.json')).catch(() => null);
+if (sells && data.heroItemStats) {
+  data.heroItemStats.sells = sells.heroes[hero];
+  data.meta = { ...data.meta, slots: sells.slots };
+}
 data.heroProfiles = {};
 for (const h of heroes) {
   const stats = await readJson(join(DATA, 'stats', 'heroes', `${h.id}.json`)).catch(() => null);
