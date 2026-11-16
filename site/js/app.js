@@ -1,7 +1,7 @@
 // Главная страница: состав матча → билд на весь матч.
 import { loadCore, loadHero, recommendData } from './data.js';
 import { buildForMatch } from './logic/match-build.js';
-import { abilityCard, buildRow, dataDateText, gameBuildsCard, h, icon, itemRow, registerServiceWorker } from './ui.js';
+import { abilityCard, buildRow, dataDateShort, dataDateText, gameBuildsCard, h, icon, itemRow, registerServiceWorker } from './ui.js';
 import { goal, startCounter } from './counter.js';
 
 const STORAGE_KEY = 'dba-match-v1';
@@ -236,24 +236,11 @@ function renderResult(result) {
     ),
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
     result.lane ? laneCard(result.lane) : null,
-    result.predictions.length > 0
-      ? card(
-          'Чего ждать от врагов',
-          h('p', { class: 'muted' }, 'Прогноз по тому, что эти герои обычно покупают (доля их игр):'),
-          h(
-            'ul',
-            { class: 'swap-list' },
-            result.predictions.slice(0, 4).map((p) =>
-              h('li', {}, h('strong', {}, `Берут ${p.label}`), h('span', { class: 'muted' }, p.who.slice(0, 4).map((w) => `${w.name} ${Math.round(w.prob * 100)}%`).join(', '))),
-            ),
-          ),
-        )
-      : null,
     result.enemies.length === 0 ? h('p', { class: 'notice' }, 'Враги не выбраны — показан обычный билд героя. Добавь врагов, чтобы подстроить его под матч.') : null,
     result.message ? h('p', { class: 'notice' }, result.message) : null,
     card(
       'Порядок покупки',
-      h('p', { class: 'muted' }, 'Нажми на предмет — увидишь, что он делает. Галочка справа — «купил»: строка зачеркнётся, чтобы после смерти сразу видеть, что дальше.'),
+      h('p', { class: 'muted' }, 'Нажми на предмет — что он делает. Галочка ✓ — «купил»: строка зачеркнётся.'),
       PHASES.filter(([key]) => result.phases[key].length > 0).map(([key, title, hint]) =>
         h('div', { class: 'phase' }, h('h3', { class: 'phase-title' }, `${title} · ${hint}`), h('ol', { class: 'item-list' }, result.phases[key].map(row))),
       ),
@@ -267,6 +254,19 @@ function renderResult(result) {
       : null,
     result.situational.length > 0
       ? card('Ситуативные — против этого состава', h('ul', { class: 'item-list' }, result.situational.map(row)))
+      : null,
+    result.predictions.length > 0
+      ? card(
+          'Чего ждать от врагов',
+          h('p', { class: 'muted' }, 'Прогноз по тому, что эти герои обычно покупают (доля их игр):'),
+          h(
+            'ul',
+            { class: 'swap-list' },
+            result.predictions.slice(0, 4).map((p) =>
+              h('li', {}, h('strong', {}, `Берут ${p.label}`), h('span', { class: 'muted' }, p.who.slice(0, 4).map((w) => `${w.name} ${Math.round(w.prob * 100)}%`).join(', '))),
+            ),
+          ),
+        )
       : null,
     result.alsoGood.length > 0
       ? card('Тоже подходит', h('p', { class: 'muted' }, 'Почти не уступают основным — можно взять вместо них по вкусу.'), h('ul', { class: 'item-list' }, result.alsoGood.map(row)))
@@ -344,7 +344,7 @@ async function start() {
 
   restoreState();
   heroFromLink();
-  $('data-date').textContent = dataDateText(core.meta);
+  $('data-date').textContent = dataDateShort(core.meta);
   $('footer-date').textContent = dataDateText(core.meta);
   $('rank').replaceChildren(
     h('option', { value: 'all' }, 'Все ранги'),

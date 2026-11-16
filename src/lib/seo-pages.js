@@ -42,6 +42,14 @@ const PHASES = [
   ['late', 'Поздние', 'после 22 минуты'],
 ];
 
+// Короткая строка для шапки: «Данные от 15 ноября · 8,5 млн матчей»; полная — в подвале.
+function dataShort(meta) {
+  const day = new Date(meta.fetchedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+  const millions = meta.totalMatches / 1e6;
+  const matches = millions >= 1 ? `${millions.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} млн матчей` : `${num(meta.totalMatches)} матчей`;
+  return `Данные от ${day} · ${matches}`;
+}
+
 function dataLine(meta) {
   return `Данные от ${dateRu(meta.fetchedAt)} · патч от ${dateRu(meta.patchDate)} · ${num(meta.totalMatches)} матчей`;
 }
@@ -199,7 +207,7 @@ function footer(meta, root) {
   return `  <footer class="footer">
     <p>Не связан с Valve. Данные: deadlock-api.com.</p>
     <p class="muted">Посещения считает Яндекс Метрика.</p>
-    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+    <p class="muted">${escapeHtml(dataShort(meta))}</p>
   </footer>
   <script type="module">
     import { startCounter } from '${root}js/counter.js';
@@ -235,7 +243,7 @@ export function heroPageHtml({ hero, result, counters, abilities, meta, heroStat
     <div class="hero-head">${iconTag(hero.icon, root, '', 'icon icon-hero')}
       <div class="picked-text"><h1>Билд: ${escapeHtml(hero.nameRu)}</h1><span class="muted">${escapeHtml(hero.name)} · ${escapeHtml(hero.role ?? '')}${stat}</span></div>
     </div>
-    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+    <p class="muted">${escapeHtml(dataShort(meta))}</p>
   </header>
 
   <main>
@@ -269,7 +277,7 @@ export function heroesIndexHtml({ heroes, meta, base }) {
   <header class="top">
     <a class="back" href="${root}">← Билд под матч</a>
     <h1>Билды на всех героев</h1>
-    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+    <p class="muted">${escapeHtml(dataShort(meta))}</p>
   </header>
 
   <main>

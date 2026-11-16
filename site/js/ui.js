@@ -32,14 +32,27 @@ export function icon(src, alt, className = 'icon') {
   return h('img', { class: className, src, alt, loading: 'lazy', decoding: 'async', width: 64, height: 64 });
 }
 
-// Строка «Данные от …» для шапки и подвала.
+// Короткая строка для шапки (на телефоне — в одну строку): «Данные от 15 ноября · 8,5 млн матчей».
+export function dataDateShort(meta) {
+  const day = new Date(meta.fetchedAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+  const millions = meta.totalMatches / 1e6;
+  const matches = millions >= 1 ? `${millions.toLocaleString('ru-RU', { maximumFractionDigits: 1 })} млн матчей` : `${formatNumber(meta.totalMatches)} матчей`;
+  return `Данные от ${day} · ${matches}`;
+}
+
+// Полная строка «Данные от …» для подвала.
 export function dataDateText(meta) {
   return `Данные от ${formatDate(meta.fetchedAt)} · патч от ${formatDate(meta.patchDate)} · ${formatNumber(meta.totalMatches)} матчей`;
 }
 
 // Что делает предмет: описание и характеристики из подсказки игры. Показывается по нажатию на строку.
-export function itemInfo(item, moreReasons = []) {
+export function itemInfo(item, moreReasons = [], narrowReason = null) {
   const stats = item.stats ?? [];
+  // narrowReason — вторая причина: на телефоне её нет в строке, поэтому показываем здесь.
+  const reasons = [
+    ...(narrowReason ? [h('li', { class: 'narrow-only' }, narrowReason)] : []),
+    ...moreReasons.map((reason) => h('li', {}, reason)),
+  ];
   const group = (title, lines) =>
     lines.length > 0
       ? h('div', { class: 'info-group' }, h('span', { class: 'phase-title' }, title), h('ul', { class: 'stat-list' }, lines.map((line) => h('li', {}, h('span', { class: 'muted' }, line.label), h('strong', {}, line.value)))))
@@ -47,8 +60,8 @@ export function itemInfo(item, moreReasons = []) {
   return h(
     'div',
     { class: 'item-info' },
-    moreReasons.length > 0
-      ? h('div', { class: 'info-group' }, h('span', { class: 'phase-title' }, 'Ещё почему'), h('ul', { class: 'reason-list' }, moreReasons.map((reason) => h('li', {}, reason))))
+    reasons.length > 0
+      ? h('div', { class: `info-group${moreReasons.length === 0 ? ' narrow-only' : ''}` }, h('span', { class: 'phase-title' }, 'Ещё почему'), h('ul', { class: 'reason-list' }, reasons))
       : null,
     item.description ? h('p', {}, item.description) : null,
     group('Всегда', stats.filter((line) => line.innate)),
@@ -108,25 +121,36 @@ export function buildRow(entry, { done, onclick }) {
             entry.upgradeFrom?.length > 0 ? h('span', { class: 'badge badge-upgrade' }, '↑ улучшение') : null,
             sellBadge(entry),
           ),
+          // Цена, время и «купил» — строкой под названием, а не колонками справа: так тексту причин шире на телефоне.
+          h(
+            'span',
+            { class: 'row-meta-line' },
+            h('span', {}, `${formatNumber(entry.cost)} душ · ~${entry.minute} мин`),
+            h(
+              'button',
+              {
+                type: 'button',
+                class: 'done-toggle',
+                'aria-pressed': String(Boolean(done)),
+                'aria-label': `Купил: ${entry.nameRu}`,
+                // Кнопка внутри строки, которая раскрывается: не даём нажатию раскрыть описание.
+                onclick: (event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onclick();
+                },
+              },
+              '✓ Купил',
+            ),
+          ),
           h('span', { class: 'reason-line' }, first),
-          second ? h('span', { class: 'muted' }, second) : null,
-          more.length > 0 ? h('span', { class: 'more-hint' }, `ещё ${more.length} — нажми`) : null,
+          // На телефоне видна только главная причина (вторая — по нажатию), на широком экране — две.
+          second ? h('span', { class: 'muted reason-second' }, second) : null,
+          second ? h('span', { class: 'more-hint narrow-only' }, `ещё ${more.length + 1} — нажми`) : null,
+          more.length > 0 ? h('span', { class: 'more-hint wide-only' }, `ещё ${more.length} — нажми`) : null,
         ),
-        h('span', { class: 'row-meta' }, h('span', { class: 'price' }, formatNumber(entry.cost)), h('span', { class: 'muted' }, `~${entry.minute} мин`)),
       ),
-      itemInfo(entry, more),
-    ),
-    h(
-      'button',
-      {
-        type: 'button',
-        class: 'done-toggle',
-        'aria-pressed': String(Boolean(done)),
-        'aria-label': `Купил: ${entry.nameRu}`,
-        title: 'Купил',
-        onclick,
-      },
-      '✓',
+      itemInfo(entry, more, second),
     ),
   );
 }
@@ -163,15 +187,7 @@ export function gameBuildsCard(builds) {
     button.textContent = (await copyText(String(id))) ? 'Скопировано' : 'Не вышло — выдели ID';
     setTimeout(() => (button.textContent = 'Копировать'), 1500);
   };
-  return h(
-    'section',
-    { class: 'card' },
-    h('h2', {}, 'Готовый билд из игры'),
-    h('p', { class: 'muted' }, 'Популярные билды игроков, ближе всего к этому совету. Введи ID в поиске билдов в игре.'),
-    h(
-      'ul',
-      { class: 'swap-list game-builds' },
-      builds.map((build) =>
+  const item = (build) =>
         h(
           'li',
           {},
@@ -194,9 +210,18 @@ export function gameBuildsCard(builds) {
               ? `Чего в нём нет: ${build.missing.map((item) => `«${item.nameRu}»`).join(', ')} — докупи сверх него`
               : 'Все предметы совета в нём есть',
           ),
-        ),
-      ),
-    ),
+        );
+  // На виду — лучший билд, остальные — по нажатию: на телефоне карточка не растягивается на пол-экрана.
+  const [best, ...rest] = builds;
+  return h(
+    'section',
+    { class: 'card' },
+    h('h2', {}, 'Готовый билд из игры'),
+    h('p', { class: 'muted' }, 'Популярный билд игроков, ближе всего к этому совету. Введи ID в поиске билдов в игре.'),
+    h('ul', { class: 'swap-list game-builds' }, item(best)),
+    rest.length > 0
+      ? h('details', {}, h('summary', {}, `Ещё похожие билды: ${rest.length}`), h('ul', { class: 'swap-list game-builds' }, rest.map(item)))
+      : null,
   );
 }
 
