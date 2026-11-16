@@ -194,7 +194,10 @@ function head({ title, description, url, base, root }) {
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${escapeHtml(url)}">
-  <meta property="og:image" content="${escapeHtml(base)}icon-512.png">
+  <meta property="og:image" content="${escapeHtml(base)}og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#14161b">
   <link rel="manifest" href="${root}manifest.webmanifest">
   <link rel="icon" href="${root}icon-192.png" type="image/png">

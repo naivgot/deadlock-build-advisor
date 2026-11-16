@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><title>og</title>
+<style>body{margin:0;background:#000}</style></head>
+<body>
+<canvas id="c" width="1200" height="630"></canvas>
+<script type="module">
+const c = document.getElementById('c');
+const g = c.getContext('2d');
+const C = { bg: '#14161b', card: '#1d2027', card2: '#262a33', line: '#343946', text: '#eceef2', muted: '#9aa1b0', accent: '#f0b54a' };
+const FONT = '"Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif';
+const load = (src) => new Promise((ok, fail) => { const i = new Image(); i.onload = () => ok(i); i.onerror = fail; i.src = src; });
+const round = (x, y, w, h, r) => { g.beginPath(); g.roundRect(x, y, w, h, r); };
+
+// Фон: тёмный с лёгким золотым свечением справа сверху.
+g.fillStyle = C.bg; g.fillRect(0, 0, 1200, 630);
+const glow = g.createRadialGradient(1050, 80, 10, 1050, 80, 620);
+glow.addColorStop(0, 'rgba(240,181,74,0.22)'); glow.addColorStop(1, 'rgba(240,181,74,0)');
+g.fillStyle = glow; g.fillRect(0, 0, 1200, 630);
+
+// Логотип и название.
+const logo = await load('/icon-512.png');
+round(72, 64, 112, 112, 26); g.save(); g.clip(); g.drawImage(logo, 72, 64, 112, 112); g.restore();
+g.fillStyle = C.text; g.font = `800 78px ${FONT}`; g.textBaseline = 'alphabetic';
+g.fillText('Билд под матч', 212, 146);
+
+// Подзаголовок.
+g.fillStyle = C.text; g.font = `600 40px ${FONT}`;
+g.fillText('Порядок покупки под твой матч в Deadlock', 72, 262);
+g.fillStyle = C.muted; g.font = `400 30px ${FONT}`;
+g.fillText('Выбери себя и врагов — получишь билд за секунду', 72, 310);
+
+// Что учитывается — «плашки».
+const chips = ['Контры против врагов', 'Сложность линии', 'Что продать', 'ID билда из игры'];
+g.font = `600 26px ${FONT}`;
+let x = 72; const y = 352;
+for (const text of chips) {
+  const w = g.measureText(text).width + 40;
+  round(x, y, w, 52, 26); g.fillStyle = C.card2; g.fill(); g.strokeStyle = C.accent; g.lineWidth = 2; g.stroke();
+  g.fillStyle = C.accent; g.fillText(text, x + 20, y + 35);
+  x += w + 14;
+}
+
+// Ряд героев — то, с чем работает сайт.
+const core = await (await fetch('/data/core.json')).json();
+const pick = ['Haze', 'Abrams', 'Infernus', 'Lady Geist', 'Seven', 'Kelvin', 'Mirage', 'Dynamo', 'Vindicta', 'Pocket', 'Shiv'];
+const heroes = pick.map((name) => core.heroes.find((h) => h.name === name)).filter(Boolean);
+let hx = 72;
+for (const hero of heroes) {
+  try {
+    const img = await load('/' + hero.icon);
+    round(hx, 452, 84, 84, 16); g.fillStyle = C.card; g.fill();
+    g.save(); round(hx, 452, 84, 84, 16); g.clip(); g.drawImage(img, hx, 452, 84, 84); g.restore();
+    round(hx, 452, 84, 84, 16); g.strokeStyle = C.line; g.lineWidth = 2; g.stroke();
+  } catch {}
+  hx += 96;
+}
+
+// Цифры — внизу справа.
+g.fillStyle = C.muted; g.font = `400 24px ${FONT}`;
+
+g.textAlign = 'right';
+g.fillText("по статистике миллионов матчей · обновляется раз в сутки", 1128, 590); // без чисел — картинка не устареет
+
+const data = c.toDataURL('image/jpeg', 0.9);
+const r = await fetch('/save', { method: 'POST', body: data });
+document.title = 'saved:' + (await r.text()) + ':' + data.length;
+</script>
+</body>
+</html>

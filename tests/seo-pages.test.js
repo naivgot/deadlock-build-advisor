@@ -58,7 +58,7 @@ test('страница героя: заголовок, описание, адр�
   assert.match(html, /<title>Мо и Мелкий \(Mo &amp; Krill\) — билд в Deadlock, ноябрь 2026<\/title>/);
   assert.match(html, /<link rel="canonical" href="https:\/\/example\.test\/site\/heroes\/mo-and-krill\/">/);
   assert.match(html, /<meta name="description" content="[^"]*ранние — Пули &lt;А&gt;, Б[^"]*">/);
-  assert.match(html, /property="og:image" content="https:\/\/example\.test\/site\/icon-512\.png"/);
+  assert.match(html, /property="og:image" content="https:\/\/example\.test\/site\/og-image\.jpg"/);
   assert.match(html, /Пули &lt;А&gt;/, 'название экранировано');
   assert.doesNotMatch(html, /мало данных/, 'у предмета без статистики — просто без цифр');
   assert.match(html, /побед 52% · берут в 50% игр/, 'сначала победы, потом популярность');
