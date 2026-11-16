@@ -296,3 +296,28 @@ details > .search { margin-bottom: 10px; }
 .lead { font-size: 0.95rem; margin-top: 2px; }
 .share-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .share-bar .btn { text-align: center; text-decoration: none; min-height: 40px; display: grid; place-items: center; }
+
+/* Раскладка главной. Телефон: одна колонка — левая обёртка «растворяется», порядок задаём явно. */
+.layout .col-left { display: contents; }
+#team { order: 1; }
+#picker { order: 2; }
+#result { order: 3; }
+#settings { order: 4; }
+.links { order: 5; display: grid; gap: 4px; }
+#result-empty { display: none; }
+
+/* Компьютер (от 1024 px): состав слева, билд справа — удобно показывать на стриме. */
+@media (min-width: 1024px) {
+  .top, .layout, .footer { max-width: 1180px; }
+  .layout { grid-template-columns: 420px minmax(0, 1fr); column-gap: 20px; align-items: start; }
+  /* Левая колонка остаётся на месте, пока листаешь билд справа (если не влезает — листается сама). */
+  .layout .col-left {
+    display: grid; gap: 12px; grid-column: 1; grid-row: 1;
+    position: sticky; top: 12px; max-height: calc(100vh - 100px); overflow-y: auto;
+  }
+  #result, #result-empty { grid-column: 2; grid-row: 1; }
+  #result-empty { display: grid; }
+  #result:not([hidden]) ~ #result-empty { display: none; }
+  /* Кнопка «Собрать билд» — под левой колонкой, а не на всю ширину. */
+  .sticky .btn-primary { max-width: 420px; margin-left: max(12px, calc((100% - 1180px) / 2 + 12px)); }
+}

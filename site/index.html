@@ -26,7 +26,9 @@
     <p class="muted" id="data-date">Загружаю данные…</p>
   </header>
 
-  <main id="app" hidden>
+  <!-- На телефоне — одна колонка (порядок задаёт CSS), на компьютере — состав слева, билд справа. -->
+  <main id="app" class="layout" hidden>
+    <div class="col-left">
     <section class="card" id="team">
       <h2>Твоя линия</h2>
       <div class="lane">
@@ -51,8 +53,6 @@
       <div id="hero-grid" class="grid grid-heroes"></div>
     </section>
 
-    <section id="result" hidden></section>
-
     <details class="card" id="settings">
       <summary>Настройки</summary>
       <label class="rank-row">
@@ -61,9 +61,18 @@
       </label>
     </details>
 
-    <a class="btn btn-link" href="heroes/">Билды на всех героев →</a>
-    <a class="btn btn-link" href="patch/">Что изменил последний патч →</a>
-    <a class="btn btn-link" href="about/">Как это работает и почему советам можно верить →</a>
+    <div class="links">
+      <a class="btn btn-link" href="heroes/">Билды на всех героев →</a>
+      <a class="btn btn-link" href="patch/">Что изменил последний патч →</a>
+      <a class="btn btn-link" href="about/">Как это работает и почему советам можно верить →</a>
+    </div>
+    </div>
+
+    <section id="result" hidden></section>
+    <section class="card" id="result-empty">
+      <h2>Здесь появится билд</h2>
+      <p class="muted">Выбери слева своего героя и врагов и нажми «Собрать билд» — порядок покупки под этот матч появится здесь.</p>
+    </section>
   </main>
 
   <p class="load-error" id="load-error" hidden></p>
