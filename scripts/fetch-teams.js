@@ -72,8 +72,21 @@ async function main() {
 
   let ok = 0;
   let kept = 0;
-  for (const [index, hero] of heroes.entries()) {
-    const label = `[${index + 1}/${heroes.length}] ${hero.nameRu}`;
+  // Первый проход — все герои; второй — только те, по кому запрос не удался (часто ошибка временная).
+  const failed = await collect(heroes, 'попытка 1');
+  const stillFailed = failed.length > 0 ? await collect(failed, 'попытка 2') : [];
+
+  async function collect(list, attempt) {
+    const failures = [];
+    for (const [index, hero] of list.entries()) {
+      const label = `[${index + 1}/${list.length}, ${attempt}] ${hero.nameRu}`;
+      const done = await collectHero(hero, label, attempt === 'попытка 2');
+      if (!done) failures.push(hero);
+    }
+    return failures;
+  }
+
+  async function collectHero(hero, label, lastTry) {
     try {
       const rows = await fetchJson(apiUrl('/v1/sql', { query: teamsQuery(hero.id, itemIds, fromUnix) }), {
         headers,
@@ -88,14 +101,23 @@ async function main() {
       );
       ok++;
       console.log(`${label} — строк: ${rows.length}`);
+      return true;
     } catch (error) {
+      const reason = error.message.replace(/https?:\/\/\S+/, '…').slice(0, 200);
+      if (!lastTry) {
+        console.warn(`${label} — не удалось (${reason}). Повторю в конце.`);
+        return false;
+      }
       const old = await previous(hero.id);
       const sameP = old && old.patchTimestamp === meta.patchTimestamp;
       if (sameP) kept++;
-      const reason = error.message.replace(/https?:\/\/\S+/, '…').slice(0, 200);
-      console.warn(`${label} — не удалось (${reason}).${sameP ? 'Оставляю прошлые данные.' : 'Прошлых данных этого патча нет.'}`);
+      const text = `${label} — не удалось (${reason}). ${sameP ? 'Оставляю прошлые данные.' : 'Прошлых данных этого патча нет.'}`;
+      // В GitHub Actions строка «::warning::» видна в сводке запуска даже без входа в аккаунт.
+      console.warn(process.env.GITHUB_ACTIONS ? `::warning::${text}` : text);
+      return false;
     }
   }
+  if (stillFailed.length > 0) console.log(`Не собраны: ${stillFailed.map((hero) => hero.nameRu).join(', ')}.`);
 
   // Данные прошлого патча смешивать нельзя — удаляем их.
   let removed = 0;

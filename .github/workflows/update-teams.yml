@@ -1,5 +1,6 @@
 # Медленный сбор статистики союзников и врагов (задачи 1.5д и 1.5е): ~3 часа из-за лимита SQL-запросов API.
-# Результат — маленькие файлы data/teams/*.json — коммитится в репозиторий и попадает на сайт при следующей ночной сборке.
+# Результат — маленькие файлы data/teams/*.json — коммитится в репозиторий, после чего сайт сразу
+# пересобирается в быстром режиме (коммит бота сам по себе сборку не запускает — так устроен GitHub).
 # Если отдельные герои не собрались — остаются их прошлые данные; сбор от этого не падает.
 name: Статистика союзников и врагов
 
@@ -10,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # чтобы запустить пересборку сайта
 
 concurrency:
   group: allies
@@ -45,6 +47,7 @@ jobs:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
       - name: Сохранить в репозиторий
+        id: save
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -56,3 +59,10 @@ jobs:
           git commit -m "Статистика союзников и врагов от $(date -u +%Y-%m-%d)"
           git pull --rebase
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Пересобрать сайт с новыми данными
+        if: steps.save.outputs.changed == 'true'
+        run: gh workflow run update-data.yml --ref main -f quick=true
+        env:
+          GH_TOKEN: ${{ github.token }}

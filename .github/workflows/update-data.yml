@@ -1,12 +1,18 @@
 # Раз в сутки (и по кнопке) скачивает свежие данные, проверяет их тестами, собирает сайт и публикует на GitHub Pages.
 # Если любой шаг упал — публикации нет, на сайте остаются вчерашние данные, а GitHub присылает письмо об ошибке.
-# При изменении кода (push) сайт пересобирается без долгого сбора: данные берутся из кэша последнего ночного запуска.
+# При изменении кода (push) и в быстром режиме (quick, его запускает сбор союзников) сайт пересобирается
+# без долгого сбора: данные берутся из кэша последнего ночного запуска.
 name: Обновление данных и сайта
 
 on:
   schedule:
     - cron: '30 3 * * *' # каждый день в 06:30 по Минску (03:30 UTC)
   workflow_dispatch: # кнопка «Run workflow» на вкладке Actions
+    inputs:
+      quick:
+        description: 'Быстро: без скачивания статистики, только пересобрать сайт'
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths: ['site/**', 'src/**', 'scripts/build-site.js', 'data/manual/**', 'data/teams/**', '.github/workflows/update-data.yml']
@@ -25,6 +31,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 300
+    env:
+      QUICK: ${{ github.event_name == 'push' || inputs.quick == true }}
     steps:
       - name: Скачать код
         uses: actions/checkout@v4
@@ -36,20 +44,20 @@ jobs:
 
       # Ночной запуск: свежие данные из API.
       - name: Скачать героев и предметы
-        if: github.event_name != 'push'
+        if: env.QUICK != 'true'
         run: npm run fetch:static
         env:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
       - name: Скачать статистику патча
-        if: github.event_name != 'push'
+        if: env.QUICK != 'true'
         timeout-minutes: 240
         run: npm run fetch:stats
         env:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
       - name: Сохранить данные в кэш для следующих сборок
-        if: github.event_name != 'push'
+        if: env.QUICK != 'true'
         uses: actions/cache/save@v4
         with:
           path: |
@@ -59,7 +67,7 @@ jobs:
 
       # Сборка после изменения кода: последние данные из кэша (если кэша нет — данные из репозитория).
       - name: Взять данные последнего ночного запуска
-        if: github.event_name == 'push'
+        if: env.QUICK == 'true'
         uses: actions/cache/restore@v4
         with:
           path: |
@@ -72,11 +80,11 @@ jobs:
         run: npm test
 
       - name: Собрать сайт на свежих данных
-        if: github.event_name != 'push'
+        if: env.QUICK != 'true'
         run: npm run build:site
 
       - name: Собрать сайт на данных из кэша
-        if: github.event_name == 'push'
+        if: env.QUICK == 'true'
         run: npm run build:site -- --allow-stale
 
       - name: Подготовить публикацию
