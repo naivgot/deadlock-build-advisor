@@ -8,7 +8,7 @@ import { readJson, writeJson } from '../src/lib/files.js';
 import { buildForMatch, heroEffectProfile } from '../src/logic/match-build.js';
 import { countersAgainst } from '../src/logic/recommend.js';
 import { patchDiff, patchPostText } from '../src/logic/patch-diff.js';
-import { heroPageHtml, heroesIndexHtml, heroSlug, patchPageHtml, robotsTxt, siteUrl, sitemapXml } from '../src/lib/seo-pages.js';
+import { aboutPageHtml, heroPageHtml, heroesIndexHtml, heroSlug, patchPageHtml, robotsTxt, siteUrl, sitemapXml } from '../src/lib/seo-pages.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const DATA = join(ROOT, 'data');
@@ -240,7 +240,13 @@ async function writeSeoPages(core, heroFiles, matchups) {
   await writeFile(join(SITE, 'patch', 'index.html'), patchPageHtml({ diff, meta: core.meta, base, post }));
   if (!diff) console.warn('Сводки по патчу нет (или она от другого патча) — страница патча покажет «ещё не готово».');
 
-  const paths = ['', 'heroes/', 'patch/', ...core.heroes.map((hero) => `heroes/${hero.slug}/`)];
+  // «Как это работает» — с итогом проверки на матчах (data/manual/backtest.json).
+  const backtest = await readJson(join(DATA, 'manual', 'backtest.json')).catch(() => null);
+  await rm(join(SITE, 'about'), { recursive: true, force: true });
+  await mkdir(join(SITE, 'about'), { recursive: true });
+  await writeFile(join(SITE, 'about', 'index.html'), aboutPageHtml({ meta: core.meta, base, backtest, heroesCount: core.heroes.length }));
+
+  const paths = ['', 'about/', 'heroes/', 'patch/', ...core.heroes.map((hero) => `heroes/${hero.slug}/`)];
   await writeFile(join(SITE, 'sitemap.xml'), sitemapXml(paths, base, core.meta.fetchedAt));
   await writeFile(join(SITE, 'robots.txt'), robotsTxt(base));
   return core.heroes.length;

@@ -205,7 +205,7 @@ function head({ title, description, url, base, root }) {
 
 function footer(meta, root) {
   return `  <footer class="footer">
-    <p>Не связан с Valve. Данные: deadlock-api.com.</p>
+    <p><a href="${root}about/">Как это работает</a> · Не связан с Valve. Данные: deadlock-api.com.</p>
     <p class="muted">Посещения считает Яндекс Метрика.</p>
     <p class="muted">${escapeHtml(dataShort(meta))}</p>
   </footer>
@@ -342,6 +342,97 @@ export function patchPageHtml({ diff, meta, base, post }) {
 
   <main>
     ${body}
+    <a class="btn btn-link" href="${root}heroes/">Билды на всех героев →</a>
+  </main>
+
+${footer(meta, root)}`;
+}
+
+// Страница «Как это работает»: site/about/index.html. backtest — итог проверки на матчах (data/manual/backtest.json).
+export function aboutPageHtml({ meta, base, backtest, heroesCount }) {
+  const root = '../';
+  const title = 'Как работает «Билд под матч» — советник по билдам Deadlock';
+  const description =
+    'Откуда данные, что учитывает совет (враги на линии, их предметы, союзники, слоты) и как совет проверен на реальных матчах.';
+  const pct = (value) => `${value > 0 ? '+' : ''}${Number(value).toLocaleString('ru-RU')}%`;
+  const check = backtest
+    ? `<section class="card"><h2>Проверено на реальных матчах</h2>
+      <p>Мы взяли ${num(backtest.matches)} матчей (${num(backtest.players)} игроков), сыгранных <strong>после</strong> даты нашей
+      статистики, и для каждого игрока посчитали совет под его настоящий состав. Сравнивали игроков одного героя
+      с похожим числом покупок — чтобы богатство победителей не путало картину.</p>
+      <ul class="swap-list">
+        <li><strong>${pct(backtest.closerToAdvice)} побед</strong><span class="muted">у тех, чьи покупки ближе к нашему совету</span></li>
+        <li><strong>${pct(backtest.closerToPopular)} побед</strong><span class="muted">у тех, чьи покупки ближе к «просто самому популярному»</span></li>
+        <li><strong>${pct(backtest.ourExtraItems)} побед</strong><span class="muted">у тех, кто купил предметы, которые совет добавляет сверх популярного</span></li>
+      </ul>
+      <p class="muted">Это связь, а не доказательство: например, защитные предметы часто покупают, когда уже проигрывают.
+      Но главное видно — подстройка под матч добавляет пользу сверх «купи то, что берут все». Проверка от ${escapeHtml(dateRu(backtest.date))}.</p>
+    </section>`
+    : '';
+
+  return `${head({ title, description, url: `${base}about/`, base, root })}
+<body>
+  <header class="top">
+    <a class="back" href="${root}">← Билд под матч</a>
+    <h1>Как это работает</h1>
+    <p class="muted">${escapeHtml(dataShort(meta))}</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Коротко</h2>
+      <p>Выбираешь своего героя, врагов на линии и остальную вражескую команду — сайт собирает билд в порядке покупки
+      <strong>под этот матч</strong>: что брать, что против кого, что продать, когда кончатся слоты. Бесплатно и без рекламы.</p>
+    </section>
+
+    <section class="card">
+      <h2>Откуда данные</h2>
+      <ul class="swap-list">
+        <li><strong>Открытая статистика матчей</strong><span class="muted">с сервиса deadlock-api.com — ${num(meta.totalMatches)} матчей текущего
+          патча (от ${escapeHtml(dateRu(meta.patchDate))}), ${heroesCount} героев. Обновляется каждую ночь.</span></li>
+        <li><strong>Только открытые данные</strong><span class="muted">Сайт не подключается к игре, не читает её память и ничего не
+          автоматизирует — пользоваться им безопасно для аккаунта.</span></li>
+        <li><strong>Неофициальный сайт</strong><span class="muted">Проект не связан с Valve.</span></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Что учитывает совет</h2>
+      <ul class="swap-list">
+        <li><strong>Что берут на твоём герое</strong><span class="muted">и с какими предметами побеждают чаще — в сравнении с предметами той
+          же цены, а не со всеми подряд (дорогие предметы покупают богатые, это не их заслуга).</span></li>
+        <li><strong>Твоих врагов</strong><span class="muted">контр-предметы против их сильных сторон и прогноз: если враги обычно
+          берут лечение — советуем срез лечения, если защиту от пуль — снижение защиты.</span></li>
+        <li><strong>Линию</strong><span class="muted">насколько она тяжёлая именно против этих врагов (души к 15-й минуте) и чем её пережить.</span></li>
+        <li><strong>Союзников</strong><span class="muted">если союзник сам возьмёт срез лечения — второй не нужен; плюс статистика, с какими
+          союзниками предмет работает лучше.</span></li>
+        <li><strong>Тип урона героя</strong><span class="muted">оружейные предметы — героям с оружием, спиритические — спиритическим.</span></li>
+        <li><strong>Слоты и улучшения</strong><span class="muted">у игрока 12 мест под предметы; улучшение встаёт на место компонента;
+          когда места нет — подскажем, что продать (по тому, что реально продают игроки).</span></li>
+        <li><strong>Твой ранг</strong><span class="muted">на разных рангах выигрывают разные предметы — ранг можно выбрать в настройках.</span></li>
+      </ul>
+    </section>
+
+    ${check}
+
+    <section class="card">
+      <h2>Чего сайт не знает</h2>
+      <ul class="swap-list">
+        <li><strong>Как идёт твой матч прямо сейчас</strong><span class="muted">Совет строится до начала. Если что-то пошло не так —
+          смотри раздел «Если матч пошёл не так».</span></li>
+        <li><strong>Твой стиль игры</strong><span class="muted">«Тоже подходит» — предметы почти не хуже основных, их можно брать по вкусу.</span></li>
+        <li><strong>Всё о редких сочетаниях</strong><span class="muted">Если данных мало, сайт честно пишет «мало данных», а не выдумывает.</span></li>
+      </ul>
+      <p class="muted">Часть советов против конкретных героев составлена вручную и ещё проверяется игроками.</p>
+    </section>
+
+    <section class="card">
+      <h2>Готовый билд из игры</h2>
+      <p>Под советом — ID популярного билда игроков, который ближе всего к этому совету. Введи ID в поиске билдов в игре —
+      и останется докупить то, чего в нём нет (сайт подскажет, что именно).</p>
+    </section>
+
+    <a class="btn-primary btn-cta" href="${root}">Собрать билд под свой матч</a>
     <a class="btn btn-link" href="${root}heroes/">Билды на всех героев →</a>
   </main>
 

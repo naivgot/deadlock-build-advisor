@@ -1,0 +1,9 @@
+{
+  "about": "Итог проверки логики на реальных матчах (scripts/backtest.js, подробности — docs/backtest.md). Обновлять после каждой новой проверки.",
+  "date": "2026-11-16",
+  "matches": 6399,
+  "players": 76788,
+  "closerToAdvice": 2.6,
+  "closerToPopular": 0.3,
+  "ourExtraItems": 3.0
+}

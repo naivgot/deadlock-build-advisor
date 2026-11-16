@@ -111,3 +111,18 @@ test('sitemap и robots', () => {
   assert.match(xml, /heroes\/abrams\//);
   assert.match(robotsTxt(base), /Sitemap: https:\/\/example\.test\/site\/sitemap\.xml/);
 });
+
+test('страница «Как это работает»: данные, проверка на матчах, честные оговорки', async () => {
+  const { aboutPageHtml } = await import('../src/lib/seo-pages.js');
+  const backtest = { date: '2026-11-16', matches: 6399, players: 76788, closerToAdvice: 2.6, closerToPopular: 0.3, ourExtraItems: 3 };
+  const html = aboutPageHtml({ meta, base, backtest, heroesCount: 44 });
+  assert.match(html, /<title>Как работает «Билд под матч»/);
+  assert.match(html, /canonical" href="https:\/\/example\.test\/site\/about\/"/);
+  assert.match(html, /6\s399 матчей/, 'разделитель тысяч — неразрывный пробел');
+  assert.match(html, /\+2,6% побед/);
+  assert.match(html, /\+0,3% побед/);
+  assert.match(html, /Это связь, а не доказательство/);
+  assert.match(html, /Неофициальный сайт/);
+  assert.match(html, /44 героев/);
+  assert.doesNotMatch(aboutPageHtml({ meta, base, backtest: null, heroesCount: 44 }), /Проверено на реальных матчах/);
+});
