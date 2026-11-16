@@ -17,3 +17,6 @@ site/heroes/
 site/sitemap.xml
 site/robots.txt
 site/patch/
+
+# Выборка матчей для проверки логики (scripts/backtest.js) — большая и временная
+data/backtest/

@@ -68,7 +68,7 @@ test('предмет сравнивается с предметами своег
 });
 
 test('контр не больше лимита на этап — остальные уходят в «Ситуативные»', () => {
-  const settings = { ...MATCH_SETTINGS, maxCountersPerPhase: 0 };
+  const settings = { ...MATCH_SETTINGS, maxCountersPerPhase: 0, situationalMinLift: -100 }; // фильтр по статистике тут не проверяем
   const result = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, makeData(), settings);
   assert.ok(!pathIds(result).includes(ITEM.healCut));
   assert.deepEqual(ids(result.situational), [ITEM.healCut]);
@@ -83,7 +83,7 @@ test('враги-хилеры: контра попадает в билд с пр
 });
 
 test('контра, не влезшая в билд, — в «Ситуативных» и в условной замене', () => {
-  const settings = { ...MATCH_SETTINGS, phaseQuota: { early: 1, mid: 2, late: 1 } };
+  const settings = { ...MATCH_SETTINGS, phaseQuota: { early: 1, mid: 2, late: 1 }, situationalMinLift: -100 };
   const result = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA, HERO.healerB] }, makeData(), settings);
 
   assert.deepEqual(ids(result.situational), [ITEM.healCut]);
@@ -338,7 +338,7 @@ test('два редких предмета на срез лечения за к�
   data.items.push({ ...healCut, id: 202, name: 'Heal Cut 2', nameRu: 'Heal Cut 2 (ру)' });
   data.counterItems.counters.heal.push({ itemId: 202, name: 'Heal Cut 2', why: 'Тоже режет лечение' });
   data.heroItemStats.items.all[202] = [...data.heroItemStats.items.all[ITEM.healCut]];
-  const result = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA, HERO.healerB] }, data);
+  const result = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA, HERO.healerB] }, data, { ...MATCH_SETTINGS, situationalMinLift: -100 });
   const both = [ITEM.healCut, 202];
   assert.equal(both.filter((id) => pathIds(result).includes(id)).length, 1, 'в пути только один');
   assert.ok(result.situational.some((entry) => both.includes(entry.itemId)), 'второй — в ситуативных');
@@ -372,4 +372,12 @@ test('компонент предмета из пути не советуетс�
   const better = result.alsoGood.find((entry) => entry.itemId === ITEM.betterGun);
   assert.ok(better, 'улучшение — в «Тоже подходит»');
   assert.ok(better.reasons.some((reason) => /Улучшение «Basic Gun \(ру\)» из твоего пути/.test(reason)));
+});
+
+test('«Ситуативные»: контра с заметно худшей статистикой у героя не показывается (вывод проверки на матчах, Д6)', () => {
+  const settings = { ...MATCH_SETTINGS, maxCountersPerPhase: 0 };
+  const shown = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, makeData(), { ...settings, situationalMinLift: -100 });
+  assert.ok(shown.situational.some((entry) => entry.itemId === ITEM.healCut), 'без фильтра Heal Cut в «Ситуативных»');
+  const filtered = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA] }, makeData(), settings);
+  assert.ok(!filtered.situational.some((entry) => entry.itemId === ITEM.healCut), 'Heal Cut хуже своего тира — убран');
 });

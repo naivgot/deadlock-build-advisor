@@ -26,6 +26,8 @@ export const MATCH_SETTINGS = {
   // В основной путь попадают предметы, которые герой берёт хотя бы в 5% игр (или контры).
   minPathPickRate: 0.05,
   maxSituational: 6,
+  // Контра в «Ситуативных», только если с ней побеждают не хуже чем на 1,5% реже похожих по цене предметов.
+  situationalMinLift: -1.5,
   // Эффекты, которые не складываются: второй предмет с тем же эффектом за контру в путь не берём.
   singleEffects: ['anti-heal', 'bullet-shred', 'spirit-shred'],
   corePickRate: 0.3, // предмет, который герой берёт в 30%+ игр, — основа билда, его это правило не трогает
@@ -625,10 +627,14 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     return from.length > 0 ? [`Улучшение «${from.join('», «')}» из твоего пути — займёт тот же слот`] : [];
   };
 
-  // Ситуативные: контры, которым не хватило места в основном пути.
+  // Ситуативные: контры, которым не хватило места в основном пути. Сортируем по полной оценке (контра + статистика),
+  // а контры, с которыми этот герой побеждает заметно реже, не показываем — если только статистика именно против
+  // этих врагов не говорит обратного. Проверка на матчах (Д6) показала: иначе раздел тянет слабые предметы.
+  const helpsAgainstThese = (c) => c.forecast.reasons.some((reason) => reason.startsWith('Против') && reason.includes('чаще'));
   const situationalPool = candidates
     .filter((c) => c.counter && !inPath.has(c.item.id) && !componentOfPath.has(c.item.id))
-    .sort((a, b) => b.counter.bonus - a.counter.bonus || a.item.cost - b.item.cost || a.item.id - b.item.id)
+    .filter((c) => !c.stat || c.stat.lift > settings.situationalMinLift || helpsAgainstThese(c))
+    .sort((a, b) => b.score - a.score || a.item.cost - b.item.cost || a.item.id - b.item.id)
     .slice(0, settings.maxSituational);
   const situational = situationalPool.map((c) => ({
     ...entry(c, [c.counter.reason, ...c.forecast.reasons, ...(c.stat ? [statReason(c.stat, settings)] : []), ...upgradeNote(c.item)]),
