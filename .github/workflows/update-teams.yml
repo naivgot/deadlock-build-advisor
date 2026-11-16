@@ -31,12 +31,15 @@ jobs:
           node-version: 22
 
       # Нужна дата текущего патча — берём из кэша ночного запуска (если его нет — из репозитория).
+      # Список папок — тот же, что при сохранении в update-data.yml, иначе кэш не найдётся.
       - name: Взять данные последнего ночного запуска
         uses: actions/cache/restore@v4
         with:
           path: |
             data/static
             data/stats
+            data/patch
+            data/builds
           key: data-none
           restore-keys: data-
 
