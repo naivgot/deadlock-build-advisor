@@ -28,10 +28,13 @@
 >   the site is static JSON.
 > - The footer says "Not affiliated with Valve. Data: deadlock-api.com".
 >
-> Two questions:
+> A few questions:
 > 1. I plan to add ads (Yandex ad network) and later maybe a paid tier (e.g. a Telegram bot). Is commercial use
 >    of the data OK with you? Any conditions — attribution format, a link, anything else?
 > 2. Could I get an API key? It would help the daily job get through the queue more reliably.
+> 3. I'd like to show players an in-game build ID that matches the advice. For now I plan to pick the closest
+>    existing public build via /v1/builds and hero-build-stats. Is there any Valve-approved way to publish builds
+>    programmatically? I don't want to automate the game client or break Valve's rules — just asking if it exists.
 >
 > If the project earns something, I'd be happy to sponsor the API on Patreon/GitHub.
 > Thanks a lot for the API — it's great!
@@ -51,10 +54,13 @@
 >   сайт состоит из готовых JSON-файлов.
 > - В подвале написано «Не связан с Valve. Данные: deadlock-api.com».
 >
-> Два вопроса:
+> Несколько вопросов:
 > 1. Я планирую добавить рекламу (Яндекс) и, возможно, позже платный уровень (например, Telegram-бот).
 >    Вы не против коммерческого использования данных? Есть условия — формат указания источника, ссылка, что-то ещё?
 > 2. Можно получить API-ключ? С ним ежедневный сбор будет надёжнее проходить очередь.
+> 3. Хочу показывать игрокам ID игрового билда, подходящего под совет. Пока планирую подбирать ближайший
+>    существующий публичный билд через /v1/builds и hero-build-stats. Есть ли разрешённый Valve способ публиковать
+>    билды программно? Автоматизировать клиент игры и нарушать правила Valve не хочу — просто спрашиваю, есть ли такое.
 >
 > Если проект начнёт что-то зарабатывать, с радостью поддержу API на Patreon/GitHub.
 > Спасибо за API — он отличный!
