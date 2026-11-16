@@ -37,14 +37,40 @@ export function dataDateText(meta) {
   return `Данные от ${formatDate(meta.fetchedAt)} · патч от ${formatDate(meta.patchDate)} · ${formatNumber(meta.totalMatches)} матчей`;
 }
 
-// Карточка предмета в списках (путь билда, контры).
+// Что делает предмет: описание и характеристики из подсказки игры. Показывается по нажатию на строку.
+export function itemInfo(item) {
+  const stats = item.stats ?? [];
+  const group = (title, lines) =>
+    lines.length > 0
+      ? h('div', { class: 'info-group' }, h('span', { class: 'phase-title' }, title), h('ul', { class: 'stat-list' }, lines.map((line) => h('li', {}, h('span', { class: 'muted' }, line.label), h('strong', {}, line.value)))))
+      : null;
+  return h(
+    'div',
+    { class: 'item-info' },
+    item.description ? h('p', {}, item.description) : null,
+    group('Всегда', stats.filter((line) => line.innate)),
+    group('Эффект', stats.filter((line) => !line.innate)),
+    h('p', { class: 'muted' }, `${TYPE_NAMES[item.type] ?? ''} · тир ${item.tier ?? '?'} · ${formatNumber(item.cost)} душ`),
+  );
+}
+
+// Карточка предмета в списках (советы на линию, контры). Нажатие раскрывает, что он делает.
 export function itemRow(item, detail) {
   return h(
     'li',
-    { class: `item-row type-${item.type}` },
-    icon(item.icon, '', 'icon icon-item'),
-    h('div', { class: 'item-row-text' }, h('strong', {}, item.nameRu), detail ? h('span', { class: 'muted' }, detail) : null),
-    h('span', { class: 'price' }, formatNumber(item.cost)),
+    {},
+    h(
+      'details',
+      { class: 'item-details' },
+      h(
+        'summary',
+        { class: `item-row type-${item.type}` },
+        icon(item.icon, '', 'icon icon-item'),
+        h('div', { class: 'item-row-text' }, h('strong', {}, item.nameRu), detail ? h('span', { class: 'muted' }, detail) : null),
+        h('span', { class: 'price' }, formatNumber(item.cost)),
+      ),
+      itemInfo(item),
+    ),
   );
 }
 
@@ -54,37 +80,48 @@ function sellBadge(entry) {
   return minute ? h('span', { class: 'badge badge-sell' }, `продать ~${minute} мин`) : null;
 }
 
-// Строка билда: тап зачёркивает её (отметка «купил»). Причины — под названием.
+// Строка билда. Нажатие на предмет — что он делает; галочка справа — «купил» (строка зачёркивается).
 export function buildRow(entry, { done, onclick }) {
   const [first, ...rest] = entry.reasons;
   return h(
     'li',
-    {},
+    { class: `build-item${done ? ' is-done' : ''}`, 'data-item': entry.itemId },
+    h(
+      'details',
+      { class: 'item-details' },
+      h(
+        'summary',
+        { class: `item-row build-row type-${entry.type}${entry.isCounter ? ' is-counter' : ''}` },
+        icon(entry.icon, '', 'icon icon-item'),
+        h(
+          'span',
+          { class: 'item-row-text' },
+          h(
+            'strong',
+            {},
+            entry.nameRu,
+            entry.isCounter ? h('span', { class: 'badge' }, 'контра') : null,
+            entry.upgradeFrom?.length > 0 ? h('span', { class: 'badge badge-upgrade' }, '↑ улучшение') : null,
+            sellBadge(entry),
+          ),
+          h('span', { class: 'reason-line' }, first),
+          rest.map((reason) => h('span', { class: 'muted' }, reason)),
+        ),
+        h('span', { class: 'row-meta' }, h('span', { class: 'price' }, formatNumber(entry.cost)), h('span', { class: 'muted' }, `~${entry.minute} мин`)),
+      ),
+      itemInfo(entry),
+    ),
     h(
       'button',
       {
         type: 'button',
-        class: `item-row build-row type-${entry.type}${done ? ' is-done' : ''}${entry.isCounter ? ' is-counter' : ''}`,
-        'data-item': entry.itemId,
+        class: 'done-toggle',
         'aria-pressed': String(Boolean(done)),
+        'aria-label': `Купил: ${entry.nameRu}`,
+        title: 'Купил',
         onclick,
       },
-      icon(entry.icon, '', 'icon icon-item'),
-      h(
-        'span',
-        { class: 'item-row-text' },
-        h(
-          'strong',
-          {},
-          entry.nameRu,
-          entry.isCounter ? h('span', { class: 'badge' }, 'контра') : null,
-          entry.upgradeFrom?.length > 0 ? h('span', { class: 'badge badge-upgrade' }, '↑ улучшение') : null,
-          sellBadge(entry),
-        ),
-        h('span', { class: 'reason-line' }, first),
-        rest.map((reason) => h('span', { class: 'muted' }, reason)),
-      ),
-      h('span', { class: 'row-meta' }, h('span', { class: 'price' }, formatNumber(entry.cost)), h('span', { class: 'muted' }, `~${entry.minute} мин`)),
+      '✓',
     ),
   );
 }

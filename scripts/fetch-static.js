@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { apiGet } from '../src/lib/deadlock-api.js';
 import { writeJson } from '../src/lib/files.js';
 import { itemEffects } from '../src/lib/item-effects.js';
+import { itemStatLines } from '../src/lib/item-stats.js';
 import { stripHtml } from '../src/lib/text.js';
 
 const OUT_DIR = fileURLToPath(new URL('../data/static/', import.meta.url));
@@ -104,6 +105,8 @@ function buildItems(itemsRu, itemsEn, boughtIds) {
     upgrades: [],
     icon: item.shop_image_webp ?? item.image_webp ?? null,
     description: itemDescription(item),
+    // Характеристики из подсказки игры: «Скорострельность: +10%» (для карточки предмета на сайте).
+    stats: itemStatLines(item.properties, item.tooltip_sections),
     // Эффекты — по характеристикам и английскому описанию (на русском правила писать сложнее).
     effects: itemEffects(item.properties, itemDescription(enById.get(item.id) ?? {})),
   }));

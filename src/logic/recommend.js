@@ -189,7 +189,17 @@ export function collectCounters(heroId, enemies, data, ctx, settings) {
 }
 
 export function describe(item) {
-  return { itemId: item.id, name: item.name, nameRu: item.nameRu, type: item.type, tier: item.tier, icon: item.icon ?? null };
+  return {
+    itemId: item.id,
+    name: item.name,
+    nameRu: item.nameRu,
+    type: item.type,
+    tier: item.tier,
+    icon: item.icon ?? null,
+    // Для карточки «что делает предмет»
+    description: item.description ?? '',
+    stats: item.stats ?? [],
+  };
 }
 
 // Слой 5: насколько можно доверять советам.

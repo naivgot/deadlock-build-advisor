@@ -22,6 +22,7 @@ const entry = (itemId, nameRu, extra = {}) => ({
   icon: `icons/items/${itemId}.webp`,
   pickRate: 0.5,
   winrate: 0.52,
+  stats: [{ label: 'Скорострельность', value: '+10%', innate: true }],
   ...extra,
 });
 const result = {
@@ -69,6 +70,8 @@ test('страница героя: заголовок, описание, адр�
   assert.match(html, /href="\.\.\/\.\.\/\?hero=1"/, 'кнопка «подстроить под матч»');
   assert.match(html, /src="\.\.\/\.\.\/icons\/items\/1\.webp"/, 'пути к иконкам от корня сайта');
   assert.match(html, /Не связан с Valve/);
+  assert.match(html, /<details class="item-details"><summary class="item-row type-weapon">/, 'предмет раскрывается');
+  assert.match(html, /Скорострельность<\/span><strong>\+10%/, 'характеристики');
   assert.doesNotMatch(html, /Поздние/, 'пустой этап не показываем');
 });
 

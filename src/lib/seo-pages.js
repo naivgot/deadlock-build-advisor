@@ -51,12 +51,32 @@ function iconTag(src, root, alt = '', className = 'icon') {
   return `<img class="${className}" src="${root}${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async" width="64" height="64">`;
 }
 
+const TYPE_NAMES = { weapon: 'Оружие', vitality: 'Живучесть', spirit: 'Спиритизм' };
+
+// Что делает предмет — раскрывается по нажатию (<details> работает без скриптов, текст виден поисковикам).
+function itemInfo(item) {
+  const stats = item.stats ?? [];
+  const group = (title, lines) =>
+    lines.length > 0
+      ? `<div class="info-group"><span class="phase-title">${title}</span><ul class="stat-list">${lines
+          .map((line) => `<li><span class="muted">${escapeHtml(line.label)}</span><strong>${escapeHtml(line.value)}</strong></li>`)
+          .join('')}</ul></div>`
+      : '';
+  return (
+    `<div class="item-info">` +
+    (item.description ? `<p>${escapeHtml(item.description)}</p>` : '') +
+    group('Всегда', stats.filter((line) => line.innate)) +
+    group('Эффект', stats.filter((line) => !line.innate)) +
+    `<p class="muted">${TYPE_NAMES[item.type] ?? ''} · тир ${item.tier ?? '?'} · ${num(item.cost)} душ</p></div>`
+  );
+}
+
 function itemRow(item, detail, root) {
   return (
-    `<li class="item-row type-${escapeHtml(item.type)}">${iconTag(item.icon, root, '', 'icon icon-item')}` +
+    `<li><details class="item-details"><summary class="item-row type-${escapeHtml(item.type)}">${iconTag(item.icon, root, '', 'icon icon-item')}` +
     `<div class="item-row-text"><strong>${escapeHtml(item.nameRu)}</strong>` +
     (detail ? `<span class="muted">${escapeHtml(detail)}</span>` : '') +
-    `</div><span class="price">${num(item.cost)}</span></li>`
+    `</div><span class="price">${num(item.cost)}</span></summary>${itemInfo(item)}</details></li>`
   );
 }
 

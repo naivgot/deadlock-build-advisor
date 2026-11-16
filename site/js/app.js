@@ -190,7 +190,7 @@ function toggleDone(id) {
   saveState();
   for (const row of document.querySelectorAll(`[data-item="${id}"]`)) {
     row.classList.toggle('is-done', state.done.includes(id));
-    row.setAttribute('aria-pressed', String(state.done.includes(id)));
+    row.querySelector('.done-toggle')?.setAttribute('aria-pressed', String(state.done.includes(id)));
   }
 }
 
@@ -253,7 +253,7 @@ function renderResult(result) {
     result.message ? h('p', { class: 'notice' }, result.message) : null,
     card(
       'Порядок покупки',
-      h('p', { class: 'muted' }, 'Тапни купленное — строка зачеркнётся, чтобы после смерти сразу видеть, что дальше.'),
+      h('p', { class: 'muted' }, 'Нажми на предмет — увидишь, что он делает. Галочка справа — «купил»: строка зачеркнётся, чтобы после смерти сразу видеть, что дальше.'),
       PHASES.filter(([key]) => result.phases[key].length > 0).map(([key, title, hint]) =>
         h('div', { class: 'phase' }, h('h3', { class: 'phase-title' }, `${title} · ${hint}`), h('ol', { class: 'item-list' }, result.phases[key].map(row))),
       ),

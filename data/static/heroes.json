@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-15T06:12:16.933Z",
+  "fetchedAt": "2026-11-16T13:05:05.512Z",
   "clientVersion": 6861,
   "source": "api.deadlock-api.com",
   "count": 44,
@@ -199,7 +199,7 @@
         "Инициатор",
         "Мастер схваток"
       ],
-      "heroType": null,
+      "heroType": "healer",
       "complexity": 2,
       "inDevelopment": false,
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_sm.webp",
@@ -222,7 +222,7 @@
         "Исследователь",
         "Ледяной"
       ],
-      "heroType": null,
+      "heroType": "healer",
       "complexity": 2,
       "inDevelopment": false,
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_sm.webp",
@@ -406,7 +406,7 @@
         "Назойливая",
         "Тверда как скала"
       ],
-      "heroType": null,
+      "heroType": "healer",
       "complexity": 3,
       "inDevelopment": false,
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_sm.webp",
@@ -705,7 +705,7 @@
         "Защитница",
         "Начитанная"
       ],
-      "heroType": null,
+      "heroType": "healer",
       "complexity": 1,
       "inDevelopment": false,
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_sm.webp",
@@ -843,7 +843,7 @@
         "Кроха",
         "Хр-р-р"
       ],
-      "heroType": null,
+      "heroType": "healer",
       "complexity": 3,
       "inDevelopment": false,
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_sm.webp",
@@ -981,7 +981,7 @@
         "Ужасающая",
         "Спасительница"
       ],
-      "heroType": null,
+      "heroType": "healer",
       "complexity": 1,
       "inDevelopment": false,
       "icon": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_sm.webp",

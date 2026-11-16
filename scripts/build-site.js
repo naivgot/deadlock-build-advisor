@@ -109,6 +109,7 @@ async function main() {
     components: item.components,
     icon: localIcon('items', item),
     description: item.description,
+    stats: item.stats ?? [],
     effects: item.effects ?? [],
   }));
   const abilities = staticAbilities.abilities.map((ability) => ({
