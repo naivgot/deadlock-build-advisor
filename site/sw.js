@@ -2,7 +2,7 @@
 // Оболочка (страницы, стили, скрипты) открывается сразу из памяти и обновляется в фоне.
 // Данные — сначала из сети (чтобы совет был по свежей статистике), без сети — из сохранённой копии.
 // Иконки — один раз скачали и больше не качаем.
-const VERSION = 'v6';
+const VERSION = 'v7';
 const SHELL = `shell-${VERSION}`;
 const DATA = `data-${VERSION}`;
 const ICONS = 'icons-v1'; // иконки не меняются — при новой версии сайта не перекачиваем
@@ -20,6 +20,7 @@ const SHELL_FILES = [
   'js/logic/recommend.js',
   'js/logic/match-build.js',
   'js/logic/game-builds.js',
+  'js/logic/share-link.js',
   'manifest.webmanifest',
   'icon-192.png',
 ];

@@ -1,7 +1,9 @@
 // Главная страница: состав матча → билд на весь матч.
 import { loadCore, loadHero, recommendData } from './data.js';
 import { buildForMatch } from './logic/match-build.js';
-import { abilityCard, buildRow, dataDateShort, dataDateText, gameBuildsCard, h, icon, itemRow, registerServiceWorker } from './ui.js';
+import { abilityCard, buildRow, copyText, dataDateShort, dataDateText, gameBuildsCard, h, icon, itemRow, registerServiceWorker } from './ui.js';
+import { nameGen, nameList } from './logic/recommend.js';
+import { decodeMatch, encodeMatch, shareSearch } from './logic/share-link.js';
 import { goal, startCounter } from './counter.js';
 
 const STORAGE_KEY = 'dba-match-v1';
@@ -23,6 +25,7 @@ const SLOTS = [
   { key: 'ally4', box: 'slots-ally', label: 'Союзник', pick: 'Союзники (необязательно)' },
 ];
 const SLOT_KEYS = SLOTS.map((slot) => slot.key);
+const ENEMY_KEYS = ['laneEnemy1', 'laneEnemy2', 'enemy1', 'enemy2', 'enemy3', 'enemy4'];
 
 const state = { picks: {}, active: 'me', rank: 'all', done: [], shown: false };
 let core = null;
@@ -174,6 +177,7 @@ function newMatch() {
   renderSlots();
   renderPicker();
   saveState();
+  history.replaceState(null, '', location.pathname + shareSearch(location.search, '')); // старый матч — из адреса
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -222,6 +226,44 @@ function laneCard(lane) {
   );
 }
 
+// «Поделиться билдом»: ссылка на этот матч. На телефоне — системное окно «Отправить», иначе — копия в буфер.
+function shareBar(hero) {
+  const query = encodeMatch(state.picks, state.rank);
+  const link = (source) => `${location.origin}${location.pathname}?${query}&utm_source=${source}`;
+  const enemies = ENEMY_KEYS.map((key) => heroById(state.picks[key])).filter(Boolean);
+  const text = `Билд: ${hero.nameRu}${enemies.length > 0 ? ` против ${nameList(enemies.map(nameGen), 3)}` : ''} — под этот матч в Deadlock`;
+
+  const share = async (event) => {
+    const button = event.currentTarget;
+    const url = link('share');
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Билд под матч', text, url });
+        goal('build_shared', { how: 'system', hero: hero.name });
+      } catch {
+        // человек закрыл окно «Отправить» — ничего не делаем
+      }
+      return;
+    }
+    const ok = await copyText(url);
+    button.textContent = ok ? 'Ссылка скопирована' : 'Не вышло — скопируй адрес из строки браузера';
+    if (ok) goal('build_shared', { how: 'copy', hero: hero.name });
+    setTimeout(() => (button.textContent = 'Поделиться'), 2000);
+  };
+  const telegram = `https://t.me/share/url?url=${encodeURIComponent(link('tg_share'))}&text=${encodeURIComponent(text)}`;
+
+  return h(
+    'div',
+    { class: 'share-bar' },
+    h('button', { type: 'button', class: 'btn', onclick: share }, 'Поделиться'),
+    h(
+      'a',
+      { class: 'btn', href: telegram, target: '_blank', rel: 'noopener', onclick: () => goal('build_shared', { how: 'telegram', hero: hero.name }) },
+      'В Telegram',
+    ),
+  );
+}
+
 function renderResult(result) {
   const hero = heroById(state.picks.me);
   const card = (title, ...children) => h('section', { class: 'card' }, h('h2', {}, title), ...children);
@@ -234,6 +276,7 @@ function renderResult(result) {
       h('h2', {}, `Билд: ${hero.nameRu}`),
       h('button', { type: 'button', class: 'btn btn-quiet', onclick: newMatch }, 'Новый матч'),
     ),
+    shareBar(hero),
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
     result.lane ? laneCard(result.lane) : null,
     result.enemies.length === 0 ? h('p', { class: 'notice' }, 'Враги не выбраны — показан обычный билд героя. Добавь врагов, чтобы подстроить его под матч.') : null,
@@ -306,6 +349,8 @@ async function showBuild({ scroll }) {
   state.shown = true;
   saveState();
   renderResult(result);
+  // Адрес в строке браузера = ссылка на этот матч: её можно скопировать или переслать.
+  history.replaceState(null, '', location.pathname + shareSearch(location.search, encodeMatch(state.picks, state.rank)));
   if (scroll) {
     // Цель — только нажатие кнопки, а не пересчёт после правки состава.
     goal('build_made', { hero: heroById(heroId)?.name, enemies: result.enemies.length });
@@ -319,10 +364,29 @@ async function showBuild({ scroll }) {
 // ---------- Запуск ----------
 
 // Пришли со страницы героя (адрес …/?hero=1): этот герой — «Ты», дальше выбираем врагов.
+// Пришли по ссылке на билд (…/?h=13&le=6,12&e=…): ставим этот состав и сразу показываем билд.
+function matchFromLink() {
+  const shared = decodeMatch(
+    location.search,
+    core.heroes.map((hero) => hero.id),
+    core.meta.rankGroups.map((group) => group.id),
+  );
+  if (!shared) return false;
+  state.picks = shared.picks;
+  state.rank = shared.rank;
+  state.done = [];
+  state.shown = true;
+  state.active = null;
+  goal('build_opened_from_link', { hero: heroById(shared.picks.me).name });
+  saveState();
+  return true;
+}
+
 function heroFromLink() {
   const params = new URLSearchParams(location.search);
   const id = Number(params.get('hero'));
-  history.replaceState(null, '', location.pathname); // убираем ?hero= из адреса
+  // Убираем ?hero= из адреса, метки utm_* оставляем (по ним Метрика видит источник).
+  history.replaceState(null, '', location.pathname + shareSearch(location.search, ''));
   if (!heroById(id) || state.picks.me === id) return;
   state.picks = { me: id };
   state.done = [];
@@ -343,7 +407,7 @@ async function start() {
   }
 
   restoreState();
-  heroFromLink();
+  if (!matchFromLink()) heroFromLink();
   $('data-date').textContent = dataDateShort(core.meta);
   $('footer-date').textContent = dataDateText(core.meta);
   $('rank').replaceChildren(

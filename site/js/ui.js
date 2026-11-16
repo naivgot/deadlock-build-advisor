@@ -156,7 +156,7 @@ export function buildRow(entry, { done, onclick }) {
 }
 
 // Копирует текст: сначала современным способом, если браузер не разрешил — старым (через скрытое поле).
-async function copyText(text) {
+export async function copyText(text) {
   try {
     await navigator.clipboard.writeText(text);
     return true;
