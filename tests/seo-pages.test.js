@@ -60,7 +60,8 @@ test('страница героя: заголовок, описание, адр�
   assert.match(html, /<meta name="description" content="[^"]*ранние — Пули &lt;А&gt;, Б[^"]*">/);
   assert.match(html, /property="og:image" content="https:\/\/example\.test\/site\/icon-512\.png"/);
   assert.match(html, /Пули &lt;А&gt;/, 'название экранировано');
-  assert.match(html, /мало данных/, 'предмет без статистики');
+  assert.doesNotMatch(html, /мало данных/, 'у предмета без статистики — просто без цифр');
+  assert.match(html, /побед 52% · берут в 50% игр/, 'сначала победы, потом популярность');
   assert.match(html, /улучшение из «Пули &lt;А&gt;»/, 'цепочка улучшений');
   assert.match(html, /Тоже подходит/);
   assert.match(html, /Нора/);
@@ -122,7 +123,8 @@ test('страница «Как это работает»: данные, про�
   assert.match(html, /\+2,6% побед/);
   assert.match(html, /\+0,3% побед/);
   assert.match(html, /Это связь, а не доказательство/);
-  assert.match(html, /Неофициальный сайт/);
+  assert.doesNotMatch(html, /Неофициальный|без рекламы|каждую ночь|мало данных/i, 'лишние строки убраны');
+  assert.match(html, /раз в сутки/);
   assert.match(html, /44 героев/);
   assert.doesNotMatch(aboutPageHtml({ meta, base, backtest: null, heroesCount: 44 }), /Проверено на реальных матчах/);
 });

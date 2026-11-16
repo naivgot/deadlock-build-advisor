@@ -278,7 +278,7 @@ function renderResult(result) {
     ),
     shareBar(hero),
     h('p', { class: `confidence confidence-${result.confidence.level}` }, result.confidence.label),
-    result.lane ? laneCard(result.lane) : null,
+    result.lane && result.lane.verdict !== 'unknown' ? laneCard(result.lane) : null,
     result.enemies.length === 0 ? h('p', { class: 'notice' }, 'Враги не выбраны — показан обычный билд героя. Добавь врагов, чтобы подстроить его под матч.') : null,
     result.message ? h('p', { class: 'notice' }, result.message) : null,
     card(

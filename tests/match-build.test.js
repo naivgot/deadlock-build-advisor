@@ -24,7 +24,8 @@ test('у каждого предмета в билде есть причина, 
   assert.ok(all.every((entry) => entry.reasons.length > 0 && entry.reason.length > 0));
 
   const basic = all.find((entry) => entry.itemId === ITEM.basicGun);
-  assert.match(basic.reason, /Берут в 60% игр/);
+  // Сначала — преимущество, потом — популярность.
+  assert.equal(basic.reason, 'С ним побеждают на 2,3% чаще, чем с похожими по цене (берут в 60% игр)');
   assert.ok(basic.reasons.some((reason) => /Потом улучшишь в «Better Gun \(ру\)»/.test(reason)));
   assert.equal(basic.upgradeInto, 'Better Gun (ру)');
   const better = all.find((entry) => entry.itemId === ITEM.betterGun);

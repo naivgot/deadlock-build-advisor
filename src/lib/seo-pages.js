@@ -1,7 +1,7 @@
 // Готовые HTML-страницы героев для поисковиков (Яндекс, Google), sitemap.xml и robots.txt.
 // Текст билда записан прямо в HTML, поэтому поисковик видит его без запуска скриптов.
 // Чистые функции: получают данные, возвращают строку.
-import { pickChange, winrateFromTo } from '../logic/patch-diff.js';
+import { patchSummaryLines, pickChange, winrateFromTo } from '../logic/patch-diff.js';
 
 // Адрес сайта по умолчанию; при переезде на свой домен — переменная окружения SITE_URL.
 export const DEFAULT_SITE_URL = 'https://naivgot.github.io/deadlock-build-advisor/';
@@ -91,14 +91,14 @@ function itemRow(item, detail, root) {
 const entryDetail = (entry) => {
   const stat =
     entry.pickRate === null || entry.pickRate === undefined
-      ? 'мало данных'
-      : `берут в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`;
+      ? ''
+      : `побед ${percent(entry.winrate)} · берут в ${percent(entry.pickRate)} игр`;
   // Цепочка улучшений: «из „Спешная стрельба“», «→ „Быстрый стрелок“».
   const from = entry.upgradeFrom?.length > 0 ? ` · улучшение из «${entry.upgradeFrom.join('», «')}»` : '';
   const into = entry.upgradeInto ? ` · потом → «${entry.upgradeInto}»` : '';
   const sellMinute = entry.soldAt ?? entry.usualSell?.minute;
   const sell = sellMinute ? ` · продать ~${sellMinute} мин` : '';
-  return stat + from + into + sell;
+  return [stat, from.replace(/^ · /, ''), into.replace(/^ · /, ''), sell.replace(/^ · /, '')].filter(Boolean).join(' · ');
 };
 
 function buildCard(result, root) {
@@ -292,7 +292,20 @@ ${footer(meta, root)}`;
 }
 
 // Страница «Что изменил патч»: site/patch/index.html. diff — результат patchDiff() или null, если данных нет.
-export function patchPageHtml({ diff, meta, base, post }) {
+// «Главное в последнем патче»: те же строки, что и в посте для канала, — коротко, в начале страницы.
+function summaryCard(diff) {
+  const lines = patchSummaryLines(diff);
+  if (lines.length === 0) return '<section class="card"><h2>Главное в последнем патче</h2><p>Заметных изменений по статистике пока нет.</p></section>';
+  const rows = lines
+    .map((line) => {
+      const [title, rest] = line.split(/:\s(.+)/);
+      return `<li><strong>${escapeHtml(title)}</strong><span class="muted">${escapeHtml(rest ?? '')}</span></li>`;
+    })
+    .join('');
+  return `<section class="card"><h2>Главное в последнем патче</h2><ul class="swap-list">${rows}</ul></section>`;
+}
+
+export function patchPageHtml({ diff, meta, base }) {
   const root = '../';
   const patchDay = dateRu(meta.patchDate).replace(/\s*г\.$/, '');
   const title = `Что изменил патч Deadlock от ${patchDay} — герои и предметы`;
@@ -313,6 +326,7 @@ export function patchPageHtml({ diff, meta, base, post }) {
         `<p class="muted">Сравниваем последние недели прошлого патча (${num(diff.previous.matches)} матчей) и текущий патч ` +
           `(${num(diff.current.matches)} матчей). Изменения бывают не только из-за правок патча, но и из-за смены меты — ` +
           `игроки распробовали новых героев и предметы.</p>`,
+        summaryCard(diff),
         card('Герои', [
           block('Стали сильнее', diff.heroes.stronger, (e) => heroRow(e, `${winrateFromTo(e)}`)),
           block('Стали слабее', diff.heroes.weaker, (e) => heroRow(e, `${winrateFromTo(e)}`)),
@@ -326,9 +340,6 @@ export function patchPageHtml({ diff, meta, base, post }) {
           block('С ними стали чаще побеждать', diff.items.stronger, (e) => itemRow(e, winrateFromTo(e), root)),
           block('С ними стали реже побеждать', diff.items.weaker, (e) => itemRow(e, winrateFromTo(e), root)),
         ]),
-        post
-          ? `<details class="card"><summary>Текст для поста в Telegram</summary><pre class="post-text">${escapeHtml(post)}</pre></details>`
-          : '',
       ].join('\n    ')
     : '<p class="notice">Сравнение с прошлым патчем ещё не готово — данные появятся после ближайшего обновления.</p>';
 
@@ -382,33 +393,31 @@ export function aboutPageHtml({ meta, base, backtest, heroesCount }) {
     <section class="card">
       <h2>Коротко</h2>
       <p>Выбираешь своего героя, врагов на линии и остальную вражескую команду — сайт собирает билд в порядке покупки
-      <strong>под этот матч</strong>: что брать, что против кого, что продать, когда кончатся слоты. Бесплатно и без рекламы.</p>
+      <strong>под этот матч</strong>: что брать, что против кого, что продать, когда кончатся слоты.</p>
     </section>
 
     <section class="card">
       <h2>Откуда данные</h2>
       <ul class="swap-list">
         <li><strong>Открытая статистика матчей</strong><span class="muted">с сервиса deadlock-api.com — ${num(meta.totalMatches)} матчей текущего
-          патча (от ${escapeHtml(dateRu(meta.patchDate))}), ${heroesCount} героев. Обновляется каждую ночь.</span></li>
+          патча (от ${escapeHtml(dateRu(meta.patchDate))}), ${heroesCount} героев. Обновляется раз в сутки.</span></li>
         <li><strong>Только открытые данные</strong><span class="muted">Сайт не подключается к игре, не читает её память и ничего не
           автоматизирует — пользоваться им безопасно для аккаунта.</span></li>
-        <li><strong>Неофициальный сайт</strong><span class="muted">Проект не связан с Valve.</span></li>
       </ul>
     </section>
 
     <section class="card">
       <h2>Что учитывает совет</h2>
       <ul class="swap-list">
-        <li><strong>Что берут на твоём герое</strong><span class="muted">и с какими предметами побеждают чаще — в сравнении с предметами той
-          же цены, а не со всеми подряд (дорогие предметы покупают богатые, это не их заслуга).</span></li>
+        <li><strong>Что реально даёт преимущество на твоём герое</strong><span class="muted">предметы, с которыми чаще побеждают, — в сравнении
+          с предметами той же цены, а не со всеми подряд (иначе дорогие предметы выглядели бы сильнее только потому, что их покупают богатые).</span></li>
         <li><strong>Твоих врагов</strong><span class="muted">контр-предметы против их сильных сторон и прогноз: если враги обычно
           берут лечение — советуем срез лечения, если защиту от пуль — снижение защиты.</span></li>
         <li><strong>Линию</strong><span class="muted">насколько она тяжёлая именно против этих врагов (души к 15-й минуте) и чем её пережить.</span></li>
         <li><strong>Союзников</strong><span class="muted">если союзник сам возьмёт срез лечения — второй не нужен; плюс статистика, с какими
           союзниками предмет работает лучше.</span></li>
-        <li><strong>Тип урона героя</strong><span class="muted">оружейные предметы — героям с оружием, спиритические — спиритическим.</span></li>
         <li><strong>Слоты и улучшения</strong><span class="muted">у игрока 12 мест под предметы; улучшение встаёт на место компонента;
-          когда места нет — подскажем, что продать (по тому, что реально продают игроки).</span></li>
+          когда места нет — подскажем, что продать: предмет, который к этому времени даёт меньше всего.</span></li>
         <li><strong>Твой ранг</strong><span class="muted">на разных рангах выигрывают разные предметы — ранг можно выбрать в настройках.</span></li>
       </ul>
     </section>
@@ -421,7 +430,6 @@ export function aboutPageHtml({ meta, base, backtest, heroesCount }) {
         <li><strong>Как идёт твой матч прямо сейчас</strong><span class="muted">Совет строится до начала. Если что-то пошло не так —
           смотри раздел «Если матч пошёл не так».</span></li>
         <li><strong>Твой стиль игры</strong><span class="muted">«Тоже подходит» — предметы почти не хуже основных, их можно брать по вкусу.</span></li>
-        <li><strong>Всё о редких сочетаниях</strong><span class="muted">Если данных мало, сайт честно пишет «мало данных», а не выдумывает.</span></li>
       </ul>
       <p class="muted">Часть советов против конкретных героев составлена вручную и ещё проверяется игроками.</p>
     </section>

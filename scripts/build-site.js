@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { readJson, writeJson } from '../src/lib/files.js';
 import { buildForMatch, heroEffectProfile } from '../src/logic/match-build.js';
 import { countersAgainst } from '../src/logic/recommend.js';
-import { patchDiff, patchPostText } from '../src/logic/patch-diff.js';
+import { patchDiff } from '../src/logic/patch-diff.js';
 import { aboutPageHtml, heroPageHtml, heroesIndexHtml, heroSlug, patchPageHtml, robotsTxt, siteUrl, sitemapXml } from '../src/lib/seo-pages.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -233,11 +233,9 @@ async function writeSeoPages(core, heroFiles, matchups) {
   const summary = await readJson(join(DATA, 'patch', 'summary.json')).catch(() => null);
   const fresh = summary && summary.current?.patchTimestamp === Math.floor(Date.parse(core.meta.patchDate) / 1000);
   const diff = fresh ? patchDiff(summary, core) : null;
-  const patchDay = new Date(core.meta.patchDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\s*г\.$/, '');
-  const post = diff ? patchPostText(diff, patchDay, `${base}patch/`) : null;
   await rm(join(SITE, 'patch'), { recursive: true, force: true });
   await mkdir(join(SITE, 'patch'), { recursive: true });
-  await writeFile(join(SITE, 'patch', 'index.html'), patchPageHtml({ diff, meta: core.meta, base, post }));
+  await writeFile(join(SITE, 'patch', 'index.html'), patchPageHtml({ diff, meta: core.meta, base }));
   if (!diff) console.warn('Сводки по патчу нет (или она от другого патча) — страница патча покажет «ещё не готово».');
 
   // «Как это работает» — с итогом проверки на матчах (data/manual/backtest.json).

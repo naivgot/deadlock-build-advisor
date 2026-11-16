@@ -129,10 +129,10 @@ export const pickChange = (entry) =>
 const pct = (value) => `${(Math.round(value * 1000) / 10).toLocaleString('ru-RU')}%`;
 export const winrateFromTo = (entry) => `побед ${pct(entry.winrate[0])} → ${pct(entry.winrate[1])}`;
 
-// Заготовка поста для Telegram-канала. url — адрес страницы патча.
-export function patchPostText(diff, patchDateText, url) {
+// Главное в патче — короткими строками: для карточки вверху страницы патча и для поста в Telegram-канал.
+export function patchSummaryLines(diff) {
   const list = (entries, describe) => entries.slice(0, 3).map((entry) => `${entry.nameRu} (${describe(entry)})`).join(', ');
-  const lines = [`Патч Deadlock от ${patchDateText}: что изменилось по статистике матчей`, ''];
+  const lines = [];
   const add = (title, entries, describe) => {
     if (entries.length > 0) lines.push(`${title}: ${list(entries, describe)}`);
   };
@@ -141,7 +141,17 @@ export function patchPostText(diff, patchDateText, url) {
   add('Новые предметы, которые берут', diff.items.newItems, pickChange);
   add('Предметы стали брать чаще', diff.items.morePopular, pickChange);
   add('Предметы стали брать реже', diff.items.lessPopular, pickChange);
-  if (lines.length === 2) lines.push('Заметных изменений по статистике пока нет.');
-  lines.push('', `Подробно и билды под матч: ${url}`);
-  return lines.join('\n');
+  return lines;
+}
+
+// Пост для Telegram-канала (на сайте не показывается). url — адрес страницы патча.
+export function patchPostText(diff, patchDateText, url) {
+  const lines = patchSummaryLines(diff);
+  return [
+    `Патч Deadlock от ${patchDateText}: что изменилось по статистике матчей`,
+    '',
+    ...(lines.length > 0 ? lines : ['Заметных изменений по статистике пока нет.']),
+    '',
+    `Подробно и билды под матч: ${url}`,
+  ].join('\n');
 }

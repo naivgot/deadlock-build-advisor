@@ -374,11 +374,12 @@ function cleanHeroes(ids, heroById, exclude, warnings, label) {
   return result;
 }
 
+// Причина по статистике: сначала — даёт ли предмет преимущество, и только потом — насколько он популярен.
 function statReason(stat, settings) {
-  const parts = [`Берут в ${Math.round(stat.pickRate * 100)}% игр`];
-  if (stat.lift >= 0.5) parts.push(`шанс победы выше на ${num(stat.lift)}%`);
-  else if (stat.lift <= -0.5) parts.push('но с похожими по цене предметами побеждают чуть чаще');
-  return parts.join(', ');
+  const pick = Math.round(stat.pickRate * 100);
+  if (stat.lift >= 0.5) return `С ним побеждают на ${num(stat.lift)}% чаще, чем с похожими по цене (берут в ${pick}% игр)`;
+  if (stat.lift <= -0.5) return `Берут в ${pick}% игр, но с похожими по цене предметами побеждают чуть чаще`;
+  return stat.pickRate >= settings.corePickRate ? `Основа билда на этом герое (в ${pick}% игр)` : `Берут в ${pick}% игр`;
 }
 
 /**
@@ -593,7 +594,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     if (c.counter) reasons.push(c.counter.reason);
     reasons.push(...c.forecast.reasons);
     if (c.stat) reasons.push(statReason(c.stat, settings));
-    else reasons.push('По этому герою мало данных — совет из справочника контр');
+    else reasons.push('Совет против этих врагов из справочника контр');
     const link = links.get(c.item.id);
     if (link.from.length > 0) reasons.push(`Улучшение «${link.from.map((item) => item.nameRu).join('», «')}» — займёт тот же слот`);
     for (const { component, by } of link.taken) {
@@ -606,7 +607,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     }
     if (slot.soldAt !== null) reasons.push(`Около ${slot.soldAt} мин продашь, чтобы освободить место`);
     if (slot.usual) {
-      reasons.push(`Этот предмет продают в ${Math.round(slot.usual.rate * 100)}% игр, обычно к ~${slot.usual.minute} мин`);
+      reasons.push(`Ближе к ~${slot.usual.minute} мин его обычно меняют на более сильный предмет`);
     }
 
     phases[phaseOf(c.minute)].push({

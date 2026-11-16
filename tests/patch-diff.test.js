@@ -97,16 +97,18 @@ test('пост для Telegram: заголовок, списки, ссылка; 
   assert.match(patchPostText(empty, '1 мая', 'u'), /Заметных изменений по статистике пока нет/);
 });
 
-test('страница патча: списки со ссылками на героев, пост, честная оговорка', () => {
+test('страница патча: «Главное в последнем патче», списки со ссылками на героев, честная оговорка', () => {
   const meta = { fetchedAt: '2026-11-15T04:00:00Z', patchDate: '2026-09-29T20:00:00Z', totalMatches: 1 };
   const diff = patchDiff(summary, refs);
-  const html = patchPageHtml({ diff, meta, base: 'https://e.test/', post: 'Текст <поста>' });
+  const html = patchPageHtml({ diff, meta, base: 'https://e.test/' });
   assert.match(html, /<title>Что изменил патч Deadlock от 29 сентября 2026 — герои и предметы<\/title>/);
   assert.match(html, /href="\.\.\/heroes\/up\/"/);
   assert.match(html, /побед 48% → 50%/);
   assert.match(html, /смены меты/);
-  assert.match(html, /Текст &lt;поста&gt;/);
+  assert.match(html, /<h2>Главное в последнем патче<\/h2>/);
+  assert.match(html, /<strong>Герои стали сильнее<\/strong><span class="muted">Вверх \(побед \+2%\)/);
+  assert.doesNotMatch(html, /Текст для поста/);
   assert.match(html, /canonical" href="https:\/\/e\.test\/patch\/"/);
-  const none = patchPageHtml({ diff: null, meta, base: 'https://e.test/', post: null });
+  const none = patchPageHtml({ diff: null, meta, base: 'https://e.test/' });
   assert.match(none, /ещё не готово/);
 });
