@@ -28,3 +28,13 @@ test('метки utm_* при смене адреса сохраняются', (
   assert.equal(shareSearch('?hero=5', ''), '');
   assert.equal(shareSearch('?utm_campaign=patch', ''), '?utm_campaign=patch');
 });
+
+test('ссылка для блогера: билд + метки источника', async () => {
+  const { campaignLink } = await import('../src/logic/share-link.js');
+  assert.equal(
+    campaignLink('https://site.ru/', 'h=13&le=6,12', { source: 'yt_ivan', medium: 'video', campaign: 'wave1' }),
+    'https://site.ru/?h=13&le=6,12&utm_source=yt_ivan&utm_medium=video&utm_campaign=wave1',
+  );
+  assert.equal(campaignLink('https://site.ru/', '', { source: 'tg_chat' }), 'https://site.ru/?utm_source=tg_chat');
+  assert.throws(() => campaignLink('https://site.ru/', '', {}), /Нужен source/);
+});

@@ -56,6 +56,17 @@ export function decodeMatch(search, heroIds, rankIds = []) {
   return { picks, rank };
 }
 
+// Ссылка для блогера или канала (задача Г7): адрес сайта + билд (если есть) + метки источника.
+// source — кто привёл (yt_имя, tg_канал…), medium — где (video, stream, post, chat), campaign — волна (wave1…).
+export function campaignLink(base, matchQuery, { source, medium, campaign }) {
+  if (!source) throw new Error('Нужен source — кто приведёт людей (например, yt_имя)');
+  const params = new URLSearchParams(matchQuery);
+  params.set('utm_source', source);
+  if (medium) params.set('utm_medium', medium);
+  if (campaign) params.set('utm_campaign', campaign);
+  return `${base}?${pretty(params)}`;
+}
+
 // Новый адрес страницы: параметры билда (или ничего) + сохранённые метки utm_*.
 export function shareSearch(currentSearch, matchQuery) {
   const kept = [...new URLSearchParams(currentSearch).entries()].filter(([key]) => KEEP.test(key));
