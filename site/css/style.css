@@ -254,3 +254,7 @@ details > .search { margin-bottom: 10px; }
 .lane-hard .lane-badge { background: #4a2a22; color: #ff9f86; }
 .lane-easy .lane-badge { background: #213a29; color: var(--ok); }
 .lane-even .lane-badge { background: #3a3320; color: var(--accent); }
+
+/* Страница «Что изменил патч» */
+.row-link { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; color: inherit; text-decoration: none; }
+.post-text { white-space: pre-wrap; font: inherit; font-size: 0.9rem; margin: 0; }

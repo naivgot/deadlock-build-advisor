@@ -1,6 +1,7 @@
 // Готовые HTML-страницы героев для поисковиков (Яндекс, Google), sitemap.xml и robots.txt.
 // Текст билда записан прямо в HTML, поэтому поисковик видит его без запуска скриптов.
 // Чистые функции: получают данные, возвращают строку.
+import { pickChange, winrateFromTo } from '../logic/patch-diff.js';
 
 // Адрес сайта по умолчанию; при переезде на свой домен — переменная окружения SITE_URL.
 export const DEFAULT_SITE_URL = 'https://naivgot.github.io/deadlock-build-advisor/';
@@ -226,6 +227,63 @@ export function heroesIndexHtml({ heroes, meta, base }) {
       ${tiles}
       </div>
     </section>
+  </main>
+
+${footer(meta, root)}`;
+}
+
+// Страница «Что изменил патч»: site/patch/index.html. diff — результат patchDiff() или null, если данных нет.
+export function patchPageHtml({ diff, meta, base, post }) {
+  const root = '../';
+  const patchDay = dateRu(meta.patchDate).replace(/\s*г\.$/, '');
+  const title = `Что изменил патч Deadlock от ${patchDay} — герои и предметы`;
+  const description = diff
+    ? `Какие герои Deadlock стали сильнее и слабее после патча от ${patchDay}, какие предметы стали брать чаще. По статистике ${num(diff.current.matches)} матчей.`
+    : `Изменения патча Deadlock от ${patchDay} по статистике матчей.`;
+
+  const heroRow = (entry, detail) =>
+    `<li class="item-row"><a class="row-link" href="${root}heroes/${escapeHtml(entry.slug)}/">${iconTag(entry.icon, root, '', 'icon icon-item')}` +
+    `<div class="item-row-text"><strong>${escapeHtml(entry.nameRu)}</strong><span class="muted">${escapeHtml(detail)}</span></div></a></li>`;
+  const block = (title, entries, row) =>
+    entries.length > 0 ? `<div class="phase"><h3 class="phase-title">${title}</h3><ul class="item-list">${entries.map(row).join('')}</ul></div>` : '';
+  const card = (title, blocks) =>
+    blocks.join('') ? `<section class="card"><h2>${title}</h2>${blocks.join('')}</section>` : '';
+
+  const body = diff
+    ? [
+        `<p class="muted">Сравниваем последние недели прошлого патча (${num(diff.previous.matches)} матчей) и текущий патч ` +
+          `(${num(diff.current.matches)} матчей). Изменения бывают не только из-за правок патча, но и из-за смены меты — ` +
+          `игроки распробовали новых героев и предметы.</p>`,
+        card('Герои', [
+          block('Стали сильнее', diff.heroes.stronger, (e) => heroRow(e, `${winrateFromTo(e)}`)),
+          block('Стали слабее', diff.heroes.weaker, (e) => heroRow(e, `${winrateFromTo(e)}`)),
+          block('Стали выбирать чаще', diff.heroes.morePopular, (e) => heroRow(e, `в ${pickChange(e).replace('игр', 'матчей')}`)),
+          block('Стали выбирать реже', diff.heroes.lessPopular, (e) => heroRow(e, `в ${pickChange(e).replace('игр', 'матчей')}`)),
+        ]),
+        card('Предметы', [
+          block('Новые', diff.items.newItems, (e) => itemRow(e, `берут в ${Math.round(e.pickRate[1] * 100)}% игр`, root)),
+          block('Стали брать чаще', diff.items.morePopular, (e) => itemRow(e, `берут в ${pickChange(e)}`, root)),
+          block('Стали брать реже', diff.items.lessPopular, (e) => itemRow(e, `берут в ${pickChange(e)}`, root)),
+          block('С ними стали чаще побеждать', diff.items.stronger, (e) => itemRow(e, winrateFromTo(e), root)),
+          block('С ними стали реже побеждать', diff.items.weaker, (e) => itemRow(e, winrateFromTo(e), root)),
+        ]),
+        post
+          ? `<details class="card"><summary>Текст для поста в Telegram</summary><pre class="post-text">${escapeHtml(post)}</pre></details>`
+          : '',
+      ].join('\n    ')
+    : '<p class="notice">Сравнение с прошлым патчем ещё не готово — данные появятся после ближайшего обновления.</p>';
+
+  return `${head({ title, description, url: `${base}patch/`, base, root })}
+<body>
+  <header class="top">
+    <a class="back" href="${root}">← Билд под матч</a>
+    <h1>Что изменил патч от ${escapeHtml(patchDay)}</h1>
+    <p class="muted">${escapeHtml(dataLine(meta))}</p>
+  </header>
+
+  <main>
+    ${body}
+    <a class="btn btn-link" href="${root}heroes/">Билды на всех героев →</a>
   </main>
 
 ${footer(meta, root)}`;

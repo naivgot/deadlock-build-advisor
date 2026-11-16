@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { readJson, writeJson } from '../src/lib/files.js';
 import { buildForMatch, heroEffectProfile } from '../src/logic/match-build.js';
 import { countersAgainst } from '../src/logic/recommend.js';
-import { heroPageHtml, heroesIndexHtml, heroSlug, robotsTxt, siteUrl, sitemapXml } from '../src/lib/seo-pages.js';
+import { patchDiff, patchPostText } from '../src/logic/patch-diff.js';
+import { heroPageHtml, heroesIndexHtml, heroSlug, patchPageHtml, robotsTxt, siteUrl, sitemapXml } from '../src/lib/seo-pages.js';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const DATA = join(ROOT, 'data');
@@ -215,7 +216,18 @@ async function writeSeoPages(core, heroFiles, matchups) {
     await writeFile(join(outDir, hero.slug, 'index.html'), html);
   }
   await writeFile(join(outDir, 'index.html'), heroesIndexHtml({ heroes: core.heroes, meta: core.meta, base }));
-  const paths = ['', 'heroes/', ...core.heroes.map((hero) => `heroes/${hero.slug}/`)];
+  // «Что изменил патч»: сводка data/patch/summary.json (npm run fetch:patch), только того же патча.
+  const summary = await readJson(join(DATA, 'patch', 'summary.json')).catch(() => null);
+  const fresh = summary && summary.current?.patchTimestamp === Math.floor(Date.parse(core.meta.patchDate) / 1000);
+  const diff = fresh ? patchDiff(summary, core) : null;
+  const patchDay = new Date(core.meta.patchDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\s*г\.$/, '');
+  const post = diff ? patchPostText(diff, patchDay, `${base}patch/`) : null;
+  await rm(join(SITE, 'patch'), { recursive: true, force: true });
+  await mkdir(join(SITE, 'patch'), { recursive: true });
+  await writeFile(join(SITE, 'patch', 'index.html'), patchPageHtml({ diff, meta: core.meta, base, post }));
+  if (!diff) console.warn('Сводки по патчу нет (или она от другого патча) — страница патча покажет «ещё не готово».');
+
+  const paths = ['', 'heroes/', 'patch/', ...core.heroes.map((hero) => `heroes/${hero.slug}/`)];
   await writeFile(join(SITE, 'sitemap.xml'), sitemapXml(paths, base, core.meta.fetchedAt));
   await writeFile(join(SITE, 'robots.txt'), robotsTxt(base));
   return core.heroes.length;
