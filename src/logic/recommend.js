@@ -151,6 +151,18 @@ function statScore(item, ctx, settings) {
   };
 }
 
+// Имя героя в падеже: «против Абрамса» (родительный), «с Абрамсом» (творительный).
+// Падежи — из data/manual/hero-cases.json; если их нет, имя как есть.
+export const nameGen = (hero) => hero?.nameGen ?? hero?.nameRu ?? '';
+export const nameIns = (hero) => hero?.nameIns ?? hero?.nameRu ?? '';
+
+// «А», «А и Б», «А, Б и В», «А, Б и ещё 2» — длинные списки имён сокращаем («и ещё 1» не пишем — проще назвать).
+export function nameList(names, limit = 2) {
+  if (names.length <= 1) return names.join('');
+  if (names.length <= limit + 1) return `${names.slice(0, -1).join(', ')} и ${names.at(-1)}`;
+  return `${names.slice(0, limit).join(', ')} и ещё ${names.length - limit}`;
+}
+
 // Слой 3: какие предметы помогают против выбранных врагов.
 export function collectCounters(heroId, enemies, data, ctx, settings) {
   const byItem = new Map();
@@ -172,7 +184,7 @@ export function collectCounters(heroId, enemies, data, ctx, settings) {
           entry.against.push(enemy.nameRu);
         }
         const names = entry.whys.get(counter.why) ?? [];
-        if (!names.includes(enemy.nameRu)) names.push(enemy.nameRu);
+        if (!names.includes(nameGen(enemy))) names.push(nameGen(enemy));
         entry.whys.set(counter.why, names);
       }
     }
@@ -182,7 +194,7 @@ export function collectCounters(heroId, enemies, data, ctx, settings) {
   for (const entry of byItem.values()) {
     const [why, names] = [...entry.whys.entries()].sort((a, b) => b[1].length - a[1].length)[0];
     entry.why = why;
-    entry.reason = `Против ${names.join(', ')}: ${why}`;
+    entry.reason = `Против ${nameList(names)}: ${why}`;
     entry.bonus = Math.min(settings.counterBonusCap, settings.counterBonus * entry.weight);
   }
   return byItem;

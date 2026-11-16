@@ -282,3 +282,6 @@ details > .search { margin-bottom: 10px; }
 .done-toggle[aria-pressed="true"] { background: #213a29; color: var(--ok); border-color: var(--ok); }
 .build-item.is-done .item-row { opacity: 0.45; }
 .build-item.is-done .item-row strong { text-decoration: line-through; }
+.reason-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.more-hint { font-size: 0.78rem; color: var(--accent); }
+.item-details[open] .more-hint { display: none; }

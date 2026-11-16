@@ -73,6 +73,7 @@ async function main() {
   const matchups = await readJson(join(DATA, 'stats', 'matchups.json'));
   const heroTags = await readJson(join(DATA, 'manual', 'hero-tags.json'));
   const counterItems = await readJson(join(DATA, 'manual', 'counter-items.json'));
+  const heroCases = (await readJson(join(DATA, 'manual', 'hero-cases.json'))).heroes;
 
   assertNotEmpty('герои', staticHeroes.heroes);
   assertNotEmpty('предметы', staticItems.items);
@@ -94,6 +95,8 @@ async function main() {
     id: hero.id,
     name: hero.name,
     nameRu: hero.nameRu,
+    // Падежи для текстов («против Абрамса», «с Абрамсом»), если имя в справочнике совпадает с текущим.
+    ...(heroCases[hero.id]?.name === hero.nameRu ? { nameGen: heroCases[hero.id].gen, nameIns: heroCases[hero.id].ins } : {}),
     role: hero.role,
     slug: heroSlug(hero.name),
     icon: localIcon('heroes', hero),

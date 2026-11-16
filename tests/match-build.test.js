@@ -79,7 +79,7 @@ test('враги-хилеры: контра попадает в билд с пр
   const healCut = [...result.phases.mid].find((entry) => entry.itemId === ITEM.healCut);
   assert.ok(healCut, 'контра в основном пути');
   assert.ok(healCut.isCounter);
-  assert.equal(healCut.reason, 'Против Healer A (ру), Healer B (ру): Режет лечение врага');
+  assert.equal(healCut.reason, 'Против Healer A (ру) и Healer B (ру): Режет лечение врага');
 });
 
 test('контра, не влезшая в билд, — в «Ситуативных» и в условной замене', () => {
@@ -91,7 +91,7 @@ test('контра, не влезшая в билд, — в «Ситуативн
   assert.equal(result.swaps.length, 1);
   assert.equal(result.swaps[0].replace.itemId, ITEM.betterGun, 'меняем предмет того же типа (оружие), не ранний');
   assert.equal(result.swaps[0].take.itemId, ITEM.healCut);
-  assert.match(result.swaps[0].text, /Если сильно мешают Healer A \(ру\), Healer B \(ру\)/);
+  assert.match(result.swaps[0].text, /Если сильно мешают Healer A \(ру\) и Healer B \(ру\)/);
 });
 
 test('враги на линии и остальные враги считаются вместе, без повторов', () => {
@@ -245,22 +245,35 @@ test('контры, работающие через чужой тип урона
 test('статистика союзников: предмет с этим союзником работает лучше или хуже обычного', () => {
   const data = makeData();
   const alone = buildForMatch({ hero: HERO.main }, data);
+  data.heroes.find((hero) => hero.id === HERO.gunner).nameIns = 'Стрелком'; // творительный падеж
   const withAlly = buildForMatch({ hero: HERO.main, allies: [HERO.gunner] }, data);
   const find = (result, id) => result.phases.mid.find((entry) => entry.itemId === id);
 
   assert.ok(find(withAlly, ITEM.bigArmor).score > find(alone, ITEM.bigArmor).score);
-  assert.ok(find(withAlly, ITEM.bigArmor).reasons.includes('С союзником Gunner (ру) с ним побеждают на 4% чаще обычного (последние дни)'));
+  assert.ok(find(withAlly, ITEM.bigArmor).reasons.includes('Вместе со Стрелком (+4%) с ним побеждают чаще обычного (последние дни)'));
   assert.ok(find(withAlly, ITEM.betterGun).score < find(alone, ITEM.betterGun).score);
-  assert.ok(find(withAlly, ITEM.betterGun).reasons.some((reason) => /на 3% реже обычного/.test(reason)));
+  assert.ok(find(withAlly, ITEM.betterGun).reasons.some((reason) => /Стрелком \(−3%\) с ним побеждают реже обычного/.test(reason)));
 });
 
 test('статистика врагов: предмет против этого врага работает лучше обычного', () => {
   const data = makeData();
   const alone = buildForMatch({ hero: HERO.main }, data);
+  data.heroes.find((hero) => hero.id === HERO.healerB).nameGen = 'Лекаря Б'; // родительный падеж
   const vs = buildForMatch({ hero: HERO.main, enemies: [HERO.healerB] }, data);
   const find = (result) => result.phases.mid.find((entry) => entry.itemId === ITEM.bigArmor);
   assert.ok(find(vs).score > find(alone).score);
-  assert.ok(find(vs).reasons.includes('Против Healer B (ру) с ним побеждают на 5% чаще обычного (последние дни)'));
+  assert.ok(find(vs).reasons.includes('Против Лекаря Б (+5%) с ним побеждают чаще обычного (последние дни)'));
+});
+
+test('nameList и падежи: короткие списки имён', async () => {
+  const { nameList, nameGen, nameIns } = await import('../src/logic/recommend.js');
+  assert.equal(nameList(['А']), 'А');
+  assert.equal(nameList(['А', 'Б']), 'А и Б');
+  assert.equal(nameList(['А', 'Б', 'В']), 'А, Б и В', '«и ещё 1» не пишем');
+  assert.equal(nameList(['А', 'Б', 'В', 'Г']), 'А, Б и ещё 2');
+  assert.equal(nameGen({ nameRu: 'Абрамс', nameGen: 'Абрамса' }), 'Абрамса');
+  assert.equal(nameGen({ nameRu: 'Динамо' }), 'Динамо', 'нет падежа — имя как есть');
+  assert.equal(nameIns({ nameRu: 'Абрамс', nameIns: 'Абрамсом' }), 'Абрамсом');
 });
 
 // ---------- Слоты и продажа ----------

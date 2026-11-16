@@ -204,7 +204,7 @@ const PHASES = [
 const LANE_LABELS ={ hard: 'Тяжёлая', even: 'Ровная', easy: 'Лёгкая', unknown: 'Мало данных' };
 
 function laneCard(lane) {
-  const who = `${lane.ally ? `Ты и ${lane.ally}` : 'Ты'} против ${lane.enemies.join(' и ')}`;
+  const who = `${lane.ally ? `Ты и ${lane.ally}` : 'Ты'} против ${(lane.enemiesGen ?? lane.enemies).join(' и ')}`;
   return h(
     'section',
     { class: `card lane-card lane-${lane.verdict}` },

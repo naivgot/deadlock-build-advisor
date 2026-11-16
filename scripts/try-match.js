@@ -9,7 +9,10 @@ const DATA = fileURLToPath(new URL('../data/', import.meta.url));
 const arg = (name, fallback = '') => process.argv.find((v) => v.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const list = (text) => text.split(',').map((s) => s.trim()).filter(Boolean);
 
-const heroes = (await readJson(join(DATA, 'static', 'heroes.json'))).heroes;
+const cases = (await readJson(join(DATA, 'manual', 'hero-cases.json'))).heroes;
+const heroes = (await readJson(join(DATA, 'static', 'heroes.json'))).heroes.map((h) =>
+  cases[h.id]?.name === h.nameRu ? { ...h, nameGen: cases[h.id].gen, nameIns: cases[h.id].ins } : h,
+);
 const find = (q) => {
   const hero = heroes.find((h) => [h.name, h.nameRu, String(h.id)].some((n) => n.toLowerCase() === q.toLowerCase()));
   if (!hero) throw new Error(`Не найден герой «${q}»`);

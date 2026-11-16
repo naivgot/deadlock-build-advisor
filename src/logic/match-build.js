@@ -6,6 +6,9 @@ import {
   buildConfidence,
   collectCounters,
   describe,
+  nameGen,
+  nameIns,
+  nameList,
   num,
   pickStats,
   shrunkRate,
@@ -133,10 +136,19 @@ export function fitsDamage(item, share, settings = MATCH_SETTINGS) {
   return true;
 }
 
+// Души на линии и итог матча — разные вещи. Если они расходятся, говорим об этом прямо, без противоречия.
+function laneWinrateText(verdict, winrate) {
+  const pct = `${num(winrate * 100)}%`;
+  if (verdict === 'easy' && winrate < 0.5) return `Но матчи с такой линией выигрывают реже половины (${pct}) — преимущество надо доводить до победы`;
+  if (verdict === 'hard' && winrate > 0.5) return `Зато матчи с такой линией выигрывают чаще половины (${pct}) — после линии игра выравнивается`;
+  return `Матчи с такой линией выигрывают в ${pct}`;
+}
+
 export function laneReport(allyId, enemyIds, laneData, data, heroById, settings = MATCH_SETTINGS, share = null) {
   if (enemyIds.length === 0) return null;
   const base = {
     enemies: enemyIds.map((id) => heroById.get(id).nameRu),
+    enemiesGen: enemyIds.map((id) => nameGen(heroById.get(id))), // «против Абрамса и Кельвина»
     ally: allyId ? heroById.get(allyId).nameRu : null,
     tips: [],
   };
@@ -219,7 +231,7 @@ export function laneReport(allyId, enemyIds, laneData, data, heroById, settings 
     netWorthDiff,
     winrate: Number(estimate.winrate.toFixed(3)),
     matches: estimate.matches,
-    text: `${label}: ${diffText}. Побед ${num(estimate.winrate * 100)}% (${basisText}).`,
+    text: `${label}: ${diffText}. ${laneWinrateText(verdict, estimate.winrate)} (${basisText}).`,
     tips,
   };
 }
@@ -241,6 +253,8 @@ export function heroEffectProfile(itemsAll, heroMatches, items) {
 }
 
 const heroProb = (data, heroId, effect) => data.heroProfiles?.[heroId]?.[effect]?.[0] ?? 0;
+// «+2,2%», «−1,5%» — для изменений в процентных пунктах.
+const signed = (value) => `${value > 0 ? '+' : '−'}${num(Math.abs(value))}%`;
 const whoText = (who, limit = Infinity) =>
   who
     .slice(0, limit)
@@ -291,29 +305,41 @@ function forecastForItem(item, predictions, allyPredictions, settings, teamStats
   let bonus = 0;
   const reasons = [];
   // Статистика: «против этого врага предмет даёт на N% больше/меньше побед, чем обычно».
+  // Несколько врагов — одной фразой: «Против Леди Гайст (+2,2%) и Семь (+1,4%) с ним побеждают чаще обычного».
   let enemyBonus = 0;
+  const enemyCells = [];
   for (const enemy of enemies) {
     const cell = enemyEffects?.[enemy.id]?.[item.id];
     if (!cell) continue;
     enemyBonus += settings.enemyStatWeight * cell[0];
-    reasons.push(
-      cell[0] > 0
-        ? `Против ${enemy.nameRu} с ним побеждают на ${num(cell[0])}% чаще обычного (последние дни)`
-        : `Против ${enemy.nameRu} с ним, наоборот, побеждают на ${num(-cell[0])}% реже обычного (последние дни)`,
-    );
+    enemyCells.push({ name: nameGen(enemy), value: cell[0] });
   }
   bonus += Math.max(-settings.enemyStatCap, Math.min(settings.enemyStatCap, enemyBonus));
+  const withValue = (cells) => nameList(cells.sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).map((c) => `${c.name} (${signed(c.value)})`));
+  const better = enemyCells.filter((c) => c.value > 0);
+  const worse = enemyCells.filter((c) => c.value < 0);
+  if (better.length > 0) reasons.push(`Против ${withValue(better)} с ним побеждают чаще обычного (последние дни)`);
+  if (worse.length > 0) reasons.push(`Против ${withValue(worse)} с ним, наоборот, побеждают реже обычного (последние дни)`);
   // Статистика: «с этим союзником предмет даёт на N% больше/меньше побед, чем обычно».
   let allyBonus = 0;
+  const allyCells = [];
   for (const ally of allies) {
     const cell = allyEffects?.[ally.id]?.[item.id];
     if (!cell) continue;
     allyBonus += settings.allyStatWeight * cell[0];
-    reasons.push(
-      `С союзником ${ally.nameRu} с ним побеждают на ${num(Math.abs(cell[0]))}% ${cell[0] > 0 ? 'чаще' : 'реже'} обычного (последние дни)`,
-    );
+    allyCells.push({ name: nameIns(ally), value: cell[0] });
   }
   bonus += Math.max(-settings.allyStatCap, Math.min(settings.allyStatCap, allyBonus));
+  const allyBetter = allyCells.filter((c) => c.value > 0);
+  const allyWorse = allyCells.filter((c) => c.value < 0);
+  // «со» перед «с/з/ш/ж + согласная»: «со Скитальцем», но «с Селестой».
+  const withPrep = (text) => (/^[сзшж][^аеёиоуыэюя]/i.test(text) ? 'со' : 'с');
+  const allyText = (cells) => {
+    const text = withValue(cells);
+    return `Вместе ${withPrep(text)} ${text}`;
+  };
+  if (allyBetter.length > 0) reasons.push(`${allyText(allyBetter)} с ним побеждают чаще обычного (последние дни)`);
+  if (allyWorse.length > 0) reasons.push(`${allyText(allyWorse)} с ним побеждают реже обычного (последние дни)`);
   const best = predictions.filter((p) => effects.includes(p.boost)).sort((a, b) => b.sum - a.sum)[0];
   if (best) {
     bonus += Math.min(settings.predictCap, settings.predictWeight * best.sum);
@@ -582,7 +608,7 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     if (!target) continue;
     replaced.add(target.item.id);
     swaps.push({
-      text: `Если сильно мешают ${c.counter.against.join(', ')} — вместо «${target.item.nameRu}» возьми «${c.item.nameRu}»`,
+      text: `Если сильно мешают ${nameList(c.counter.against)} — вместо «${target.item.nameRu}» возьми «${c.item.nameRu}»`,
       why: c.counter.why,
       replace: { ...describe(target.item), cost: target.item.cost },
       take: { ...describe(c.item), cost: c.item.cost },

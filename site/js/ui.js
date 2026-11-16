@@ -38,7 +38,7 @@ export function dataDateText(meta) {
 }
 
 // Что делает предмет: описание и характеристики из подсказки игры. Показывается по нажатию на строку.
-export function itemInfo(item) {
+export function itemInfo(item, moreReasons = []) {
   const stats = item.stats ?? [];
   const group = (title, lines) =>
     lines.length > 0
@@ -47,6 +47,9 @@ export function itemInfo(item) {
   return h(
     'div',
     { class: 'item-info' },
+    moreReasons.length > 0
+      ? h('div', { class: 'info-group' }, h('span', { class: 'phase-title' }, 'Ещё почему'), h('ul', { class: 'reason-list' }, moreReasons.map((reason) => h('li', {}, reason))))
+      : null,
     item.description ? h('p', {}, item.description) : null,
     group('Всегда', stats.filter((line) => line.innate)),
     group('Эффект', stats.filter((line) => !line.innate)),
@@ -82,7 +85,8 @@ function sellBadge(entry) {
 
 // Строка билда. Нажатие на предмет — что он делает; галочка справа — «купил» (строка зачёркивается).
 export function buildRow(entry, { done, onclick }) {
-  const [first, ...rest] = entry.reasons;
+  // На строке — две главные причины, остальные — по нажатию, чтобы список читался с первого взгляда.
+  const [first, second, ...more] = entry.reasons;
   return h(
     'li',
     { class: `build-item${done ? ' is-done' : ''}`, 'data-item': entry.itemId },
@@ -105,11 +109,12 @@ export function buildRow(entry, { done, onclick }) {
             sellBadge(entry),
           ),
           h('span', { class: 'reason-line' }, first),
-          rest.map((reason) => h('span', { class: 'muted' }, reason)),
+          second ? h('span', { class: 'muted' }, second) : null,
+          more.length > 0 ? h('span', { class: 'more-hint' }, `ещё ${more.length} — нажми`) : null,
         ),
         h('span', { class: 'row-meta' }, h('span', { class: 'price' }, formatNumber(entry.cost)), h('span', { class: 'muted' }, `~${entry.minute} мин`)),
       ),
-      itemInfo(entry),
+      itemInfo(entry, more),
     ),
     h(
       'button',
