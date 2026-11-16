@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { MATCH_SETTINGS, buildForMatch } from '../src/logic/match-build.js';
+import { MATCH_SETTINGS, buildForMatch, componentLinks } from '../src/logic/match-build.js';
 import { HERO, ITEM, makeData } from './fixtures/recommend-data.js';
 
 const ids = (list) => list.map((entry) => entry.itemId);
@@ -25,9 +25,31 @@ test('у каждого предмета в билде есть причина, 
 
   const basic = all.find((entry) => entry.itemId === ITEM.basicGun);
   assert.match(basic.reason, /Берут в 60% игр/);
-  assert.ok(basic.reasons.some((reason) => /улучшается в «Better Gun \(ру\)»/.test(reason)));
+  assert.ok(basic.reasons.some((reason) => /Потом улучшишь в «Better Gun \(ру\)»/.test(reason)));
+  assert.equal(basic.upgradeInto, 'Better Gun (ру)');
   const better = all.find((entry) => entry.itemId === ITEM.betterGun);
-  assert.ok(better.reasons.some((reason) => /Улучшение «Basic Gun \(ру\)»/.test(reason)));
+  assert.ok(better.reasons.some((reason) => /Улучшение «Basic Gun \(ру\)» — займёт тот же слот/.test(reason)));
+  assert.deepEqual(better.upgradeFrom, ['Basic Gun (ру)']);
+});
+
+test('componentLinks: компонент уходит только в первое улучшение', () => {
+  const comp = { id: 1, nameRu: 'Компонент' };
+  const first = { id: 2, nameRu: 'Первое', components: [1] };
+  const second = { id: 3, nameRu: 'Второе', components: [1, 9] };
+  const links = componentLinks([comp, first, second]);
+  assert.equal(links.get(1).into, first);
+  assert.deepEqual(links.get(2).from, [comp]);
+  assert.deepEqual(links.get(3).from, [], 'компонента 9 нет в пути, а 1 уже занят');
+  assert.deepEqual(links.get(3).taken, [{ component: comp, by: first }]);
+});
+
+test('компонент, который по статистике покупают позже улучшения, ставится перед ним', () => {
+  const data = makeData();
+  const stats = data.heroItemStats.items.all;
+  stats[ITEM.basicGun] = [stats[ITEM.basicGun][0], stats[ITEM.basicGun][1], 30]; // «покупают» на 30-й минуте
+  const result = buildForMatch({ hero: HERO.main }, data);
+  const order = pathIds(result);
+  assert.ok(order.indexOf(ITEM.basicGun) < order.indexOf(ITEM.betterGun));
 });
 
 test('если места мало: лучшие на каждом этапе в билде, не хуже обычного — в «Тоже подходит»', () => {

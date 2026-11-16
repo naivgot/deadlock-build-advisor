@@ -67,7 +67,13 @@ export function buildRow(entry, { done, onclick }) {
       h(
         'span',
         { class: 'item-row-text' },
-        h('strong', {}, entry.nameRu, entry.isCounter ? h('span', { class: 'badge' }, 'контра') : null),
+        h(
+          'strong',
+          {},
+          entry.nameRu,
+          entry.isCounter ? h('span', { class: 'badge' }, 'контра') : null,
+          entry.upgradeFrom?.length > 0 ? h('span', { class: 'badge badge-upgrade' }, '↑ улучшение') : null,
+        ),
         h('span', { class: 'reason-line' }, first),
         rest.map((reason) => h('span', { class: 'muted' }, reason)),
       ),

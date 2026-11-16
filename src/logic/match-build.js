@@ -351,6 +351,30 @@ function statReason(stat, settings) {
  *              enemies, allies, message, warnings }.
  * Союзники пока только запоминаются: их учёт — задачи 1.5в и 1.5г.
  */
+// Цепочки «компонент → улучшение» в пути (items — в порядке покупки).
+// Компонент исчезает при улучшении, поэтому уходит только в одно — первое по порядку — улучшение.
+// Возвращает Map: id предмета → { from: [компоненты, которые он забирает], into: улучшение или null,
+// taken: [{ component, by }] — компонент нужен и ему, но его уже забрал другой предмет }.
+export function componentLinks(items) {
+  const links = new Map(items.map((item) => [item.id, { from: [], into: null, taken: [] }]));
+  const byId = new Map(items.map((item) => [item.id, item]));
+  const consumedBy = new Map();
+  for (const item of items) {
+    for (const componentId of item.components ?? []) {
+      const component = byId.get(componentId);
+      if (!component) continue;
+      if (consumedBy.has(componentId)) {
+        links.get(item.id).taken.push({ component, by: consumedBy.get(componentId) });
+      } else {
+        consumedBy.set(componentId, item);
+        links.get(item.id).from.push(component);
+        links.get(componentId).into = item;
+      }
+    }
+  }
+  return links;
+}
+
 export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   const { hero: heroId, rankGroup = 'all' } = input;
   const warnings = [];
@@ -430,7 +454,14 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     path.push(c);
   }
   const inPath = new Set(path.map((c) => c.item.id));
+  // Компонент покупают до улучшения: если по статистике он позже — ставим его на ту же минуту.
+  for (const c of path) {
+    for (const other of path) {
+      if ((c.item.components ?? []).includes(other.item.id) && other.minute > c.minute) other.minute = c.minute;
+    }
+  }
   path.sort((a, b) => a.minute - b.minute || a.item.cost - b.item.cost || a.item.id - b.item.id);
+  const links = componentLinks(path.map((c) => c.item));
 
   const entry = (c, reasons) => ({
     ...describe(c.item),
@@ -451,12 +482,18 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     reasons.push(...c.forecast.reasons);
     if (c.stat) reasons.push(statReason(c.stat, settings));
     else reasons.push('По этому герою мало данных — совет из справочника контр');
-    const ownedFrom = (c.item.components ?? []).filter((id) => inPath.has(id)).map((id) => itemById.get(id).nameRu);
-    if (ownedFrom.length > 0) reasons.push(`Улучшение «${ownedFrom.join('», «')}»`);
-    const upgradesTo = path.filter((other) => (other.item.components ?? []).includes(c.item.id));
-    if (upgradesTo.length > 0) reasons.push(`Потом улучшается в «${upgradesTo.map((u) => u.item.nameRu).join('», «')}»`);
+    const link = links.get(c.item.id);
+    if (link.from.length > 0) reasons.push(`Улучшение «${link.from.map((item) => item.nameRu).join('», «')}» — займёт тот же слот`);
+    for (const { component, by } of link.taken) {
+      reasons.push(`«${component.nameRu}» к этому времени уже уйдёт в «${by.nameRu}» — этот предмет берёшь отдельно`);
+    }
+    if (link.into) reasons.push(`Потом улучшишь в «${link.into.nameRu}»`);
 
-    phases[phaseOf(c.minute)].push(entry(c, reasons));
+    phases[phaseOf(c.minute)].push({
+      ...entry(c, reasons),
+      upgradeFrom: link.from.map((item) => item.nameRu),
+      upgradeInto: link.into?.nameRu ?? null,
+    });
   }
 
   // Ситуативные: контры, которым не хватило места в основном пути.

@@ -60,10 +60,16 @@ function itemRow(item, detail, root) {
   );
 }
 
-const entryDetail = (entry) =>
-  entry.pickRate === null || entry.pickRate === undefined
-    ? 'мало данных'
-    : `берут в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`;
+const entryDetail = (entry) => {
+  const stat =
+    entry.pickRate === null || entry.pickRate === undefined
+      ? 'мало данных'
+      : `берут в ${percent(entry.pickRate)} игр, побед ${percent(entry.winrate)}`;
+  // Цепочка улучшений: «из „Спешная стрельба“», «→ „Быстрый стрелок“».
+  const from = entry.upgradeFrom?.length > 0 ? ` · улучшение из «${entry.upgradeFrom.join('», «')}»` : '';
+  const into = entry.upgradeInto ? ` · потом → «${entry.upgradeInto}»` : '';
+  return stat + from + into;
+};
 
 function buildCard(result, root) {
   const phases = PHASES.filter(([key]) => result.phases[key].length > 0).map(

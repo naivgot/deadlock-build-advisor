@@ -26,7 +26,7 @@ const entry = (itemId, nameRu, extra = {}) => ({
 });
 const result = {
   confidence: { level: 'high', label: 'Много данных' },
-  phases: { early: [entry(1, 'Пули <А>'), entry(2, 'Б')], mid: [entry(3, 'В', { pickRate: null })], late: [] },
+  phases: { early: [entry(1, 'Пули <А>', { upgradeInto: 'Б' }), entry(2, 'Б', { upgradeFrom: ['Пули <А>'] })], mid: [entry(3, 'В', { pickRate: null })], late: [] },
   alsoGood: [entry(4, 'Г')],
   abilityOrder: { maxFirst: [{ abilityId: 10, pickRate: 0.6, winrate: 0.5 }], order: [10, 10] },
 };
@@ -60,6 +60,7 @@ test('страница героя: заголовок, описание, адр�
   assert.match(html, /property="og:image" content="https:\/\/example\.test\/site\/icon-512\.png"/);
   assert.match(html, /Пули &lt;А&gt;/, 'название экранировано');
   assert.match(html, /мало данных/, 'предмет без статистики');
+  assert.match(html, /улучшение из «Пули &lt;А&gt;»/, 'цепочка улучшений');
   assert.match(html, /Тоже подходит/);
   assert.match(html, /Нора/);
   assert.match(html, /режет лечение/);
