@@ -329,3 +329,47 @@ test('билд на матч: при малом числе слотов сове
   assert.ok(buyer.reasons.some((reason) => /Все 3 слотов заняты — перед покупкой продай/.test(reason)));
   assert.ok(all.some((entry) => entry.soldAt !== null));
 });
+
+// ---------- Аудит Д5: повтор эффекта, тип урона, компоненты в доп. разделах ----------
+
+test('два редких предмета на срез лечения за контру в путь не идут — второй уходит в ситуативные', () => {
+  const data = makeData();
+  const healCut = data.items.find((entry) => entry.id === ITEM.healCut);
+  data.items.push({ ...healCut, id: 202, name: 'Heal Cut 2', nameRu: 'Heal Cut 2 (ру)' });
+  data.counterItems.counters.heal.push({ itemId: 202, name: 'Heal Cut 2', why: 'Тоже режет лечение' });
+  data.heroItemStats.items.all[202] = [...data.heroItemStats.items.all[ITEM.healCut]];
+  const result = buildForMatch({ hero: HERO.main, enemies: [HERO.healerA, HERO.healerB] }, data);
+  const both = [ITEM.healCut, 202];
+  assert.equal(both.filter((id) => pathIds(result).includes(id)).length, 1, 'в пути только один');
+  assert.ok(result.situational.some((entry) => both.includes(entry.itemId)), 'второй — в ситуативных');
+});
+
+test('предмет не под тип урона прогнозом не поднимается', () => {
+  const data = makeData();
+  // Герой почти без оружейных покупок → оружейный срез лечения (Heal Cut, «by-weapon») ему не подходит.
+  data.items.find((entry) => entry.id === ITEM.healCut).effects = ['anti-heal', 'by-weapon'];
+  data.items.find((entry) => entry.id === ITEM.lateItem).effects = [];
+  const all = data.heroItemStats.items.all;
+  for (const id of [ITEM.basicGun, ITEM.betterGun, ITEM.rareGem, ITEM.healCut]) all[id] = [all[id][0] / 100, all[id][1] / 100, all[id][2]];
+  const result = buildForMatch({ hero: HERO.main, enemies: [HERO.gunner] }, data);
+  const all2 = [...result.phases.early, ...result.phases.mid, ...result.phases.late, ...result.alsoGood];
+  const healCut = all2.find((entry) => entry.itemId === ITEM.healCut);
+  assert.ok(!healCut || !healCut.reasons.some((reason) => reason.startsWith('Прогноз')), 'нет причины «Прогноз»');
+});
+
+test('компонент предмета из пути не советуется в «Тоже подходит», улучшение — с подписью', () => {
+  // 1) Компонент (Basic Gun) берут редко: в путь не проходит (меньше 5%), а по цифрам годится в «Тоже подходит» (от 3%).
+  const data = makeData();
+  data.heroItemStats.items.all[ITEM.basicGun] = [2400, 4000, 4];
+  const withoutComponentRule = buildForMatch({ hero: HERO.main }, data, { ...MATCH_SETTINGS, alsoGoodMinPickRate: 0 });
+  assert.ok(pathIds(withoutComponentRule).includes(ITEM.betterGun), 'улучшение в пути');
+  assert.ok(!pathIds(withoutComponentRule).includes(ITEM.basicGun), 'компонент не в пути');
+  assert.ok(!withoutComponentRule.alsoGood.some((entry) => entry.itemId === ITEM.basicGun), 'и не в «Тоже подходит»');
+
+  // 2) Улучшение (Better Gun) не влезло в путь, а его компонент там есть — в «Тоже подходит» оно с подписью.
+  const data2 = makeData();
+  const result = buildForMatch({ hero: HERO.main }, data2, { ...MATCH_SETTINGS, phaseQuota: { early: 2, mid: 0, late: 1 }, alsoGoodMinPickRate: 0 });
+  const better = result.alsoGood.find((entry) => entry.itemId === ITEM.betterGun);
+  assert.ok(better, 'улучшение — в «Тоже подходит»');
+  assert.ok(better.reasons.some((reason) => /Улучшение «Basic Gun \(ру\)» из твоего пути/.test(reason)));
+});

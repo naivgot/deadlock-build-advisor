@@ -120,6 +120,10 @@ jobs:
         if: env.QUICK == 'true'
         run: npm run build:site -- --allow-stale
 
+      # Аудит билдов всех героев (задача Д5): при ошибках в билдах сайт не публикуем.
+      - name: Проверить билды всех героев
+        run: npm run audit
+
       - name: Подготовить публикацию
         uses: actions/configure-pages@v5
 

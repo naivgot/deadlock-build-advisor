@@ -15,6 +15,7 @@
     "fetch:sells": "node scripts/fetch-sells.js",
     "fetch:builds": "node scripts/fetch-builds.js",
     "build:site": "node scripts/build-site.js",
+    "audit": "node scripts/audit-builds.js",
     "test": "node --test",
     "dev": "node scripts/dev-server.js"
   }

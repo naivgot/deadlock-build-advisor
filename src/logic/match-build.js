@@ -26,6 +26,10 @@ export const MATCH_SETTINGS = {
   // В основной путь попадают предметы, которые герой берёт хотя бы в 5% игр (или контры).
   minPathPickRate: 0.05,
   maxSituational: 6,
+  // Эффекты, которые не складываются: второй предмет с тем же эффектом за контру в путь не берём.
+  singleEffects: ['anti-heal', 'bullet-shred', 'spirit-shred'],
+  corePickRate: 0.3, // предмет, который герой берёт в 30%+ игр, — основа билда, его это правило не трогает
+  maxRepeatRounds: 8, // сколько раз пересобирать путь, убирая повторы эффекта
   // «Тоже подходит»: берут хотя бы в 3% игр и не хуже обычного больше чем на 0,5%.
   maxAlsoGood: 4,
   alsoGoodMinPickRate: 0.03,
@@ -485,12 +489,15 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     const stat = itemStat(item, ctx, settings);
     const counter = counterByItem.get(item.id) ?? null;
     if (!stat && !counter) continue;
-    const forecast = forecastForItem(item, predictions, allyPredictions, settings, {
-      allyEffects: ctx.stats?.allyEffects,
-      allies,
-      enemyEffects: ctx.stats?.enemyEffects,
-      enemies,
-    });
+    // Предмет не под тип урона героя (оружейный срез лечения спиритическому герою) прогнозом не поднимаем.
+    const forecast = fitsDamage(item, share, settings)
+      ? forecastForItem(item, predictions, allyPredictions, settings, {
+          allyEffects: ctx.stats?.allyEffects,
+          allies,
+          enemyEffects: ctx.stats?.enemyEffects,
+          enemies,
+        })
+      : { bonus: 0, reasons: [] };
     const score =
       (stat ? stat.lift + settings.popularityWeight * stat.pickRate : 0) + (counter ? counter.bonus : 0) + forecast.bonus;
     candidates.push({
@@ -508,21 +515,51 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
   // Основной путь: лучшие по оценке на каждом этапе, с ограничением на число контр.
   const phaseOf = (minute) =>
     minute < settings.earlyUntilMinute ? 'early' : minute < settings.midUntilMinute ? 'mid' : 'late';
-  const taken = { early: 0, mid: 0, late: 0 };
-  const countersIn = { early: 0, mid: 0, late: 0 };
-  let counters = 0;
-  const path = [];
-  for (const c of candidates) {
-    if (!c.inPathPool) continue;
-    const phase = phaseOf(c.minute);
-    if (taken[phase] >= settings.phaseQuota[phase]) continue;
-    if (c.counter && (counters >= settings.maxCountersInPath || countersIn[phase] >= settings.maxCountersPerPhase)) continue;
-    taken[phase]++;
-    if (c.counter) {
-      counters++;
-      countersIn[phase]++;
+  const selectPath = (excluded) => {
+    const taken = { early: 0, mid: 0, late: 0 };
+    const countersIn = { early: 0, mid: 0, late: 0 };
+    let counters = 0;
+    const selected = [];
+    for (const c of candidates) {
+      if (!c.inPathPool || excluded.has(c.item.id)) continue;
+      const phase = phaseOf(c.minute);
+      if (taken[phase] >= settings.phaseQuota[phase]) continue;
+      if (c.counter && (counters >= settings.maxCountersInPath || countersIn[phase] >= settings.maxCountersPerPhase)) continue;
+      taken[phase]++;
+      if (c.counter) {
+        counters++;
+        countersIn[phase]++;
+      }
+      selected.push(c);
     }
-    path.push(c);
+    return selected;
+  };
+
+  // Один и тот же эффект (срез лечения, снижение защиты) не складывается: второй такой предмет почти ничего
+  // не добавляет. Если в путь его подняли контра или прогноз, а не обычные покупки героя (30%+ игр), —
+  // убираем его, место отдаём следующему кандидату и собираем путь заново.
+  const single = (c) => (c.item.effects ?? []).filter((e) => settings.singleEffects.includes(e));
+  const boosted = (c) => Boolean(c.counter) || c.forecast.reasons.some((reason) => reason.startsWith('Прогноз'));
+  const droppable = (c) => boosted(c) && !(c.stat && c.stat.pickRate >= settings.corePickRate);
+  const findRepeat = (selected) => {
+    for (const effect of settings.singleEffects) {
+      const same = selected.filter((c) => single(c).includes(effect));
+      if (same.length < 2) continue;
+      const canDrop = same.filter(droppable).sort((a, b) => a.score - b.score);
+      if (canDrop.length === 0) continue; // все — обычные покупки героя
+      // Если все повторы «поднятые» — лучший остаётся, иначе остаются обычные покупки.
+      if (canDrop.length === same.length) canDrop.pop();
+      if (canDrop.length > 0) return canDrop[0];
+    }
+    return null;
+  };
+  const excluded = new Set();
+  let path = selectPath(excluded);
+  for (let round = 0; round < settings.maxRepeatRounds; round++) {
+    const repeat = findRepeat(path);
+    if (!repeat) break;
+    excluded.add(repeat.item.id);
+    path = selectPath(excluded);
   }
   const inPath = new Set(path.map((c) => c.item.id));
   // Компонент покупают до улучшения: если по статистике он позже — ставим его на ту же минуту.
@@ -580,13 +617,21 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     });
   }
 
+  // Компоненты предметов пути в доп. разделах не нужны: их советуют рядом с тем, во что они превращаются.
+  const componentOfPath = new Set(path.flatMap((c) => c.item.components ?? []));
+  // Улучшение предмета из пути — подписываем: «вырастает из того, что ты уже купишь».
+  const upgradeNote = (item) => {
+    const from = (item.components ?? []).filter((id) => inPath.has(id)).map((id) => itemById.get(id).nameRu);
+    return from.length > 0 ? [`Улучшение «${from.join('», «')}» из твоего пути — займёт тот же слот`] : [];
+  };
+
   // Ситуативные: контры, которым не хватило места в основном пути.
   const situationalPool = candidates
-    .filter((c) => c.counter && !inPath.has(c.item.id))
+    .filter((c) => c.counter && !inPath.has(c.item.id) && !componentOfPath.has(c.item.id))
     .sort((a, b) => b.counter.bonus - a.counter.bonus || a.item.cost - b.item.cost || a.item.id - b.item.id)
     .slice(0, settings.maxSituational);
   const situational = situationalPool.map((c) => ({
-    ...entry(c, [c.counter.reason, ...c.forecast.reasons, ...(c.stat ? [statReason(c.stat, settings)] : [])]),
+    ...entry(c, [c.counter.reason, ...c.forecast.reasons, ...(c.stat ? [statReason(c.stat, settings)] : []), ...upgradeNote(c.item)]),
     against: c.counter.against,
     why: c.counter.why,
   }));
@@ -620,13 +665,16 @@ export function buildForMatch(input, data, settings = MATCH_SETTINGS) {
     .filter(
       (c) =>
         !inPath.has(c.item.id) &&
+        !componentOfPath.has(c.item.id) &&
         !c.counter &&
         c.stat &&
         c.stat.pickRate >= settings.alsoGoodMinPickRate &&
-        c.stat.lift >= settings.alsoGoodMinLift,
+        c.stat.lift >= settings.alsoGoodMinLift &&
+        // Не под тип урона и берут редко — не советуем (часто берут — значит, игроки знают зачем).
+        (fitsDamage(c.item, share, settings) || c.stat.pickRate >= settings.corePickRate),
     )
     .slice(0, settings.maxAlsoGood)
-    .map((c) => entry(c, [...c.forecast.reasons, statReason(c.stat, settings)]));
+    .map((c) => entry(c, [...c.forecast.reasons, statReason(c.stat, settings), ...upgradeNote(c.item)]));
 
   // Готовые игровые билды, похожие на этот совет: ID ищется в игре, недостающее — докупить.
   const gameBuilds = matchGameBuilds(
