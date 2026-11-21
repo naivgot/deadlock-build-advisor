@@ -68,7 +68,8 @@ jobs:
             exit 0
           fi
           git commit -m "Статистика союзников и врагов от $(date -u +%Y-%m-%d)"
-          git pull --rebase
+          # --autostash: файлы из кэша ночного запуска отличаются от репозитория — git отложит их на время подтягивания
+          git pull --rebase --autostash
           git push
           echo "changed=true" >> "$GITHUB_OUTPUT"
 

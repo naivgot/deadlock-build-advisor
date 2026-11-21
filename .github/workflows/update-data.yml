@@ -52,7 +52,8 @@ jobs:
       - name: Скачать статистику патча
         if: env.QUICK != 'true'
         timeout-minutes: 240
-        run: npm run fetch:stats
+        # Если API ответил ошибкой посреди сбора — вторая попытка через 5 минут.
+        run: npm run fetch:stats || (echo "Повтор через 5 минут" && sleep 300 && npm run fetch:stats)
         env:
           DEADLOCK_API_KEY: ${{ secrets.DEADLOCK_API_KEY }}
 
