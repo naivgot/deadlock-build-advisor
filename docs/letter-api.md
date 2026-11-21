@@ -15,7 +15,7 @@
 ## Текст (английский — отправлять его)
 
 > Hi! I'm building a Russian-language build advisor for Deadlock on top of your API:
-> https://naivgot.github.io/deadlock-build-advisor/ (code: https://github.com/naivgot/deadlock-build-advisor)
+> https://dlbuilder.ru/ (code: https://github.com/naivgot/deadlock-build-advisor)
 >
 > You pick your hero, your lane opponents and the enemy team — the site gives a full build in buying order,
 > adapted to that match: counter items, lane tips, swaps if the game goes wrong, ability order.

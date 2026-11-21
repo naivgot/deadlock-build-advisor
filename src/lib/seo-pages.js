@@ -4,7 +4,7 @@
 import { patchSummaryLines, pickChange, winrateFromTo } from '../logic/patch-diff.js';
 
 // Адрес сайта по умолчанию; при переезде на свой домен — переменная окружения SITE_URL.
-export const DEFAULT_SITE_URL = 'https://naivgot.github.io/deadlock-build-advisor/';
+export const DEFAULT_SITE_URL = 'https://dlbuilder.ru/';
 
 export function siteUrl(env = process.env) {
   const url = env.SITE_URL || DEFAULT_SITE_URL;

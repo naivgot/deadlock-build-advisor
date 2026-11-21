@@ -2,13 +2,11 @@
 
 ## Какой
 
-**Рекомендация: `buildpodmatch.ru`** — совпадает с названием сайта «Билд под матч»: на стриме говорится
-«билд под матч точка ру», и человек сразу пишет правильно. Проверка 16.11.2026 (по DNS) — похоже, свободен;
-точно скажет регистратор при покупке.
+**Куплен `dlbuilder.ru`** (reg.ru, 17.11.2026, оплачен до 17.11.2027). Продлить до этой даты — иначе сайт пропадёт.
+Статус в реестре на 21.11.2026: `REGISTERED, DELEGATED, UNVERIFIED` — данные владельца нужно подтвердить в reg.ru.
 
-Запасные (тоже похоже свободны): `matchbuild.ru`, `dlbuild.ru`, `buildpodmatch.com`.
-Занят: `podmatch.ru`. Не берём имена с `lock` (`lockbuild.ru`, `buildlock.ru`) — похожи на чужие сайты
-(lockbuilds.com, deadlocked.gg), люди будут путать.
+(Рассматривали также `buildpodmatch.ru`, `matchbuild.ru`, `dlbuild.ru`; `podmatch.ru` занят. Имена с `lock` не брали —
+похожи на чужие сайты lockbuilds.com, deadlocked.gg.)
 
 ## Где купить
 
@@ -40,7 +38,7 @@
 
 ## Что сделать на GitHub
 
-1. Репозиторий `deadlock-build-advisor` → **Settings → Pages → Custom domain** → вписать `buildpodmatch.ru` → Save.
+1. Репозиторий `deadlock-build-advisor` → **Settings → Pages → Custom domain** → вписать `dlbuilder.ru` → Save.
 2. Когда GitHub проверит домен (галочка) — включить **Enforce HTTPS** (сертификат выдаётся сам, до суток).
 
 ## Что сделаю я (≈ 30 минут после покупки)
@@ -51,4 +49,4 @@
 - Метрика: новый адрес в настройках счётчика (счётчик тот же, номер не меняется).
 - Старый адрес `naivgot.github.io/deadlock-build-advisor/` GitHub сам перенаправит на новый домен —
   старые ссылки и иконки на телефонах не сломаются.
-- Проверю, что всё открывается по `https://buildpodmatch.ru` и с `www`.
+- Проверю, что всё открывается по `https://dlbuilder.ru` и с `www`.
